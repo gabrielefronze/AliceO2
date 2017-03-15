@@ -1129,3 +1129,11 @@ o2_define_bucket(
 
     INCLUDE_DIRECTORIES
 )
+
+o2_define_bucket(
+    NAME
+    muon_base_bucket
+
+    DEPENDENCIES
+    root_base_bucket
+)
