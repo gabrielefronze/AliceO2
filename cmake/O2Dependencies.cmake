@@ -1137,3 +1137,18 @@ o2_define_bucket(
     DEPENDENCIES
     root_base_bucket
 )
+
+o2_define_bucket(
+    NAME
+    muon_reconstruction_bucket
+
+    DEPENDENCIES
+    common_boost_bucket
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    fairroot_base_bucket
+    MUONBase
+
+    INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/Detectors/MUON/base/include
+)
