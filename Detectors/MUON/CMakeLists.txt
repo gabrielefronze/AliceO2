@@ -1,3 +1,4 @@
+# * Author: The ALICE Off-line Project.                                    *
 # **************************************************************************
 # * Copyright(c) 1998-2014, ALICE Experiment at CERN, All rights reserved. *
 # *                                                                        *
