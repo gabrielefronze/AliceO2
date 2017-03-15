@@ -917,6 +917,14 @@ o2_define_bucket(
 
 o2_define_bucket(
     NAME
+    muon_base_bucket
+
+    DEPENDENCIES
+    root_base_bucket
+)
+
+o2_define_bucket(
+    NAME
     tof_simulation_bucket
 
     DEPENDENCIES
