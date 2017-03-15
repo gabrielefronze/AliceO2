@@ -760,3 +760,11 @@ o2_define_bucket(
     ${CMAKE_SOURCE_DIR}/Detectors/Base/include
     ${CMAKE_SOURCE_DIR}/Detectors/EMCAL/base/include
 )
+
+o2_define_bucket(
+    NAME
+    muon_base_bucket
+
+    DEPENDENCIES
+    root_base_bucket
+)
