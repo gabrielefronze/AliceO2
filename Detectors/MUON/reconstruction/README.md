@@ -1,3 +1,4 @@
+```
 First generate the mapping for the MID. This requires the AliRoot development branch 'feature-muonhlt':
 # Running MID clustering
 
