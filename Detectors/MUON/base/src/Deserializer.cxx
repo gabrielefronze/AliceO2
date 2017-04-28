@@ -2,7 +2,7 @@
 // Created by Gabriele Gaetano Fronzé on 28/04/2017.
 //
 
-#include "Deserializer.h"
+#include "MUONBase/Deserializer.h"
 
 using namespace AliceO2::MUON;
 
