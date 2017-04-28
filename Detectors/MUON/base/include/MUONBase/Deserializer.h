@@ -18,8 +18,19 @@ namespace AliceO2 {
         Deserializer(FairMQMessagePtr& msg);
         ~Deserializer();
 
+        struct dataStruct {
+            uint32_t fDetElemID;
+            uint32_t fBoardID;
+            uint32_t fChannel;
+            uint32_t fCathode;
+        };
+
         bool Rewind();
-        bool NextDigit(uint32_t* output);
+        dataStruct* NextDigit();
+        
+        dataStruct* operator() (){
+            return NextDigit();
+        }
 
     private:
         const UInt_t kHeaderLength = 100;
@@ -33,8 +44,10 @@ namespace AliceO2 {
         uint32_t fOffset;
         uint32_t fDigitCounter;
         uint32_t fUniqueID;
+        dataStruct fOutputDataStruct;
+        uint32_t* fDataStructItems[kNumberOfValues] = {&(fOutputDataStruct.fDetElemID),&(fOutputDataStruct.fBoardID),&(fOutputDataStruct.fChannel),&(fOutputDataStruct.fCathode)};
 
-        bool ApplyMask(short maskIndex, uint32_t &returnValue);
+        bool ApplyMask(short maskIndex);
     };
 
   }
