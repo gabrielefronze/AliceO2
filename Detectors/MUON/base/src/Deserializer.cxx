@@ -3,6 +3,11 @@
 //
 
 #include "MUONBase/Deserializer.h"
+#include "FairMQMessage.h"
+
+
+AliceO2::MUON::kMasks = {0xFFF,0xFFF000,0x3F000000,0x40000000};
+AliceO2::MUON::kShifts  = {0,12,24,30};
 
 using namespace AliceO2::MUON;
 
@@ -44,25 +49,15 @@ deserializerDataStruct* Deserializer::NextDigit() {
     // Loading data in the data member used by ApplyMask
     fUniqueID = fDigitsDataPtr[fOffset];
 
-    // Apply all the masks defined in the header
-    for (short iData = 0; iData < kNumberOfValues ; ++iData) {
-        control &= ApplyMask(iData);
-    }
+    fOutputDataStruct.fDetElemID = fUniqueID & 0xFFF;
+    fOutputDataStruct.fBoardID = ( fUniqueID >> 12 ) & 0xFFF;
+    fOutputDataStruct.fChannel = ( fUniqueID >> 24 ) & 0x3F;
+    fOutputDataStruct.fCathode = ( fUniqueID >> 30 ) & 0x4;
+
 
     // Go to the following digit leaping unwanted data
     fOffset+=2;
 
     // If everything is ok return the pointer to the internal dataStruct
     return (control) ? &fOutputDataStruct : 0x0;
-}
-
-//_________________________________________________________________________________________________
-bool Deserializer::ApplyMask(short maskIndex){
-    // Check if the maskIndex is allowed
-    if (maskIndex>(kNumberOfValues-1)) return false;
-
-    // Apply the mask
-    *(fDataStructItems[maskIndex]) = (fUniqueID & kMasks[maskIndex]) >> kShifts[maskIndex];
-
-    return true;
 }

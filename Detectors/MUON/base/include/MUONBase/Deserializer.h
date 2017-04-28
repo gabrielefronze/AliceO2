@@ -5,7 +5,9 @@
 #ifndef DESERIALIZER_H
 #define DESERIALIZER_H
 
-#include "FairMQMessage.h"
+#include "Rtypes.h"
+
+class FairMQMessagePtr;
 
 namespace AliceO2 {
 
@@ -34,11 +36,7 @@ namespace AliceO2 {
 
     private:
         // Const values to exclude first 100 bytes of message and perform deserialization
-        const UInt_t kHeaderLength = 100;
-        const short kNumberOfValues = 4;
-        static const UInt_t kMasks[kNumberOfValues] = {0xFFF,0xFFF000,0x3F000000,0x40000000};
-        static const UInt_t kShifts[kNumberOfValues] = {0,12,24,30};
-
+        const uint32_t kHeaderLength = 100;
 
         uint8_t* fDataPtr;
         uint32_t* fDigitsDataPtr;
@@ -47,12 +45,9 @@ namespace AliceO2 {
         uint32_t fDigitCounter;
         uint32_t fUniqueID;
 
-        // Internal data container and array of pointers (neede in ApplyMask)
+        // Internal data container
         deserializerDataStruct fOutputDataStruct;
-        uint32_t* fDataStructItems[kNumberOfValues] = {&(fOutputDataStruct.fDetElemID),&(fOutputDataStruct.fBoardID),&(fOutputDataStruct.fChannel),&(fOutputDataStruct.fCathode)};
 
-        // Method to extract data using the masks and shifts defined above
-        bool ApplyMask(short maskIndex);
     };
 
   }
