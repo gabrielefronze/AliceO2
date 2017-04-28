@@ -27,7 +27,7 @@ namespace AliceO2 {
 
         bool Rewind();
         dataStruct* NextDigit();
-        
+        inline dataStruct* CurrentDigit(){ return &fOutputDataStruct; };
         dataStruct* operator() (){
             return NextDigit();
         }
