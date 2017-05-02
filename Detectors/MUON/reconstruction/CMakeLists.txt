@@ -3,6 +3,8 @@ set(MODULE_NAME "MUONReconstruction")
 O2_SETUP(NAME ${MODULE_NAME})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDclustering.json ${CMAKE_BINARY_DIR}/bin/config/runMIDclustering.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDoccupancy.json ${CMAKE_BINARY_DIR}/bin/config/runMIDoccupancy.json)
+
 
 link_directories(${LINK_DIRECTORIES})
 
