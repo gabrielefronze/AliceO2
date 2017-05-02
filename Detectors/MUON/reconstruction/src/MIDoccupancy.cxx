@@ -10,11 +10,13 @@
 using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
-MIDoccupancy::MIDoccupancy(TString mapFilename):
+MIDoccupancy::MIDoccupancy():
 FairMQDevice(),
 fMessageDeserializer(),
 fInternalMapping(0x0),
-fMapFilename(mapFilename){}
+fMapFilename(""){
+    FairMQDevice::OnData("data-in", &MIDoccupancy::HandleData);
+}
 
 //_________________________________________________________________________________________________
 MIDoccupancy::~MIDoccupancy() {
@@ -24,20 +26,14 @@ MIDoccupancy::~MIDoccupancy() {
 //_________________________________________________________________________________________________
 void MIDoccupancy::InitTask() {
 
-    if ( !boost::filesystem::exists(fMapFilename.Data()) ){
-        LOG(ERROR) << "Could not read binary mapping file: " << fMapFilename.Data();
-        return;
-    } else {
-        LOG(TRACE) << "File " << fMapFilename.Data()<<" found.";
-    }
+    fMapFilename = fConfig->GetValue<string>("binmapfile");
 
     int numberOfDetectionElements = 0;
-    fInternalMapping = Mapping::ReadMapping(fMapFilename.Data(),numberOfDetectionElements);
 
-    if ( !fInternalMapping ){
-        LOG(ERROR) << "Error reading the mapping even if " << fMapFilename.Data()<<" exists.";
+    if ( !(fInternalMapping = Mapping::ReadMapping(fMapFilename.Data(),numberOfDetectionElements)) ){
+        LOG(ERROR) << "Error reading the mapping even if " << fMapFilename <<" exists.";
     } else {
-        LOG(TRACE) << "Mapping correctly loaded with "<<numberOfDetectionElements<<" detector elements.";
+        LOG(TRACE) << "Mapping correctly loaded with "<< numberOfDetectionElements <<" detector elements.";
     }
 
 }
