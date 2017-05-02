@@ -3,11 +3,6 @@
 //
 
 #include "MUONBase/Deserializer.h"
-#include "FairMQMessage.h"
-
-
-AliceO2::MUON::kMasks = {0xFFF,0xFFF000,0x3F000000,0x40000000};
-AliceO2::MUON::kShifts  = {0,12,24,30};
 
 using namespace AliceO2::MUON;
 
