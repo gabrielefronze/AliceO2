@@ -58,13 +58,13 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     while((deserializedData = MessageDeserializer.NextDigit())){
         counter++;
-        LOG(INFO) << "Read "<<counter<<" data:";
-        LOG(INFO) << "\t"<<deserializedData->fDetElemID;
-        LOG(INFO) << "\t"<<deserializedData->fBoardID;
-        LOG(INFO) << "\t"<<deserializedData->fChannel;
-        LOG(INFO) << "\t"<<deserializedData->fCathode;
+//        LOG(INFO) << "\t"<<deserializedData->fDetElemID;
+//        LOG(INFO) << "\t"<<deserializedData->fBoardID;
+//        LOG(INFO) << "\t"<<deserializedData->fChannel;
+//        LOG(INFO) << "\t"<<deserializedData->fCathode;
     }
 
+    LOG(INFO) << "Received valid message containing "<<counter<<" digits";
     return true;
 }
 
