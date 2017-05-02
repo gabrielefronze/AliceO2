@@ -70,6 +70,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     return true;
 }
 
+//_________________________________________________________________________________________________
 bool MIDoccupancy::ReadMapping( const char * filename )
 {
     /// Read mapping
