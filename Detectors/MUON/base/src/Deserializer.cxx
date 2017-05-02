@@ -30,7 +30,7 @@ bool Deserializer::Rewind(){
 }
 
 //_________________________________________________________________________________________________
-deserializerDataStruct* Deserializer::NextDigit() {
+AliceO2::MUON::Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
 
     // Avoid exceding the total number of digits
     if ( fDigitCounter>fNDigits ) return 0x0;
