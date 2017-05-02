@@ -41,9 +41,15 @@ void MIDoccupancy::InitTask() {
 bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 {
 
-    LOG(INFO) << "Received message";
+    if ( !msg ) {
+        LOG(ERROR) << "Message pointer not valid, aborting";
+        return false;
+    }
 
-    if ( !msg ) return false;
+    if ( msg->GetSize()<100 ) {
+        LOG(ERROR) << "Message empty, skipping";
+        return true;
+    }
 
     Deserializer MessageDeserializer(msg);
     int counter = 0;
