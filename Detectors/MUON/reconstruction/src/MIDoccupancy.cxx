@@ -56,8 +56,6 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     Deserializer::deserializerDataStruct* deserializedData;
 
-    if ( !deserializedData ) return false;
-
     while((deserializedData = MessageDeserializer.NextDigit())){
         counter++;
         LOG(INFO) << "Read "<<counter<<" data:";
