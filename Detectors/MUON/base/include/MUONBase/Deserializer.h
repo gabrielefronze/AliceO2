@@ -16,6 +16,7 @@ namespace AliceO2 {
 
     public:
 
+        Deserializer();
         Deserializer(FairMQMessagePtr& msg);
         ~Deserializer();
 
