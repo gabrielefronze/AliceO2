@@ -26,11 +26,11 @@ MIDoccupancy::~MIDoccupancy() {
 //_________________________________________________________________________________________________
 void MIDoccupancy::InitTask() {
 
-    fMapFilename = fConfig->GetValue<string>("binmapfile");
+    fMapFilename = fConfig->GetValue<std::string>("binmapfile");
 
     int numberOfDetectionElements = 0;
 
-    if ( !(fInternalMapping = Mapping::ReadMapping(fMapFilename.Data(),numberOfDetectionElements)) ){
+    if ( !(fInternalMapping = Mapping::ReadMapping(fMapFilename.c_str(),numberOfDetectionElements)) ){
         LOG(ERROR) << "Error reading the mapping even if " << fMapFilename <<" exists.";
     } else {
         LOG(TRACE) << "Mapping correctly loaded with "<< numberOfDetectionElements <<" detector elements.";
