@@ -17,7 +17,7 @@ fDigitCounter(0),
 fOffset(1){
     // Internal pointers to data are kept locally
     fDataPtr = reinterpret_cast<uint8_t*>(msg->GetData());
-    fDigitsDataPtr = reinterpret_cast<uint32_t*>(fDataPtr + 100);
+    fDigitsDataPtr = reinterpret_cast<uint32_t*>(fDataPtr + kHeaderLength);
     fNDigits = fDigitsDataPtr[0];
 }
 
