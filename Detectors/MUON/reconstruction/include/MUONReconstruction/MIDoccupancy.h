@@ -7,7 +7,6 @@
 
 #include "Rtypes.h"
 #include "FairMQDevice.h"
-#include "MUONBase/Deserializer.h"
 #include "MUONBase/Mapping.h"
 #include "string.h"
 
@@ -27,7 +26,6 @@ namespace AliceO2 {
 
         private:
             Mapping::mpDE* fInternalMapping;
-            Deserializer fMessageDeserializer;
             std::string fMapFilename;
 
         };

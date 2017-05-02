@@ -3,16 +3,15 @@
 //
 
 #include "MUONReconstruction/MIDoccupancy.h"
+#include "MUONBase/Deserializer.h"
 #include "FairMQLogger.h"
 #include "options/FairMQProgOptions.h"
-#include "boost"
 
 using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
 MIDoccupancy::MIDoccupancy():
 FairMQDevice(),
-fMessageDeserializer(),
 fInternalMapping(0x0),
 fMapFilename(""){
     FairMQDevice::OnData("data-in", &MIDoccupancy::HandleData);
@@ -41,12 +40,12 @@ void MIDoccupancy::InitTask() {
 //_________________________________________________________________________________________________
 bool MIDoccupancy::HandleData(FairMQMessagePtr &msg, int /*index*/)
 {
-    fMessageDeserializer = Deserializer(msg);
+    Deserializer MessageDeserializer(msg);
     int counter = 0;
 
     Deserializer::deserializerDataStruct* deserializedData;
 
-    while(deserializedData = fMessageDeserializer.NextDigit()){
+    while((deserializedData = MessageDeserializer.NextDigit())){
         counter++;
         LOG(TRACE) << "Read "<<counter<<" data:";
         LOG(TRACE) << "\t"<<deserializedData->fDetElemID;
