@@ -6,6 +6,15 @@
 
 using namespace AliceO2::MUON;
 
+Deserializer::Deserializer():
+fDigitCounter(0),
+fOffset(1){
+    // Internal pointers to data are kept locally
+    fDataPtr = 0x0;
+    fDigitsDataPtr = 0x0;
+    fNDigits = 0x0;
+}
+
 //_________________________________________________________________________________________________
 Deserializer::Deserializer(FairMQMessagePtr& msg):
 fDigitCounter(0),
