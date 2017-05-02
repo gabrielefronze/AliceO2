@@ -25,14 +25,14 @@ MIDoccupancy::~MIDoccupancy() {
 //_________________________________________________________________________________________________
 void MIDoccupancy::InitTask() {
 
-    LOG(TRACE) << "Initializing device";
+    LOG(INFO) << "Initializing device";
 
     fMapFilename = fConfig->GetValue<std::string>("binmapfile");
 
     if ( !(ReadMapping(fMapFilename.c_str())) ){
         LOG(ERROR) << "Error reading the mapping from " << fMapFilename;
     } else {
-        LOG(TRACE) << "Mapping correctly loaded.";
+        LOG(INFO) << "Mapping correctly loaded.";
     }
 
 }
@@ -41,7 +41,7 @@ void MIDoccupancy::InitTask() {
 bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 {
 
-    LOG(TRACE) << "Received message";
+    LOG(INFO) << "Received message";
 
     if ( !msg ) return false;
 
@@ -54,11 +54,11 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     while((deserializedData = MessageDeserializer.NextDigit())){
         counter++;
-        LOG(TRACE) << "Read "<<counter<<" data:";
-        LOG(TRACE) << "\t"<<deserializedData->fDetElemID;
-        LOG(TRACE) << "\t"<<deserializedData->fBoardID;
-        LOG(TRACE) << "\t"<<deserializedData->fChannel;
-        LOG(TRACE) << "\t"<<deserializedData->fCathode;
+        LOG(INFO) << "Read "<<counter<<" data:";
+        LOG(INFO) << "\t"<<deserializedData->fDetElemID;
+        LOG(INFO) << "\t"<<deserializedData->fBoardID;
+        LOG(INFO) << "\t"<<deserializedData->fChannel;
+        LOG(INFO) << "\t"<<deserializedData->fCathode;
     }
 
     return true;
