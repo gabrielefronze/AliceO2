@@ -25,25 +25,32 @@ MIDoccupancy::~MIDoccupancy() {
 //_________________________________________________________________________________________________
 void MIDoccupancy::InitTask() {
 
+    LOG(TRACE) << "Initializing device";
+
     fMapFilename = fConfig->GetValue<std::string>("binmapfile");
 
-    int numberOfDetectionElements = 0;
-
-    if ( !(fInternalMapping = Mapping::ReadMapping(fMapFilename.c_str(),numberOfDetectionElements)) ){
-        LOG(ERROR) << "Error reading the mapping even if " << fMapFilename <<" exists.";
+    if ( !(ReadMapping(fMapFilename.c_str())) ){
+        LOG(ERROR) << "Error reading the mapping from " << fMapFilename;
     } else {
-        LOG(TRACE) << "Mapping correctly loaded with "<< numberOfDetectionElements <<" detector elements.";
+        LOG(TRACE) << "Mapping correctly loaded.";
     }
 
 }
 
 //_________________________________________________________________________________________________
-bool MIDoccupancy::HandleData(FairMQMessagePtr &msg, int /*index*/)
+bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 {
+
+    LOG(TRACE) << "Received message";
+
+    if ( !msg ) return false;
+
     Deserializer MessageDeserializer(msg);
     int counter = 0;
 
     Deserializer::deserializerDataStruct* deserializedData;
+
+    if ( !deserializedData ) return false;
 
     while((deserializedData = MessageDeserializer.NextDigit())){
         counter++;
@@ -53,4 +60,35 @@ bool MIDoccupancy::HandleData(FairMQMessagePtr &msg, int /*index*/)
         LOG(TRACE) << "\t"<<deserializedData->fChannel;
         LOG(TRACE) << "\t"<<deserializedData->fCathode;
     }
+
+    return true;
+}
+
+bool MIDoccupancy::ReadMapping( const char * filename )
+{
+
+    /// Read mapping
+
+    auto tStart = std::chrono::high_resolution_clock::now();
+
+    // std::vector<Mapping::mpDE> mpdeList = Mapping::ReadMapping(filename);
+    int numberOfDetectionElements = 0;
+    Mapping::mpDE* mpdeList = Mapping::ReadMapping(filename,numberOfDetectionElements);
+
+    // if (mpdeList.size() == 0 ) {
+    if ( numberOfDetectionElements == 0 ) {
+        return false;
+    }
+
+    // for ( Mapping::mpDE mpde : mpdeList ) {
+    for ( int impde=0; impde<numberOfDetectionElements; impde++ ) {
+
+        // printf("mpDE id %i\n",mpde.id);
+        Mapping::mpDE &mpde = mpdeList[impde];
+    }
+
+    auto tEnd = std::chrono::high_resolution_clock::now();
+    LOG(INFO) << "Read mapping in: " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms\n";
+
+    return true;
 }
