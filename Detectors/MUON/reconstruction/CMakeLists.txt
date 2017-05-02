@@ -53,3 +53,5 @@ EndForEach (_file RANGE 0 ${_length})
 
 install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDclustering.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDoccupancy.json
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
