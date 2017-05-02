@@ -28,6 +28,8 @@ namespace AliceO2 {
             Mapping::mpDE* fInternalMapping;
             std::string fMapFilename;
 
+            bool ReadMapping ( const char* );
+
         };
 
     }
