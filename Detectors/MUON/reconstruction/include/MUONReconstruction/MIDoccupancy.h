@@ -9,7 +9,7 @@
 #include "FairMQDevice.h"
 #include "MUONBase/Deserializer.h"
 #include "MUONBase/Mapping.h"
-#include "TString.h"
+#include "string.h"
 
 namespace AliceO2 {
 
@@ -18,7 +18,7 @@ namespace AliceO2 {
         class MIDoccupancy : public FairMQDevice
         {
         public:
-            MIDoccupancy(TString mapFilename);
+            MIDoccupancy();
             virtual ~MIDoccupancy();
 
         protected:
@@ -28,7 +28,7 @@ namespace AliceO2 {
         private:
             Mapping::mpDE* fInternalMapping;
             Deserializer fMessageDeserializer;
-            TString fMapFilename;
+            std::string fMapFilename;
 
         };
 
