@@ -71,6 +71,8 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 {
     auto tStart = std::chrono::high_resolution_clock::now();
 
+    LOG(INFO) << "Starting reading of mapping";
+
     int numberOfDetectionElements = 0;
     Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
 
