@@ -98,7 +98,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     bufferStripMapping.startTS = 0;
     bufferStripMapping.stopTS = 0;
     bufferStripMapping.digitsCounter = 0;
-    bufferStripMapping.rate = 0.;
+    bufferStripMapping.rate = 0;
     bufferStripMapping.isDead = false;
     bufferStripMapping.isNoisy = false;
     bufferStripMapping.useMe = true;
@@ -124,7 +124,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
         padIndeces[1] = &(de.padIndices[1]);
 
         // the two maps have to be reversed to make iPad->UniqueID
-        std::unordered_map<Long64_t, Long64_t> reversedPadIndexes;
+        std::unordered_map<uint64_t, uint64_t> reversedPadIndexes;
 
         // Using indecesIt1.second-1 because of theway the mapping has been filled
         for (auto indecesIt1 : *padIndeces[0]){
