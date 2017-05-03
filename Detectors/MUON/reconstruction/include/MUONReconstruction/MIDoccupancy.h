@@ -43,6 +43,8 @@ namespace AliceO2 {
 
             bool ReadMapping(const char*);
             void ResetCounters(uint64_t newStartTS);
+            void ComputeRate(stripMapping* strip);
+            void ComputeAllRates();
 
         };
 
