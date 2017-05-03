@@ -52,14 +52,26 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     Deserializer MessageDeserializer(msg);
     int counter = 0;
 
-    Deserializer::deserializerDataStruct* deserializedData;
+    uint32_t *uniqueIDBuffer;
+//    Deserializer::deserializerDataStruct* deserializedData;
 
-    while((deserializedData = MessageDeserializer.NextDigit())){
-        counter++;
-//        LOG(INFO) << "\t"<<deserializedData->fDetElemID;
-//        LOG(INFO) << "\t"<<deserializedData->fBoardID;
-//        LOG(INFO) << "\t"<<deserializedData->fChannel;
-//        LOG(INFO) << "\t"<<deserializedData->fCathode;
+//    while((deserializedData = MessageDeserializer.NextDigit())){
+//        counter++;
+////        LOG(INFO) << "\t"<<deserializedData->fDetElemID;
+////        LOG(INFO) << "\t"<<deserializedData->fBoardID;
+////        LOG(INFO) << "\t"<<deserializedData->fChannel;
+////        LOG(INFO) << "\t"<<deserializedData->fCathode;
+//    }
+
+    while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
+        try {
+            fInternalMapping.at((Long64_t)(*uniqueIDBuffer)).digitsCounter++;
+        } catch (int err){
+            LOG(ERROR) << "No stripMapping struct found for ID "<< *uniqueIDBuffer;
+            LOG(ERROR) << "Continuing...";
+            continue;
+        }
+
     }
 
     LOG(INFO) << "Received valid message containing "<<counter<<" digits";
