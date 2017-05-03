@@ -36,13 +36,17 @@ namespace AliceO2 {
                 Float_t rate; // rate in Hz/cm2 or 1/cm2
                 Bool_t isDead;
                 Bool_t isNoisy;
+                Bool_t useMe;
             };
 
             std::string fMapFilename;
             std::unordered_map<uint64_t,stripMapping> fInternalMapping;
 
             bool ReadMapping(const char*);
+
+            void ResetUseMe(Bool_t value = true);
             void ResetCounters(uint64_t newStartTS);
+
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();
 
