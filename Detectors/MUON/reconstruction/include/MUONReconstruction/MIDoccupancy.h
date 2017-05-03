@@ -27,11 +27,15 @@ namespace AliceO2 {
         private:
 
             struct stripMapping{
-                uint64_t startTS, stopTS; // timestamps
+                uint64_t startTS; // timestamp of first added run
+                uint64_t stopTS; // timestamp of last added run
                 uint64_t digitsCounter; // counter of time the strip has been fired
-                UChar_t nNeighbours; // number of neighboursUniqueIDs
-                Long64_t neighboursUniqueIDs[10]; // indices of neighboursUniqueIDs in array stored in mpDE
-                Double_T area; // 2D area
+                UChar_t nNeighbours; // number of neighbours
+                uint64_t neighboursUniqueIDs[10]; // uniqueIDs of neighbours
+                Float_t area; // 1D area
+                Float_t rate; // rate in Hz/cm2 or 1/cm2
+                Bool_t isDead;
+                Bool_t isNoisy;
             };
 
             std::string fMapFilename;
