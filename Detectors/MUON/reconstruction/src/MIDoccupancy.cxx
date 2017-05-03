@@ -71,13 +71,73 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 //_________________________________________________________________________________________________
 bool MIDoccupancy::ReadMapping( const char * filename )
 {
-    /// Read mapping
-
     auto tStart = std::chrono::high_resolution_clock::now();
 
-    // std::vector<Mapping::mpDE> mpdeList = Mapping::ReadMapping(filename);
     int numberOfDetectionElements = 0;
-    fInternalMapping = Mapping::ReadMapping(filename,numberOfDetectionElements);
+    Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
+
+    // struct to contain data from each strip
+    stripMapping bufferStripMapping;
+
+    // initialization of the buffer struct
+    bufferStripMapping.startTS = 0;
+    bufferStripMapping.stopTS = 0;
+    bufferStripMapping.digitsCounter = 0;
+    for (int iNeighboursInit = 0; iNeighboursInit < 10; ++iNeighboursInit) {
+        bufferStripMapping.neighboursUniqueID[iNeighboursInit] = -1;
+    }
+
+    // loop over DE to read every pad (DE = detection element)
+    for ( int iDE = 0; iDE < numberOfDetectionElements; iDE++ ){
+
+        // read the iDE-th DE and the number of pads
+        Mapping::mpDE& de(detectionElements[iDE]);
+        int numberOfPads = de.nPads[0] + de.nPads[1] ;
+
+        //  load the internal maps in order to get back to the UniqueID
+        std::unordered_map<Long64_t, Long64_t> *padIndeces[2];
+        padIndeces[0] = &(de.padIndices[0]);
+        padIndeces[1] = &(de.padIndices[1]);
+
+        // the two maps have to be reversed to make iPad->UniqueID
+        std::unordered_map<Long64_t, Long64_t> reversedPadIndeces;
+        for (auto indecesIt1 : *padIndeces[0]){
+            reversedPadIndeces.insert({indecesIt1.second,indecesIt1.second});
+        }
+        for (auto indecesIt2 : *padIndeces[1]){
+            reversedPadIndeces.insert({indecesIt2.second,indecesIt2.second});
+        }
+
+        // original maps not needed anymore
+        padIndeces[0] = 0x0;
+        padIndeces[1] = 0x0;
+
+        // loop over pads from each DE
+        for ( int iPad = 0; iPad < numberOfPads; iPad++ ){
+
+            // read the iPad-th pad and the number of pads
+            Mapping::mpPad& pad(de.pads[iPad]);
+            int numberOfNeighbours = pad.nNeighbours;
+
+            // load in the struct sensible data
+            bufferStripMapping.nNeighbours = pad.nNeighbours;
+            bufferStripMapping.area[0][0] = pad.area[0][0];
+            bufferStripMapping.area[1][0] = pad.area[1][0];
+            bufferStripMapping.area[0][1] = pad.area[0][1];
+            bufferStripMapping.area[1][1] = pad.area[1][1];
+
+            // load the neighboursUniqueIDs or set to -1 if no neighbour
+            for ( int iNeighbours = 0; iNeighbours < numberOfNeighbours; iNeighbours++){
+                bufferStripMapping.neighboursUniqueID[iNeighbours] = reversedPadIndeces.at(pad.neighbours[iNeighbours]);
+            }
+            for ( int iNeighbours = numberOfNeighbours; iNeighbours < 10; iNeighbours++){
+                bufferStripMapping.neighboursUniqueID[iNeighbours] = -1;
+            }
+
+            // save the buffer struct at the iPad position in the map
+            fInternalMapping.insert({reversedPadIndeces.at(iPad),bufferStripMapping});
+        }
+    }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
     LOG(INFO) << "Mapping loaded in: " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms\n";
