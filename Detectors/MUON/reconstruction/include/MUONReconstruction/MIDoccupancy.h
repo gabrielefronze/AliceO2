@@ -47,6 +47,11 @@ namespace AliceO2 {
             void ComputeAllRates();
 
             double GetRateSum(stripMapping* strip, uint &counter, uint depth=1);
+            void ComputeIsDead(stripMapping* strip);
+            void ComputeAllIsDead();
+            void ComputeIsNoisy(stripMapping* strip);
+            void ComputeAllIsNoisy();
+
         };
 
     }

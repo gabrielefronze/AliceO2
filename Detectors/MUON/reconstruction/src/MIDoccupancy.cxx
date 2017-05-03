@@ -272,3 +272,53 @@ double MIDoccupancy::GetRateSum(stripMapping* strip, uint &counter, uint depth){
     return rateSum;
 }
 
+//_________________________________________________________________________________________________
+void MIDoccupancy::ComputeIsDead(stripMapping* strip) {
+    uint nOfRates = 0;
+    double meanRate = 0;
+
+    meanRate = GetRateSum(strip, nOfRates, 2);
+    meanRate /= (double)nOfRates;
+
+    if ( strip->rate > meanRate*0.000001 ) strip->isDead = true;
+}
+
+//_________________________________________________________________________________________________
+void MIDoccupancy::ComputeAllIsDead() {
+
+    auto tStart = std::chrono::high_resolution_clock::now();
+
+    for(auto mapIterator : fInternalMapping){
+        ComputeIsDead(&(mapIterator.second));
+    }
+
+    auto tEnd = std::chrono::high_resolution_clock::now();
+
+    LOG(DEBUG) << "Dead strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+}
+
+//_________________________________________________________________________________________________
+void MIDoccupancy::ComputeIsNoisy(stripMapping* strip) {
+
+    uint nOfRates = 0;
+    double meanRate = 0;
+
+    meanRate = GetRateSum(strip, nOfRates, 2);
+    meanRate /= (double)nOfRates;
+
+    if ( strip->rate > meanRate*5. ) strip->isNoisy = true;
+}
+
+//_________________________________________________________________________________________________
+void MIDoccupancy::ComputeAllIsNoisy() {
+
+    auto tStart = std::chrono::high_resolution_clock::now();
+
+    for(auto mapIterator : fInternalMapping){
+        ComputeIsNoisy(&(mapIterator.second));
+    }
+
+    auto tEnd = std::chrono::high_resolution_clock::now();
+
+    LOG(DEBUG) << "Dead strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+}
