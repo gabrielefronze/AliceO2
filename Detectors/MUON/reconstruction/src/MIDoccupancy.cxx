@@ -107,14 +107,14 @@ bool MIDoccupancy::ReadMapping( const char * filename )
         padIndeces[1] = &(de.padIndices[1]);
 
         // the two maps have to be reversed to make iPad->UniqueID
-        std::unordered_map<Long64_t, Long64_t> reversedPadIndeces;
+        std::unordered_map<Long64_t, Long64_t> reversedPadIndexes;
 
         // Using indecesIt1.second-1 because of theway the mapping has been filled
         for (auto indecesIt1 : *padIndeces[0]){
-            reversedPadIndeces.insert({indecesIt1.second-1,indecesIt1.first});
+            reversedPadIndexes.insert({indecesIt1.second-1,indecesIt1.first});
         }
         for (auto indecesIt2 : *padIndeces[1]){
-            reversedPadIndeces.insert({indecesIt2.second-1,indecesIt2.first});
+            reversedPadIndexes.insert({indecesIt2.second-1,indecesIt2.first});
         }
 
         // original maps not needed anymore
@@ -141,7 +141,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
             // load the neighboursUniqueIDs or set to -1 if no neighbour
             for ( int iNeighbours = 0; iNeighbours < numberOfNeighbours; iNeighbours++){
-                Long64_t padUniqueID = reversedPadIndeces[pad.neighbours[iNeighbours]];
+                Long64_t padUniqueID = reversedPadIndexes.at(pad.neighbours[iNeighbours]);
 
                 LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< padUniqueID;
 
@@ -154,7 +154,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             LOG(DEBUG) << "Inserting the internal mapping entry";
 
             // save the buffer struct at the iPad position in the map
-            fInternalMapping.insert(std::pair<Long64_t, stripMapping>(reversedPadIndeces[iPad], bufferStripMapping));
+            fInternalMapping.insert(std::pair<Long64_t, stripMapping>(reversedPadIndexes.at(iPad), bufferStripMapping));
 
             LOG(DEBUG) << "\t"<< reversedPadIndeces[iPad] <<" "<< bufferStripMapping.nNeighbours;
         }
