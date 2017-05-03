@@ -87,7 +87,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     bufferStripMapping.stopTS = 0;
     bufferStripMapping.digitsCounter = 0;
     for (int iNeighboursInit = 0; iNeighboursInit < 10; ++iNeighboursInit) {
-        bufferStripMapping.neighboursUniqueID[iNeighboursInit] = -1;
+        bufferStripMapping.neighboursUniqueIDs[iNeighboursInit] = -1;
     }
 
     // loop over DE to read every pad (DE = detection element)
@@ -152,10 +152,10 @@ bool MIDoccupancy::ReadMapping( const char * filename )
                 
 //                LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< neighbourUniqueID;
 
-                bufferStripMapping.neighboursUniqueID[iNeighbours] = neighbourUniqueID;
+                bufferStripMapping.neighboursUniqueIDs[iNeighbours] = neighbourUniqueID;
             }
             for ( int iNeighbours = numberOfNeighbours; iNeighbours < 10; iNeighbours++){
-                bufferStripMapping.neighboursUniqueID[iNeighbours] = -1;
+                bufferStripMapping.neighboursUniqueIDs[iNeighbours] = -1;
             }
 
 //            LOG(DEBUG) << "Inserting the internal mapping entry";

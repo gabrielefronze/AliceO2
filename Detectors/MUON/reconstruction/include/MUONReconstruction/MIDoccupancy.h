@@ -29,8 +29,8 @@ namespace AliceO2 {
             struct stripMapping{
                 uint64_t startTS, stopTS; // timestamps
                 uint64_t digitsCounter; // counter of time the strip has been fired
-                UChar_t nNeighbours; // number of neighboursUniqueID
-                Long64_t neighboursUniqueID[10]; // indices of neighboursUniqueID in array stored in mpDE
+                UChar_t nNeighbours; // number of neighboursUniqueIDs
+                Long64_t neighboursUniqueIDs[10]; // indices of neighboursUniqueIDs in array stored in mpDE
                 Float_t area[2][2]; // 2D area
             };
 
