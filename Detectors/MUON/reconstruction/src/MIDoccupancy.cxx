@@ -144,10 +144,10 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
             // load in the struct sensible data
             bufferStripMapping.nNeighbours = pad.nNeighbours;
-            bufferStripMapping.area[0][0] = pad.area[0][0];
-            bufferStripMapping.area[1][0] = pad.area[1][0];
-            bufferStripMapping.area[0][1] = pad.area[0][1];
-            bufferStripMapping.area[1][1] = pad.area[1][1];
+
+            Double_t deltaX = pad.area[0][1] - pad.area[0][0];
+            Double_t deltaY = pad.area[1][0] - pad.area[1][1];
+            bufferStripMapping.area = deltaX * deltaY;
 
 //            LOG(DEBUG) << "\t Pad has "<<numberOfNeighbours<<" neighbours";
 
