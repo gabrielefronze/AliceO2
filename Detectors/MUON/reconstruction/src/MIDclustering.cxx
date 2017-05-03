@@ -79,7 +79,7 @@ void MIDclustering::AddPad(digiPads &de, UShort_t iPad, preCluster &cl)
 
   pad.useMe = kFALSE;
 
-  // loop over its neighbours
+  // loop over its neighboursUniqueID
   for (UShort_t iNeighbour = 0; iNeighbour < pad.nNeighbours; ++iNeighbour) {
 
     if (pads[pad.neighbours[iNeighbour]].useMe) {
@@ -396,7 +396,7 @@ void MIDclustering::PreClusterizeRecursive(digiPads &de)
 
         pc.useMe = kTRUE;
 
-        // add the pad and its fired neighbours recusively
+        // add the pad and its fired neighboursUniqueID recusively
         // cl.firstPad = de.nOrderedPads;
         AddPad(de, iPad, pc);
 

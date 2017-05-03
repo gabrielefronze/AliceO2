@@ -25,8 +25,17 @@ namespace AliceO2 {
             virtual void InitTask();
 
         private:
-            Mapping::mpDE* fInternalMapping;
+
+            struct stripMapping{
+                uint64_t startTS, stopTS; // timestamps
+                uint64_t digitsCounter; // counter of time the strip has been fired
+                UChar_t nNeighbours; // number of neighboursUniqueID
+                Long64_t neighboursUniqueID[10]; // indices of neighboursUniqueID in array stored in mpDE
+                Float_t area[2][2]; // 2D area
+            };
+
             std::string fMapFilename;
+            std::unordered_map<uint64_t,stripMapping> fInternalMapping;
 
             bool ReadMapping ( const char* );
 
