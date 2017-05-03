@@ -218,5 +218,31 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
     LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
+//_________________________________________________________________________________________________
+void MIDoccupancy::ComputeRate(stripMapping* strip) {
+    for(auto mapIterator : fInternalMapping){
+        strip->rate = strip->digitsCounter / strip->area;
+
+        uint64_t startTS = strip->startTS;
+        uint64_t stopTS = strip->stopTS;
+
+        if ( stopTS > startTS ){
+            strip->rate/=(stopTS-startTS);
+        }
     }
 }
+
+//_________________________________________________________________________________________________
+void MIDoccupancy::ComputeAllRates() {
+
+    auto tStart = std::chrono::high_resolution_clock::now();
+
+    for(auto mapIterator : fInternalMapping){
+        ComputeRate(&(mapIterator.second));
+    }
+
+    auto tEnd = std::chrono::high_resolution_clock::now();
+
+    LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+}
+
