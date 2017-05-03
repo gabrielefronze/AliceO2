@@ -74,6 +74,9 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     int numberOfDetectionElements = 0;
     Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
 
+    LOG(DEBUG) << "\t"<<numberOfDetectionElements<<" DE found";
+    LOG(DEBUG) << "Initializing buffer struct";
+
     // struct to contain data from each strip
     stripMapping bufferStripMapping;
 
@@ -88,9 +91,13 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     // loop over DE to read every pad (DE = detection element)
     for ( int iDE = 0; iDE < numberOfDetectionElements; iDE++ ){
 
+        LOG(DEBUG) << "Processing DE "<<iDE;
+
         // read the iDE-th DE and the number of pads
         Mapping::mpDE& de(detectionElements[iDE]);
         int numberOfPads = de.nPads[0] + de.nPads[1] ;
+
+        LOG(DEBUG) << "Starting map inversion";
 
         //  load the internal maps in order to get back to the UniqueID
         std::unordered_map<Long64_t, Long64_t> *padIndeces[2];
@@ -112,6 +119,8 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
         // loop over pads from each DE
         for ( int iPad = 0; iPad < numberOfPads; iPad++ ){
+
+            LOG(DEBUG) << "Processing pad "<<iPad;
 
             // read the iPad-th pad and the number of pads
             Mapping::mpPad& pad(de.pads[iPad]);
@@ -148,7 +157,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
-    LOG(INFO) << "Mapping loaded in: " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms\n";
+    LOG(DEBUG) << "Mapping loaded in: " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms\n";
 
     return true;
 }
