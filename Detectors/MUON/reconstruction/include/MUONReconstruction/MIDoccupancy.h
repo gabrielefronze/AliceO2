@@ -37,7 +37,8 @@ namespace AliceO2 {
             std::string fMapFilename;
             std::unordered_map<uint64_t,stripMapping> fInternalMapping;
 
-            bool ReadMapping ( const char* );
+            bool ReadMapping(const char*);
+            bool ResetCounters(uint64_t newStartTS);
 
         };
 

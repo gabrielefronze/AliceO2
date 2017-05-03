@@ -193,3 +193,12 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
     return true;
 }
+
+bool MIDoccupancy::ResetCounters(uint64_t newStartTS) {
+    for(auto mapIterator : fInternalMapping){
+        stripMapping* strip = &(mapIterator.second);
+        strip->digitsCounter=0;
+        strip->startTS=newStartTS;
+        strip->stopTS=0;
+    }
+}
