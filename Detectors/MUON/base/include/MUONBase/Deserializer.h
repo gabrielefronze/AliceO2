@@ -34,6 +34,9 @@ namespace AliceO2 {
         inline deserializerDataStruct* CurrentDigit(){ return &fOutputDataStruct; }
         inline deserializerDataStruct* operator() (){ return NextDigit(); }
 
+        uint32_t * NextUniqueID();
+        inline uint32_t * CurrentUniqueID(){ return &fUniqueID; }
+
     private:
         // Const values to exclude first 100 bytes of message and perform deserialization
         const uint32_t kHeaderLength = 100;
