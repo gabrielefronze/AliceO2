@@ -108,11 +108,13 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
         // the two maps have to be reversed to make iPad->UniqueID
         std::unordered_map<Long64_t, Long64_t> reversedPadIndeces;
+
+        // Using indecesIt1.second-1 because of theway the mapping has been filled
         for (auto indecesIt1 : *padIndeces[0]){
-            reversedPadIndeces.insert({indecesIt1.second,indecesIt1.first});
+            reversedPadIndeces.insert({indecesIt1.second-1,indecesIt1.first});
         }
         for (auto indecesIt2 : *padIndeces[1]){
-            reversedPadIndeces.insert({indecesIt2.second,indecesIt2.first});
+            reversedPadIndeces.insert({indecesIt2.second-1,indecesIt2.first});
         }
 
         // original maps not needed anymore
