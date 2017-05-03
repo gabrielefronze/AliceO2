@@ -101,6 +101,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     bufferStripMapping.rate = 0.;
     bufferStripMapping.isDead = false;
     bufferStripMapping.isNoisy = false;
+    bufferStripMapping.useMe = true;
 
     for (int iNeighboursInit = 0; iNeighboursInit < 10; ++iNeighboursInit) {
         bufferStripMapping.neighboursUniqueIDs[iNeighboursInit] = -1;
@@ -199,6 +200,20 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 }
 
 //_________________________________________________________________________________________________
+void MIDoccupancy::ResetUseMe(Bool_t value) {
+
+    auto tStart = std::chrono::high_resolution_clock::now();
+
+    for(auto mapIterator : fInternalMapping){
+        mapIterator.second.useMe = value;
+    }
+
+    auto tEnd = std::chrono::high_resolution_clock::now();
+
+    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+}
+
+//_________________________________________________________________________________________________
 void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 
     auto tStart = std::chrono::high_resolution_clock::now();
@@ -210,7 +225,8 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
         strip->stopTS=0;
         strip->isNoisy = false;
         strip->isDead = false;
-        strip->rate = 0.;
+        strip->useMe = true;
+        strip->rate = 0;
     }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
