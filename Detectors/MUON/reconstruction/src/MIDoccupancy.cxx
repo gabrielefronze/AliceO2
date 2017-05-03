@@ -142,19 +142,36 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             // load the neighboursUniqueIDs or set to -1 if no neighbour
             for ( int iNeighbours = 0; iNeighbours < numberOfNeighbours; iNeighbours++){
                 Long64_t padUniqueID = reversedPadIndexes.at(pad.neighbours[iNeighbours]);
+                Long64_t neighbourUniqueID;
+                try {
+                    neighbourUniqueID = reversedPadIndexes.at(pad.neighbours[iNeighbours]);
+                } catch ( int err ){
+                    LOG(ERROR) << "No reverse mapping found for pad "<< pad.neighbours[iNeighbours] <<" neighbour of "<< iPad;
+                    LOG(ERROR) << "Aborting...";
+                    return false;
+                }
 
                 LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< padUniqueID;
+//                LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< neighbourUniqueID;
 
-                bufferStripMapping.neighboursUniqueID[iNeighbours] = padUniqueID;
+                bufferStripMapping.neighboursUniqueID[iNeighbours] = neighbourUniqueID;
             }
             for ( int iNeighbours = numberOfNeighbours; iNeighbours < 10; iNeighbours++){
                 bufferStripMapping.neighboursUniqueID[iNeighbours] = -1;
             }
 
             LOG(DEBUG) << "Inserting the internal mapping entry";
+            Long64_t padUniqueID;
+            try {
+                padUniqueID = reversedPadIndexes.at(iPad);
+            } catch ( int err ){
+                LOG(ERROR) << "No reverse mapping found for pad "<< iPad;
+                LOG(ERROR) << "Aborting...";
+                return false;
+            }
 
             // save the buffer struct at the iPad position in the map
-            fInternalMapping.insert(std::pair<Long64_t, stripMapping>(reversedPadIndexes.at(iPad), bufferStripMapping));
+            fInternalMapping.insert(std::pair<Long64_t, stripMapping>(padUniqueID, bufferStripMapping));
 
             LOG(DEBUG) << "\t"<< reversedPadIndeces[iPad] <<" "<< bufferStripMapping.nNeighbours;
         }
