@@ -124,16 +124,26 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             bufferStripMapping.area[0][1] = pad.area[0][1];
             bufferStripMapping.area[1][1] = pad.area[1][1];
 
+            LOG(DEBUG) << "\t Pad has "<<numberOfNeighbours<<" neighbours";
+
             // load the neighboursUniqueIDs or set to -1 if no neighbour
             for ( int iNeighbours = 0; iNeighbours < numberOfNeighbours; iNeighbours++){
-                bufferStripMapping.neighboursUniqueID[iNeighbours] = reversedPadIndeces.at(pad.neighbours[iNeighbours]);
+                Long64_t padUniqueID = reversedPadIndeces[pad.neighbours[iNeighbours]];
+
+                LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< padUniqueID;
+
+                bufferStripMapping.neighboursUniqueID[iNeighbours] = padUniqueID;
             }
             for ( int iNeighbours = numberOfNeighbours; iNeighbours < 10; iNeighbours++){
                 bufferStripMapping.neighboursUniqueID[iNeighbours] = -1;
             }
 
+            LOG(DEBUG) << "Inserting the internal mapping entry";
+
             // save the buffer struct at the iPad position in the map
-            fInternalMapping.insert({reversedPadIndeces.at(iPad),bufferStripMapping});
+            fInternalMapping.insert(std::pair<Long64_t, stripMapping>(reversedPadIndeces[iPad], bufferStripMapping));
+
+            LOG(DEBUG) << "\t"<< reversedPadIndeces[iPad] <<" "<< bufferStripMapping.nNeighbours;
         }
     }
 
