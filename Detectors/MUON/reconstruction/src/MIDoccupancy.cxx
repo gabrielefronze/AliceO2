@@ -149,8 +149,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
                     LOG(ERROR) << "Aborting...";
                     return false;
                 }
-
-                LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< padUniqueID;
+                
 //                LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< neighbourUniqueID;
 
                 bufferStripMapping.neighboursUniqueID[iNeighbours] = neighbourUniqueID;
