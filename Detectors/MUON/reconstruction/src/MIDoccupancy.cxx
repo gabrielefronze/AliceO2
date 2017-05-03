@@ -246,3 +246,29 @@ void MIDoccupancy::ComputeAllRates() {
     LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
+
+//_________________________________________________________________________________________________
+double MIDoccupancy::GetRateSum(stripMapping* strip, uint &counter, uint depth){
+
+    double rateSum = 0.;
+    counter = 0;
+    if ( depth>=1 ){
+        Int_t nNeighbours = strip->nNeighbours;
+        for (int iNeighbours = 0; iNeighbours < nNeighbours; ++iNeighbours) {
+
+            MIDoccupancy::stripMapping* neighbourStrip;
+            try {
+                neighbourStrip = &(fInternalMapping.at(strip->neighboursUniqueIDs[iNeighbours]));
+            } catch ( int err ){
+                LOG(ERROR) << "Missing entry in the mapping. Continuing.";
+                continue;
+            }
+
+            rateSum += neighbourStrip->rate;
+            counter++;
+            rateSum += GetRateSum(neighbourStrip, counter, depth--);
+        }
+    }
+    return rateSum;
+}
+
