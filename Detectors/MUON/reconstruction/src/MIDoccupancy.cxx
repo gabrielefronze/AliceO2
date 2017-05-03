@@ -262,10 +262,23 @@ void MIDoccupancy::ComputeAllRates() {
     LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
+//_________________________________________________________________________________________________
+double MIDoccupancy::GetMeanRate(stripMapping* strip, uint depth=1){
+
+    MIDoccupancy::ResetUseMe(true);
+
+    uint counter = 0;
+
+    double rateSum = RecursiveGetRateSum(strip, counter, depth);
+
+    MIDoccupancy::ResetUseMe(true);
+
+    return rateSum/(double)counter;
+
+};
 
 //_________________________________________________________________________________________________
-double MIDoccupancy::GetRateSum(stripMapping* strip, uint &counter, uint depth){
-
+double MIDoccupancy::RecursiveGetRateSum(stripMapping* strip, uint &counter, uint depth){
     double rateSum = 0.;
     counter = 0;
     if ( depth>=1 ){
@@ -280,9 +293,10 @@ double MIDoccupancy::GetRateSum(stripMapping* strip, uint &counter, uint depth){
                 continue;
             }
 
-            rateSum += neighbourStrip->rate;
+            if (neighbourStrip->useMe) rateSum += neighbourStrip->rate;
+            neighbourStrip->useMe = false;
             counter++;
-            rateSum += GetRateSum(neighbourStrip, counter, depth--);
+            rateSum += RecursiveGetRateSum(neighbourStrip, counter, depth-1);
         }
     }
     return rateSum;
@@ -291,10 +305,7 @@ double MIDoccupancy::GetRateSum(stripMapping* strip, uint &counter, uint depth){
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeIsDead(stripMapping* strip) {
     uint nOfRates = 0;
-    double meanRate = 0;
-
-    meanRate = GetRateSum(strip, nOfRates, 2);
-    meanRate /= (double)nOfRates;
+    double meanRate = GetMeanRate(strip);
 
     if ( strip->rate > meanRate*0.000001 ) strip->isDead = true;
 }
@@ -317,12 +328,9 @@ void MIDoccupancy::ComputeAllIsDead() {
 void MIDoccupancy::ComputeIsNoisy(stripMapping* strip) {
 
     uint nOfRates = 0;
-    double meanRate = 0;
+    double meanRate = GetMeanRate(strip);
 
-    meanRate = GetRateSum(strip, nOfRates, 2);
-    meanRate /= (double)nOfRates;
-
-    if ( strip->rate > meanRate*5. ) strip->isNoisy = true;
+    if ( strip->rate > meanRate*100. ) strip->isNoisy = true;
 }
 
 //_________________________________________________________________________________________________

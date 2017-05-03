@@ -50,7 +50,8 @@ namespace AliceO2 {
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();
 
-            double GetRateSum(stripMapping* strip, uint &counter, uint depth=1);
+            double GetMeanRate(stripMapping* strip, uint depth=1);
+            double RecursiveGetRateSum(stripMapping* strip, uint &counter, uint depth=1);
             void ComputeIsDead(stripMapping* strip);
             void ComputeAllIsDead();
             void ComputeIsNoisy(stripMapping* strip);
