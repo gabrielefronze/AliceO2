@@ -39,16 +39,13 @@ bool Deserializer::Rewind(){
 }
 
 //_________________________________________________________________________________________________
-AliceO2::MUON::Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
+Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
 
     // Avoid exceding the total number of digits
     if ( fDigitCounter>fNDigits ) return 0x0;
 
     // Keep track of how much digits have been read
     fDigitCounter++;
-
-    // Control value to detect parsing problems
-    bool control = true;
 
     // Loading data in the data member used by ApplyMask
     fUniqueID = fDigitsDataPtr[fOffset];
@@ -63,5 +60,24 @@ AliceO2::MUON::Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
     fOffset+=2;
 
     // If everything is ok return the pointer to the internal dataStruct
-    return (control) ? &fOutputDataStruct : 0x0;
+    return &fOutputDataStruct;
+}
+
+//_________________________________________________________________________________________________
+uint32_t* Deserializer::NextUniqueID() {
+
+    // Avoid exceding the total number of digits
+    if ( fDigitCounter>fNDigits ) return 0x0;
+
+    // Keep track of how much digits have been read
+    fDigitCounter++;
+
+    // Loading data in the data member used by ApplyMask
+    fUniqueID = fDigitsDataPtr[fOffset];
+
+    // Go to the following digit leaping unwanted data
+    fOffset+=2;
+
+    // If everything is ok return the pointer to the internal dataStruct
+    return &fUniqueID;
 }
