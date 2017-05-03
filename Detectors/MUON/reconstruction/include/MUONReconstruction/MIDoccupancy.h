@@ -31,8 +31,8 @@ namespace AliceO2 {
                 uint64_t stopTS; // timestamp of last added run
                 uint64_t digitsCounter; // counter of time the strip has been fired
                 UChar_t nNeighbours; // number of neighbours
-                uint64_t neighboursUniqueIDs[10]; // uniqueIDs of neighbours
-                Float_t area; // 1D area
+                int64_t neighboursUniqueIDs[10]; // uniqueIDs of neighbours
+                Double_t area; // 1D area
                 Float_t rate; // rate in Hz/cm2 or 1/cm2
                 Bool_t isDead;
                 Bool_t isNoisy;
