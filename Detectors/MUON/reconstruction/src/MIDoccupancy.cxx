@@ -156,6 +156,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
 //            LOG(DEBUG) << "\t Pad has "<<numberOfNeighbours<<" neighbours";
 
+            //TODO: make the parsing avoid adding lateral neighbours
             // load the neighboursUniqueIDs or set to -1 if no neighbour
             for ( int iNeighbours = 0; iNeighbours < numberOfNeighbours; iNeighbours++){
                 Long64_t neighbourUniqueID;
