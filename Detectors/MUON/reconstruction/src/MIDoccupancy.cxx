@@ -264,7 +264,7 @@ void MIDoccupancy::ComputeAllRates() {
 }
 
 //_________________________________________________________________________________________________
-double MIDoccupancy::GetMeanRate(stripMapping* strip, uint depth=1){
+double MIDoccupancy::GetMeanRate(stripMapping* strip, uint depth){
 
     MIDoccupancy::ResetUseMe(true);
 
