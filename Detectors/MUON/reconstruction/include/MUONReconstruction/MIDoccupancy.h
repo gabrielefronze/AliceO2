@@ -42,7 +42,7 @@ namespace AliceO2 {
             std::unordered_map<uint64_t,stripMapping> fInternalMapping;
 
             bool ReadMapping(const char*);
-            bool ResetCounters(uint64_t newStartTS);
+            void ResetCounters(uint64_t newStartTS);
 
         };
 
