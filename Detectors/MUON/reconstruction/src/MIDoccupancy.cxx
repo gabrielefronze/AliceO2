@@ -85,6 +85,14 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     }
 
     LOG(INFO) << "Received valid message containing "<<counter<<" digits";
+    MIDoccupancy::ComputeAllIsDead();
+    MIDoccupancy::ComputeAllIsNoisy();
+
+    for(auto mapIterator : fInternalMapping){
+        if ( mapIterator.second.isDead ) LOG(INFO)<<mapIterator.first<<" is dead.";
+        else if ( mapIterator.second.isNoisy ) LOG(INFO)<<mapIterator.first<<" is noisy.";
+    }
+
     return true;
 }
 
