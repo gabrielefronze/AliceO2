@@ -303,7 +303,7 @@ double MIDoccupancy::RecursiveGetRateSum(stripMapping* strip, uint &counter, uin
 
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeIsDead(stripMapping* strip) {
-    uint nOfRates = 0;
+
     double meanRate = GetMeanRate(strip);
 
     if ( strip->rate > meanRate*0.000001 ) strip->isDead = true;
@@ -326,7 +326,6 @@ void MIDoccupancy::ComputeAllIsDead() {
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeIsNoisy(stripMapping* strip) {
 
-    uint nOfRates = 0;
     double meanRate = GetMeanRate(strip);
 
     if ( strip->rate > meanRate*100. ) strip->isNoisy = true;
