@@ -68,7 +68,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
         LOG(INFO) << "UniqueID "<<  *uniqueIDBuffer;
 
-        if ( ((uniqueIDBuffer & FFF) / 100) <10 ) continue;
+        if ( ((uniqueIDBuffer & 0xFFF) / 100) <10 ) continue;
 
         stripMapping* strip;
 
