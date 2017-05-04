@@ -159,10 +159,10 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             //TODO: make the parsing avoid adding lateral neighbours
             // load the neighboursUniqueIDs or set to -1 if no neighbour
             for ( int iNeighbours = 0; iNeighbours < numberOfNeighbours; iNeighbours++){
-                Long64_t neighbourUniqueID;
+                uint64_t neighbourUniqueID;
                 try {
                     neighbourUniqueID = reversedPadIndexes.at(pad.neighbours[iNeighbours]);
-                } catch ( int err ){
+                } catch ( std::out_of_range err ){
                     LOG(ERROR) << "No reverse mapping found for pad "<< pad.neighbours[iNeighbours] <<" neighbour of "<< iPad;
                     LOG(ERROR) << "Aborting...";
                     return false;
@@ -181,7 +181,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             Long64_t padUniqueID;
             try {
                 padUniqueID = reversedPadIndexes.at(iPad);
-            } catch ( int err ){
+            } catch ( std::out_of_range err ){
                 LOG(ERROR) << "No reverse mapping found for pad "<< iPad;
                 LOG(ERROR) << "Aborting...";
                 return false;
@@ -287,7 +287,7 @@ double MIDoccupancy::RecursiveGetRateSum(stripMapping* strip, uint &counter, uin
             MIDoccupancy::stripMapping* neighbourStrip;
             try {
                 neighbourStrip = &(fInternalMapping.at(strip->neighboursUniqueIDs[iNeighbours]));
-            } catch ( int err ){
+            } catch ( std::out_of_range err ){
                 LOG(ERROR) << "Missing entry in the mapping. Continuing.";
                 continue;
             }
