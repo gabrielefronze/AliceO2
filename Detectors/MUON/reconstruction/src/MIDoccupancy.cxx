@@ -63,14 +63,24 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 ////        LOG(INFO) << "\t"<<deserializedData->fCathode;
 //    }
 
+    LOG(INFO) << "Received valid message";
+
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
+        LOG(INFO) << "UniqueID "<<  *uniqueIDBuffer;
+
+        if ( ((uniqueIDBuffer & FFF) / 100) <10 ) continue;
+
+        stripMapping* strip;
+
         try {
-            fInternalMapping.at((Long64_t)(*uniqueIDBuffer)).digitsCounter++;
-        } catch (int err){
+            strip = &fInternalMapping.at((uint64_t)(*uniqueIDBuffer));
+        } catch (std::out_of_range err){
             LOG(ERROR) << "No stripMapping struct found for ID "<< *uniqueIDBuffer;
             LOG(ERROR) << "Continuing...";
             continue;
         }
+
+        strip->digitsCounter++;
 
     }
 
