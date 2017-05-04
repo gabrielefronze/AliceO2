@@ -34,6 +34,7 @@ namespace AliceO2 {
                 uint64_t neighboursUniqueIDs[10]; // uniqueIDs of neighbours
                 Float_t area; // 1D area
                 Float_t rate; // rate in Hz/cm2 or 1/cm2
+                Float_t neighboursRate;
                 Bool_t isDead;
                 Bool_t isNoisy;
                 Bool_t useMe;
