@@ -66,9 +66,11 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     LOG(INFO) << "Received valid message";
 
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
-        LOG(INFO) << "UniqueID "<<  *uniqueIDBuffer;
+//        LOG(INFO) << "UniqueID "<<  *uniqueIDBuffer;
 
-        if ( ((*uniqueIDBuffer & 0xFFF) / 100) <10 ) continue;
+        if ( ((*uniqueIDBuffer) & 0xFFF) < 1100 ) continue;
+
+        counter++;
 
         stripMapping* strip;
 
@@ -76,7 +78,6 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
             strip = &fInternalMapping.at((uint64_t)(*uniqueIDBuffer));
         } catch (std::out_of_range err){
             LOG(ERROR) << "No stripMapping struct found for ID "<< *uniqueIDBuffer;
-            LOG(ERROR) << "Continuing...";
             continue;
         }
 
@@ -85,13 +86,19 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     }
 
     LOG(INFO) << "Received valid message containing "<<counter<<" digits";
+    MIDoccupancy::ComputeAllRates();
     MIDoccupancy::ComputeAllIsDead();
     MIDoccupancy::ComputeAllIsNoisy();
 
-    for(auto mapIterator : fInternalMapping){
-        if ( mapIterator.second.isDead ) LOG(INFO)<<mapIterator.first<<" is dead.";
-        else if ( mapIterator.second.isNoisy ) LOG(INFO)<<mapIterator.first<<" is noisy.";
-    }
+    stripMapping* strip;
+    uint64_t* uniqueID;
+//    for(auto mapIterator : fInternalMapping){
+//        uniqueID = (uint64_t *) &mapIterator.first;
+//        strip = &mapIterator.second;
+//        if ( strip->isDead ) LOG(INFO)<<uniqueID<<" is dead.";
+//        else if ( strip->isNoisy ) LOG(INFO)<<uniqueID<<" is noisy.";
+//        else LOG(INFO)<<uniqueID<<" is working as expected.";
+//    }
 
     return true;
 }
@@ -208,7 +215,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             // save the buffer struct at the iPad position in the map
             fInternalMapping.insert(std::pair<Long64_t, stripMapping>(padUniqueID, bufferStripMapping));
 
-            LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
+            //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
         }
     }
 
@@ -229,7 +236,7 @@ void MIDoccupancy::ResetUseMe(Bool_t value) {
 
     auto tEnd = std::chrono::high_resolution_clock::now();
 
-    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+//    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
 //_________________________________________________________________________________________________
@@ -250,7 +257,7 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 
     auto tEnd = std::chrono::high_resolution_clock::now();
 
-    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+//    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
 //_________________________________________________________________________________________________
@@ -270,8 +277,12 @@ void MIDoccupancy::ComputeAllRates() {
 
     auto tStart = std::chrono::high_resolution_clock::now();
 
+    stripMapping *strip;
+
     for(auto mapIterator : fInternalMapping){
-        ComputeRate(&(mapIterator.second));
+        strip = &(mapIterator.second);
+        ComputeRate(strip);
+        strip->neighboursRate = (Float_t)GetMeanRate(strip,1);
     }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
@@ -321,10 +332,7 @@ double MIDoccupancy::RecursiveGetRateSum(stripMapping* strip, uint &counter, uin
 
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeIsDead(stripMapping* strip) {
-
-    double meanRate = GetMeanRate(strip);
-
-    if ( strip->rate > meanRate*0.000001 ) strip->isDead = true;
+    if ( strip->rate > strip->neighboursRate*0.000001 ) strip->isDead = true;
 }
 
 //_________________________________________________________________________________________________
@@ -343,10 +351,7 @@ void MIDoccupancy::ComputeAllIsDead() {
 
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeIsNoisy(stripMapping* strip) {
-
-    double meanRate = GetMeanRate(strip);
-
-    if ( strip->rate > meanRate*100. ) strip->isNoisy = true;
+    if ( strip->rate > strip->neighboursRate*100. ) strip->isNoisy = true;
 }
 
 //_________________________________________________________________________________________________
@@ -360,5 +365,5 @@ void MIDoccupancy::ComputeAllIsNoisy() {
 
     auto tEnd = std::chrono::high_resolution_clock::now();
 
-    LOG(DEBUG) << "Dead strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+    LOG(DEBUG) << "Noisy strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
