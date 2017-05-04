@@ -190,7 +190,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             // save the buffer struct at the iPad position in the map
             fInternalMapping.insert(std::pair<Long64_t, stripMapping>(padUniqueID, bufferStripMapping));
 
-//            LOG(DEBUG) << "\t"<< reversedPadIndexes[iPad] <<" "<< bufferStripMapping.nNeighbours;
+            LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
         }
     }
 
