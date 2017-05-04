@@ -104,7 +104,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     bufferStripMapping.useMe = true;
 
     for (int iNeighboursInit = 0; iNeighboursInit < 10; ++iNeighboursInit) {
-        bufferStripMapping.neighboursUniqueIDs[iNeighboursInit] = -1;
+        bufferStripMapping.neighboursUniqueIDs[iNeighboursInit] = 7777777;
     }
 
     // loop over DE to read every pad (DE = detection element)
@@ -139,7 +139,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
         padIndeces[1] = 0x0;
 
         // loop over pads from each DE
-        for ( int iPad = 0; iPad < numberOfPads; iPad++ ){
+        for ( uint64_t iPad = 0; iPad < numberOfPads; iPad++ ){
 
 //            LOG(DEBUG) << "Processing pad "<<iPad;
 
@@ -150,8 +150,8 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             // load in the struct sensible data
             bufferStripMapping.nNeighbours = pad.nNeighbours;
 
-            Double_t deltaX = pad.area[0][1] - pad.area[0][0];
-            Double_t deltaY = pad.area[1][0] - pad.area[1][1];
+            Float_t deltaX = pad.area[0][1] - pad.area[0][0];
+            Float_t deltaY = pad.area[1][0] - pad.area[1][1];
             bufferStripMapping.area = deltaX * deltaY;
 
 //            LOG(DEBUG) << "\t Pad has "<<numberOfNeighbours<<" neighbours";
@@ -173,7 +173,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
                 bufferStripMapping.neighboursUniqueIDs[iNeighbours] = neighbourUniqueID;
             }
             for ( int iNeighbours = numberOfNeighbours; iNeighbours < 10; iNeighbours++){
-                bufferStripMapping.neighboursUniqueIDs[iNeighbours] = -1;
+                bufferStripMapping.neighboursUniqueIDs[iNeighbours] = 7777777;
             }
 
 //            LOG(DEBUG) << "Inserting the internal mapping entry";
@@ -237,15 +237,13 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeRate(stripMapping* strip) {
-    for(auto mapIterator : fInternalMapping){
-        strip->rate = strip->digitsCounter / strip->area;
+    strip->rate = (Float_t)(strip->digitsCounter) / strip->area;
 
-        uint64_t startTS = strip->startTS;
-        uint64_t stopTS = strip->stopTS;
+    uint64_t startTS = strip->startTS;
+    uint64_t stopTS = strip->stopTS;
 
-        if ( stopTS > startTS ){
-            strip->rate/=(stopTS-startTS);
-        }
+    if ( stopTS > startTS ){
+        strip->rate/=(stopTS-startTS);
     }
 }
 
