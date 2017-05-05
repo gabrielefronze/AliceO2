@@ -37,6 +37,13 @@ namespace AliceO2 {
                 Bool_t isNoisy;
             };
 
+            struct mask{
+                UShort_t nDead;
+                UShort_t nNoisy;
+                uint32_t* deadStripsIDs;
+                uint32_t* noisyStripsIDs;
+            };
+
             std::string fMapFilename;
             std::unordered_map<uint32_t,stripMapping> fInternalMapping;
             stripMapping* fStructsBuffer[64];
