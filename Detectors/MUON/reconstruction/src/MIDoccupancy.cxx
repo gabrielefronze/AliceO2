@@ -90,11 +90,11 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     stripMapping* strip;
     uint64_t* uniqueID;
-//    for(auto mapIterator : fInternalMapping){
-//        uniqueID = (uint64_t *) &mapIterator.first;
-//        strip = &mapIterator.second;
-//        if ( strip->isDead ) LOG(INFO)<<uniqueID<<" is dead.";
-//        else if ( strip->isNoisy ) LOG(INFO)<<uniqueID<<" is noisy.";
+    for(auto mapIterator : fInternalMapping){
+        uniqueID = (uint64_t *) &mapIterator.first;
+        strip = &mapIterator.second;
+        if ( strip->isDead ) LOG(INFO)<<uniqueID<<" is dead.";
+        else if ( strip->isNoisy ) LOG(INFO)<<uniqueID<<" is noisy.";
 //        else LOG(INFO)<<uniqueID<<" is working as expected.";
 //    }
 
