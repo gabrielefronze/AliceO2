@@ -47,7 +47,8 @@ namespace AliceO2 {
             };
 
             std::string fMapFilename;
-            std::unordered_map<uint32_t,stripMapping> fInternalMapping;
+            std::unordered_map<uint32_t,stripMapping*> fInternalMapping;
+            std::vector<stripMapping> fStripVector;
             stripMapping* fStructsBuffer[64];
             stripMask fStructMask;
 
