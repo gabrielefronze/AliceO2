@@ -214,7 +214,7 @@ bool MIDclustering::LoadDigits ( FairMQMessagePtr& msg )
     try {
       de = &fMpDEs.at(detElemId);
     }
-    catch ( int err ) {
+    catch ( std::out_of_range err ) {
       continue;
     }
 
