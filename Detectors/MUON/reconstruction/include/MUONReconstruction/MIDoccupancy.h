@@ -30,33 +30,30 @@ namespace AliceO2 {
                 uint64_t startTS; // timestamp of first added run
                 uint64_t stopTS; // timestamp of last added run
                 uint64_t digitsCounter; // counter of time the strip has been fired
-                UChar_t nNeighbours; // number of neighbours
-                uint64_t neighboursUniqueIDs[10]; // uniqueIDs of neighbours
+                UShort_t columnID;
                 Float_t area; // 1D area
                 Float_t rate; // rate in Hz/cm2 or 1/cm2
-                Float_t neighboursRate;
                 Bool_t isDead;
                 Bool_t isNoisy;
-                Bool_t useMe;
             };
 
             std::string fMapFilename;
-            std::unordered_map<uint64_t,stripMapping> fInternalMapping;
+            std::unordered_map<uint32_t,stripMapping> fInternalMapping;
+            stripMapping* fStructsBuffer[64];
 
             bool ReadMapping(const char*);
 
-            void ResetUseMe(Bool_t value = true);
             void ResetCounters(uint64_t newStartTS);
 
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();
 
-            double GetMeanRate(stripMapping* strip, uint depth=1);
-            double RecursiveGetRateSum(stripMapping* strip, uint &counter, uint depth=1);
-            void ComputeIsDead(stripMapping* strip);
-            void ComputeAllIsDead();
-            void ComputeIsNoisy(stripMapping* strip);
-            void ComputeAllIsNoisy();
+//            double GetMeanRate(stripMapping* strip, uint depth=1);
+//            double RecursiveGetRateSum(stripMapping* strip, uint &counter, uint depth=1);
+//            void ComputeIsDead(stripMapping* strip);
+//            void ComputeAllIsDead();
+//            void ComputeIsNoisy(stripMapping* strip);
+//            void ComputeAllIsNoisy();
 
         };
 

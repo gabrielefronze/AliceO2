@@ -66,7 +66,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     LOG(INFO) << "Received valid message";
 
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
-//        LOG(INFO) << "UniqueID "<<  *uniqueIDBuffer;
+        LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
 
         if ( ((*uniqueIDBuffer) & 0xFFF) < 1100 ) continue;
 
@@ -87,8 +87,6 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     LOG(INFO) << "Received valid message containing "<<counter<<" digits";
     MIDoccupancy::ComputeAllRates();
-    MIDoccupancy::ComputeAllIsDead();
-    MIDoccupancy::ComputeAllIsNoisy();
 
     stripMapping* strip;
     uint64_t* uniqueID;
@@ -113,6 +111,8 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     int numberOfDetectionElements = 0;
     Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
 
+    fInternalMapping.reserve(30000);
+
     LOG(DEBUG) << "\t"<<numberOfDetectionElements<<" DE found";
     LOG(DEBUG) << "Initializing buffer struct";
 
@@ -126,11 +126,6 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     bufferStripMapping.rate = 0;
     bufferStripMapping.isDead = false;
     bufferStripMapping.isNoisy = false;
-    bufferStripMapping.useMe = true;
-
-    for (int iNeighboursInit = 0; iNeighboursInit < 10; ++iNeighboursInit) {
-        bufferStripMapping.neighboursUniqueIDs[iNeighboursInit] = 7777777;
-    }
 
     // loop over DE to read every pad (DE = detection element)
     for ( int iDE = 0; iDE < numberOfDetectionElements; iDE++ ){
@@ -170,36 +165,12 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
             // read the iPad-th pad and the number of pads
             Mapping::mpPad& pad(de.pads[iPad]);
-            int numberOfNeighbours = pad.nNeighbours;
-
-            // load in the struct sensible data
-            bufferStripMapping.nNeighbours = pad.nNeighbours;
 
             Float_t deltaX = pad.area[0][1] - pad.area[0][0];
             Float_t deltaY = pad.area[1][0] - pad.area[1][1];
             bufferStripMapping.area = deltaX * deltaY;
 
-//            LOG(DEBUG) << "\t Pad has "<<numberOfNeighbours<<" neighbours";
-
-            //TODO: make the parsing avoid adding lateral neighbours
-            // load the neighboursUniqueIDs or set to -1 if no neighbour
-            for ( int iNeighbours = 0; iNeighbours < numberOfNeighbours; iNeighbours++){
-                uint64_t neighbourUniqueID;
-                try {
-                    neighbourUniqueID = reversedPadIndexes.at(pad.neighbours[iNeighbours]);
-                } catch ( std::out_of_range err ){
-                    LOG(ERROR) << "No reverse mapping found for pad "<< pad.neighbours[iNeighbours] <<" neighbour of "<< iPad;
-                    LOG(ERROR) << "Aborting...";
-                    return false;
-                }
-                
-//                LOG(DEBUG) <<"\t"<< iNeighbours <<" "<< neighbourUniqueID;
-
-                bufferStripMapping.neighboursUniqueIDs[iNeighbours] = neighbourUniqueID;
-            }
-            for ( int iNeighbours = numberOfNeighbours; iNeighbours < 10; iNeighbours++){
-                bufferStripMapping.neighboursUniqueIDs[iNeighbours] = 7777777;
-            }
+            bufferStripMapping.columnID = pad.iDigit;
 
 //            LOG(DEBUG) << "Inserting the internal mapping entry";
 
@@ -213,7 +184,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             }
 
             // save the buffer struct at the iPad position in the map
-            fInternalMapping.insert(std::pair<Long64_t, stripMapping>(padUniqueID, bufferStripMapping));
+            fInternalMapping.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
 
             //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
         }
@@ -223,20 +194,6 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     LOG(DEBUG) << "Mapping loaded in: " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms\n";
 
     return true;
-}
-
-//_________________________________________________________________________________________________
-void MIDoccupancy::ResetUseMe(Bool_t value) {
-
-    auto tStart = std::chrono::high_resolution_clock::now();
-
-    for(auto mapIterator : fInternalMapping){
-        mapIterator.second.useMe = value;
-    }
-
-    auto tEnd = std::chrono::high_resolution_clock::now();
-
-//    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
 //_________________________________________________________________________________________________
@@ -251,7 +208,6 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
         strip->stopTS=0;
         strip->isNoisy = false;
         strip->isDead = false;
-        strip->useMe = true;
         strip->rate = 0;
     }
 
@@ -278,11 +234,36 @@ void MIDoccupancy::ComputeAllRates() {
     auto tStart = std::chrono::high_resolution_clock::now();
 
     stripMapping *strip;
+    int previousColumnID = 0 ;
+    Float_t ratesSum = 0;
+    Int_t nRates = 0;
 
-    for(auto mapIterator : fInternalMapping){
-        strip = &(mapIterator.second);
+
+    for(auto mapIteratorRead : fInternalMapping){
+        strip = &(mapIteratorRead.second);
         ComputeRate(strip);
-        strip->neighboursRate = (Float_t)GetMeanRate(strip,1);
+        int currentColumnID = strip->columnID;
+
+        if (previousColumnID != currentColumnID) {
+
+            Float_t meanRate = ratesSum / (Float_t)nRates;
+
+            for (int iStrip = 0; iStrip < nRates; ++iStrip) {
+                Float_t rate = (*fStructsBuffer[iStrip]).rate;
+
+                if ( rate < 0.001 * meanRate ) (*fStructsBuffer[iStrip]).isDead = true;
+                else if ( rate > 100000 * meanRate ) (*fStructsBuffer[iStrip]).isNoisy = true;
+            }
+
+            previousColumnID = currentColumnID;
+            ratesSum = strip->rate;
+            nRates = 1;
+        } else {
+            ratesSum += strip->rate;
+            nRates++;
+        }
+
+        fStructsBuffer[nRates-1] = strip;
     }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
@@ -290,80 +271,80 @@ void MIDoccupancy::ComputeAllRates() {
     LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
-//_________________________________________________________________________________________________
-double MIDoccupancy::GetMeanRate(stripMapping* strip, uint depth){
+////_________________________________________________________________________________________________
+//double MIDoccupancy::GetMeanRate(stripMapping* strip, uint depth){
+//
+//    MIDoccupancy::ResetUseMe(true);
+//
+//    uint counter = 0;
+//
+////    double rateSum = RecursiveGetRateSum(strip, counter, depth);
+//
+//    MIDoccupancy::ResetUseMe(true);
+//
+////    return rateSum/(double)counter;
+//
+//};
 
-    MIDoccupancy::ResetUseMe(true);
+////_________________________________________________________________________________________________
+//double MIDoccupancy::RecursiveGetRateSum(stripMapping* strip, uint &counter, uint depth){
+//    double rateSum = 0.;
+//    counter = 0;
+//    if ( depth>=1 ){
+//        Int_t nNeighbours = strip->nNeighbours;
+//        for (int iNeighbours = 0; iNeighbours < nNeighbours; ++iNeighbours) {
+//
+//            MIDoccupancy::stripMapping* neighbourStrip;
+//            try {
+//                neighbourStrip = &(fInternalMapping.at(strip->neighboursUniqueIDs[iNeighbours]));
+//            } catch ( std::out_of_range err ){
+//                LOG(ERROR) << "Missing entry in the mapping. Continuing.";
+//                continue;
+//            }
+//
+//            if (neighbourStrip->useMe) rateSum += neighbourStrip->rate;
+//            neighbourStrip->useMe = false;
+//            counter++;
+//            rateSum += RecursiveGetRateSum(neighbourStrip, counter, depth-1);
+//        }
+//    }
+//    return rateSum;
+//}
 
-    uint counter = 0;
-
-    double rateSum = RecursiveGetRateSum(strip, counter, depth);
-
-    MIDoccupancy::ResetUseMe(true);
-
-    return rateSum/(double)counter;
-
-};
-
-//_________________________________________________________________________________________________
-double MIDoccupancy::RecursiveGetRateSum(stripMapping* strip, uint &counter, uint depth){
-    double rateSum = 0.;
-    counter = 0;
-    if ( depth>=1 ){
-        Int_t nNeighbours = strip->nNeighbours;
-        for (int iNeighbours = 0; iNeighbours < nNeighbours; ++iNeighbours) {
-
-            MIDoccupancy::stripMapping* neighbourStrip;
-            try {
-                neighbourStrip = &(fInternalMapping.at(strip->neighboursUniqueIDs[iNeighbours]));
-            } catch ( std::out_of_range err ){
-                LOG(ERROR) << "Missing entry in the mapping. Continuing.";
-                continue;
-            }
-
-            if (neighbourStrip->useMe) rateSum += neighbourStrip->rate;
-            neighbourStrip->useMe = false;
-            counter++;
-            rateSum += RecursiveGetRateSum(neighbourStrip, counter, depth-1);
-        }
-    }
-    return rateSum;
-}
-
-//_________________________________________________________________________________________________
-void MIDoccupancy::ComputeIsDead(stripMapping* strip) {
-    if ( strip->rate > strip->neighboursRate*0.000001 ) strip->isDead = true;
-}
-
-//_________________________________________________________________________________________________
-void MIDoccupancy::ComputeAllIsDead() {
-
-    auto tStart = std::chrono::high_resolution_clock::now();
-
-    for(auto mapIterator : fInternalMapping){
-        ComputeIsDead(&(mapIterator.second));
-    }
-
-    auto tEnd = std::chrono::high_resolution_clock::now();
-
-    LOG(DEBUG) << "Dead strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
-}
-
-//_________________________________________________________________________________________________
-void MIDoccupancy::ComputeIsNoisy(stripMapping* strip) {
-    if ( strip->rate > strip->neighboursRate*100. ) strip->isNoisy = true;
-}
-
-//_________________________________________________________________________________________________
-void MIDoccupancy::ComputeAllIsNoisy() {
-
-    auto tStart = std::chrono::high_resolution_clock::now();
-
-    for(auto mapIterator : fInternalMapping){
-        ComputeIsNoisy(&(mapIterator.second));
-    }
-
-    auto tEnd = std::chrono::high_resolution_clock::now();
-
-    LOG(DEBUG) << "Noisy strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
-}
+////_________________________________________________________________________________________________
+//void MIDoccupancy::ComputeIsDead(stripMapping* strip) {
+//    if ( strip->rate > strip->columnRate*0.000001 ) strip->isDead = true;
+//}
+//
+////_________________________________________________________________________________________________
+//void MIDoccupancy::ComputeAllIsDead() {
+//
+//    auto tStart = std::chrono::high_resolution_clock::now();
+//
+//    for(auto mapIterator : fInternalMapping){
+//        ComputeIsDead(&(mapIterator.second));
+//    }
+//
+//    auto tEnd = std::chrono::high_resolution_clock::now();
+//
+//    LOG(DEBUG) << "Dead strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+//}
+//
+////_________________________________________________________________________________________________
+//void MIDoccupancy::ComputeIsNoisy(stripMapping* strip) {
+//    if ( strip->rate > strip->columnRate*100. ) strip->isNoisy = true;
+//}
+//
+////_________________________________________________________________________________________________
+//void MIDoccupancy::ComputeAllIsNoisy() {
+//
+//    auto tStart = std::chrono::high_resolution_clock::now();
+//
+//    for(auto mapIterator : fInternalMapping){
+//        ComputeIsNoisy(&(mapIterator.second));
+//    }
+//
+//    auto tEnd = std::chrono::high_resolution_clock::now();
+//
+//    LOG(DEBUG) << "Noisy strips computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+//}
