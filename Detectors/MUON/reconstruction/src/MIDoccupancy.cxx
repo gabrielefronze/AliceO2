@@ -75,7 +75,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         stripMapping* strip;
 
         try {
-            strip = &fInternalMapping.at((uint64_t)(*uniqueIDBuffer));
+            strip = &fInternalMapping.at(*uniqueIDBuffer);
         } catch (std::out_of_range err){
             LOG(ERROR) << "No stripMapping struct found for ID "<< *uniqueIDBuffer;
             continue;
