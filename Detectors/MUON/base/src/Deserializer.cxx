@@ -41,11 +41,11 @@ bool Deserializer::Rewind(){
 //_________________________________________________________________________________________________
 Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
 
-    // Avoid exceding the total number of digits
-    if ( fDigitCounter>fNDigits ) return 0x0;
-
     // Keep track of how much digits have been read
     fDigitCounter++;
+
+    // Avoid exceding the total number of digits
+    if ( fDigitCounter>fNDigits ) return 0x0;
 
     // Loading data in the data member used by ApplyMask
     fUniqueID = fDigitsDataPtr[fOffset];
@@ -66,11 +66,11 @@ Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
 //_________________________________________________________________________________________________
 uint32_t* Deserializer::NextUniqueID() {
 
-    // Avoid exceding the total number of digits
-    if ( fDigitCounter>fNDigits ) return 0x0;
-
     // Keep track of how much digits have been read
     fDigitCounter++;
+
+    // Avoid exceding the total number of digits
+    if ( fDigitCounter>fNDigits ) return 0x0;
 
     // Loading data in the data member used by ApplyMask
     fUniqueID = fDigitsDataPtr[fOffset];
