@@ -96,7 +96,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         if ( strip->isDead ) LOG(INFO)<<uniqueID<<" is dead.";
         else if ( strip->isNoisy ) LOG(INFO)<<uniqueID<<" is noisy.";
 //        else LOG(INFO)<<uniqueID<<" is working as expected.";
-//    }
+    }
 
     return true;
 }
