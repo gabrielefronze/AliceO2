@@ -14,6 +14,10 @@ MIDoccupancy::MIDoccupancy():
 FairMQDevice(),
 fInternalMapping(0x0),
 fMapFilename(""){
+
+    fStructMask.nDead = 0;
+    fStructMask.nNoisy = 0;
+
     FairMQDevice::OnData("data-in", &MIDoccupancy::HandleData);
 }
 
