@@ -9,6 +9,8 @@
 #include "FairMQDevice.h"
 #include "MUONBase/Mapping.h"
 #include "string.h"
+#include <unordered_map>
+#include <unordered_set>
 
 namespace AliceO2 {
 
@@ -37,16 +39,17 @@ namespace AliceO2 {
                 Bool_t isNoisy;
             };
 
-            struct mask{
-                UShort_t nDead;
-                UShort_t nNoisy;
-                uint32_t* deadStripsIDs;
-                uint32_t* noisyStripsIDs;
+            struct stripMask{
+                UShort_t nDead; // number of elements for deadStripsIDs
+                UShort_t nNoisy; // number of elements for noisyStripsIDs
+                std::unordered_set<uint32_t> deadStripsIDs; // container of UniqueIDs of dead strips
+                std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };
 
             std::string fMapFilename;
             std::unordered_map<uint32_t,stripMapping> fInternalMapping;
             stripMapping* fStructsBuffer[64];
+            stripMask fStructMask;
 
             bool ReadMapping(const char*);
 
