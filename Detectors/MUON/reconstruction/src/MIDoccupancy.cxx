@@ -2,6 +2,7 @@
 // Created by Gabriele Gaetano Fronzé on 02/05/2017.
 //
 
+#include <TRandom.h>
 #include "MUONReconstruction/MIDoccupancy.h"
 #include "MUONBase/Deserializer.h"
 #include "FairMQLogger.h"
@@ -79,6 +80,10 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         }
 
         strip->digitsCounter++;
+        if ( gRandom->Rndm() > 0.99 ){
+            strip->digitsCounter+=10000;
+            LOG(DEBUG) << "Simulating noisy strip " << *uniqueIDBuffer;
+        }
 
     }
 
