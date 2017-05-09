@@ -46,7 +46,6 @@ namespace AliceO2 {
                 std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };
 
-            std::string fMapFilename;
             std::unordered_map<uint32_t,stripMapping*> fInternalMapping;
             std::vector<stripMapping> fStripVector;
             stripMapping* fStructsBuffer[64];
