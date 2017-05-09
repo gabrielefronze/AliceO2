@@ -52,7 +52,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     }
 
     if ( msg->GetSize()<100 ) {
-        LOG(ERROR) << "Message empty, skipping";
+//        LOG(ERROR) << "Message empty, skipping";
         return true;
     }
 
