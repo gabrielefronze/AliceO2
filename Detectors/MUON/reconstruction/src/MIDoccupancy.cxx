@@ -188,7 +188,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             Mapping::mpPad& pad(de.pads[iPad]);
 
             Float_t deltaX = pad.area[0][1] - pad.area[0][0];
-            Float_t deltaY = pad.area[1][0] - pad.area[1][1];
+            Float_t deltaY = - pad.area[1][0] + pad.area[1][1];
             bufferStripMapping.area = deltaX * deltaY;
 
             bufferStripMapping.columnID = pad.iDigit;
