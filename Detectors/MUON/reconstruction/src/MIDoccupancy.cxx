@@ -12,8 +12,8 @@ using namespace AliceO2::MUON;
 //_________________________________________________________________________________________________
 MIDoccupancy::MIDoccupancy():
 FairMQDevice(),
-fInternalMapping(0x0),
-fMapFilename(""){
+fInternalMapping(0x0)
+{
 
     fStructMask.nDead = 0;
     fStructMask.nNoisy = 0;
@@ -29,10 +29,10 @@ void MIDoccupancy::InitTask() {
 
     LOG(INFO) << "Initializing device";
 
-    fMapFilename = fConfig->GetValue<std::string>("binmapfile");
+    std::string mapFilename = fConfig->GetValue<std::string>("binmapfile");
 
-    if ( !(ReadMapping(fMapFilename.c_str())) ){
-        LOG(ERROR) << "Error reading the mapping from " << fMapFilename;
+    if ( !(ReadMapping(mapFilename.c_str())) ){
+        LOG(ERROR) << "Error reading the mapping from " << mapFilename;
     } else {
         LOG(INFO) << "Mapping correctly loaded.";
     }
