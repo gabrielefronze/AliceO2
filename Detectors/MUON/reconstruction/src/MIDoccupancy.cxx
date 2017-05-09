@@ -269,6 +269,8 @@ void MIDoccupancy::ComputeAllRates() {
 
         if (previousColumnID != currentColumnID) {
 
+            if ( nRates == 0 ) continue;
+
             Float_t meanRate = ratesSum / (Float_t)nRates;
 
             for (int iStrip = 0; iStrip < nRates; ++iStrip) {
