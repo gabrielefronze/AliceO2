@@ -27,12 +27,12 @@ fInternalMapping(0x0)
 //_________________________________________________________________________________________________
 MIDoccupancy::~MIDoccupancy() {
     LOG(DEBUG) << "Detected noisy strips:";
-    for(auto itMask : fStructMask.noisyStripsIDs){
+    for(const auto &itMask : fStructMask.noisyStripsIDs){
         LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter;
     }
 
     LOG(DEBUG) << "\nSimulated noisy strips:";
-    for(auto itMaskSim : fStructMaskSim.noisyStripsIDs){
+    for(const auto &itMaskSim : fStructMaskSim.noisyStripsIDs){
         if (fStructMask.noisyStripsIDs.find(itMaskSim) != fStructMask.noisyStripsIDs.end()) LOG(DEBUG) << "\t" << itMaskSim << "\t\t\tOK - found";
         else LOG(DEBUG) << "\t" << itMaskSim << "\t\t\tXX - not found";
     }
@@ -153,8 +153,8 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     int numberOfDetectionElements = 0;
     Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
 
-    fStripVector.reserve(23000);
-    fInternalMapping.reserve(23000);
+//    fStripVector.reserve(23000);
+    fInternalMapping.reserve(20992);
 
     LOG(DEBUG) << "\t"<<numberOfDetectionElements<<" DE found";
     LOG(DEBUG) << "Initializing buffer struct";
@@ -169,6 +169,9 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     bufferStripMapping.rate = 0;
     bufferStripMapping.isDead = false;
     bufferStripMapping.isNoisy = false;
+
+    Int_t nStrips = 0;
+    Int_t nStrips2 = 0;
 
     // loop over DE to read every pad (DE = detection element)
     for ( int iDE = 0; iDE < numberOfDetectionElements; iDE++ ){
@@ -190,16 +193,18 @@ bool MIDoccupancy::ReadMapping( const char * filename )
         std::unordered_map<uint32_t, uint32_t> reversedPadIndexes;
 
         // Using indecesIt1.second-1 because of theway the mapping has been filled
-        for (auto indecesIt1 : *padIndeces[0]){
+        for (const auto &indecesIt1 : *padIndeces[0]){
             reversedPadIndexes.insert({(uint32_t)indecesIt1.second-1,(uint32_t)indecesIt1.first});
         }
-        for (auto indecesIt2 : *padIndeces[1]){
+        for (const auto &indecesIt2 : *padIndeces[1]){
             reversedPadIndexes.insert({(uint32_t)indecesIt2.second-1,(uint32_t)indecesIt2.first});
         }
 
         // original maps not needed anymore
         padIndeces[0] = 0x0;
         padIndeces[1] = 0x0;
+
+        nStrips += numberOfPads;
 
         // loop over pads from each DE
         for ( uint32_t iPad = 0; iPad < numberOfPads; iPad++ ){
@@ -228,8 +233,9 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
             // save the buffer struct at the iPad position in the map
             //fInternalMapping.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
-            fStripVector.emplace_back(bufferStripMapping);
-            fInternalMapping[padUniqueID] = &(fStripVector.back());
+            fStripVector[nStrips2] = bufferStripMapping;
+            fInternalMapping[padUniqueID] = &(fStripVector[nStrips2]);
+            nStrips2++;
 
             //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
         }
@@ -237,6 +243,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 
     auto tEnd = std::chrono::high_resolution_clock::now();
     LOG(DEBUG) << "Mapping loaded in: " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms\n";
+    LOG(DEBUG) << nStrips << " " << nStrips2 << " loaded";
 
     return true;
 }
@@ -246,7 +253,7 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 
     auto tStart = std::chrono::high_resolution_clock::now();
 
-    for(auto &vecIterator : fStripVector){
+    for( auto &vecIterator : fStripVector){
         stripMapping* strip = &vecIterator;
         strip->digitsCounter=0;
         strip->startTS=newStartTS;
@@ -292,9 +299,14 @@ void MIDoccupancy::ComputeAllRates() {
     stripMapping *strip;
     int previousColumnID = 0 ;
 
-    for(auto &vecIteratorRead : fStripVector){
+    for( auto &vecIteratorRead : fStripVector){
         strip = &vecIteratorRead;
+
+
         ComputeRate(strip);
+
+//        LOG(DEBUG) << strip->digitsCounter;
+
         int currentColumnID = strip->columnID;
 
         if (previousColumnID != currentColumnID) {
@@ -345,16 +357,17 @@ void MIDoccupancy::ComputeAllRates() {
 
 //            LOG(DEBUG) << "Mean counts for column " << currentColumnID << " are " << meanCounts << " obtained with " << cutOut << " calls.";
 
-            for( auto &stripIterator : fStructsBuffer ){
-                uint64_t digitsCounter = stripIterator->digitsCounter;
-                if ( digitsCounter > meanCounts + 5 * meanCountsSqrt ){
+            for( const auto stripIterator : fStructsBuffer ){
+                uint64_t digitsCounter = (*stripIterator).digitsCounter;
+//                LOG(DEBUG) << digitsCounter;
+                if ( digitsCounter > meanCounts * 42 /* So long and thanks for all the fish */){
 //                    LOG(ERROR) << "Strip is noisy " << digitsCounter << " " << meanCounts;
-                    (&*stripIterator)->isNoisy = true;
+                    (*stripIterator).isNoisy = true;
                 }
 //                else if ( digitsCounter < 0.01 * meanCounts ) (&*stripIterator)->isDead = true;
                 else {
-                    (&*stripIterator)->isNoisy = false;
-                    (&*stripIterator)->isDead = false;
+                    (*stripIterator).isNoisy = false;
+                    (*stripIterator).isDead = false;
                 }
             }
 
@@ -363,7 +376,7 @@ void MIDoccupancy::ComputeAllRates() {
             fStructsBuffer.clear();
         }
 
-        fStructsBuffer.emplace_back(&vecIteratorRead);
+        fStructsBuffer.emplace_back(strip);
 
 //        LOG(DEBUG) << "Added Strip" << &vecIteratorRead;
 
