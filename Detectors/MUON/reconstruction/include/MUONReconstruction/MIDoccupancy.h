@@ -48,12 +48,14 @@ namespace AliceO2 {
 
             std::unordered_map<uint32_t,stripMapping*> fInternalMapping;
             std::vector<stripMapping> fStripVector;
-            stripMapping* fStructsBuffer[64];
+            std::vector<stripMapping*> fStructsBuffer;
             stripMask fStructMask;
+            stripMask fStructMaskSim;
 
             bool ReadMapping(const char*);
 
             void ResetCounters(uint64_t newStartTS);
+            bool EnoughStatistics();
 
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();

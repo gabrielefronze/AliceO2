@@ -3,10 +3,12 @@
 //
 
 #include <TRandom.h>
+#include <TMath.h>
 #include "MUONReconstruction/MIDoccupancy.h"
 #include "MUONBase/Deserializer.h"
 #include "FairMQLogger.h"
 #include "options/FairMQProgOptions.h"
+#include "algorithm"
 
 using namespace AliceO2::MUON;
 
@@ -23,7 +25,18 @@ fInternalMapping(0x0)
 }
 
 //_________________________________________________________________________________________________
-MIDoccupancy::~MIDoccupancy() {}
+MIDoccupancy::~MIDoccupancy() {
+    LOG(DEBUG) << "Detected noisy strips:";
+    for(auto itMask : fStructMask.noisyStripsIDs){
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter;
+    }
+
+    LOG(DEBUG) << "\nSimulated noisy strips:";
+    for(auto itMaskSim : fStructMaskSim.noisyStripsIDs){
+        if (fStructMask.noisyStripsIDs.find(itMaskSim) != fStructMask.noisyStripsIDs.end()) LOG(DEBUG) << "\t" << itMaskSim << "\t\t\tOK - found";
+        else LOG(DEBUG) << "\t" << itMaskSim << "\t\t\tXX - not found";
+    }
+}
 
 //_________________________________________________________________________________________________
 void MIDoccupancy::InitTask() {
@@ -37,6 +50,8 @@ void MIDoccupancy::InitTask() {
     } else {
         LOG(INFO) << "Mapping correctly loaded.";
     }
+
+    fStructsBuffer.reserve(64);
 
     std::cout<< &fInternalMapping << std::endl;
 
@@ -81,8 +96,10 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
         strip->digitsCounter++;
         if ( gRandom->Rndm() > 0.99 ){
-            strip->digitsCounter+=10000;
-            LOG(DEBUG) << "Simulating noisy strip " << *uniqueIDBuffer;
+            strip->digitsCounter+=999999;
+//            LOG(ERROR) << "Simulating noisy strip " << *uniqueIDBuffer;
+            fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
+            fStructMaskSim.nNoisy++;
         }
 
     }
@@ -93,7 +110,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     const stripMapping* strip;
     uint32_t uniqueID;
 
-    for(auto mapIterator : fInternalMapping){
+    for(const auto &mapIterator : fInternalMapping){
         uniqueID = mapIterator.first;
         strip = mapIterator.second;
 
@@ -103,9 +120,9 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
             if(alreadyThere){
                 fStructMask.nDead++;
-                LOG(INFO)<<uniqueID<<" is dead.";
+//                LOG(ERROR)<<uniqueID<<" is dead.";
             } else {
-                LOG(INFO)<<uniqueID<<" already set.";
+//                LOG(INFO)<<uniqueID<<" already set.";
             }
 
         } else if ( strip->isNoisy ) {
@@ -114,9 +131,9 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
             if(alreadyThere){
                 fStructMask.nNoisy++;
-                LOG(INFO)<<uniqueID<<" is noisy.";
+//                LOG(ERROR)<<uniqueID<<" is noisy.";
             } else {
-                LOG(INFO)<<uniqueID<<" already set.";
+//                LOG(INFO)<<uniqueID<<" already set.";
             }
 
         }
@@ -229,7 +246,7 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 
     auto tStart = std::chrono::high_resolution_clock::now();
 
-    for(auto vecIterator : fStripVector){
+    for(auto &vecIterator : fStripVector){
         stripMapping* strip = &vecIterator;
         strip->digitsCounter=0;
         strip->startTS=newStartTS;
@@ -242,6 +259,12 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
     auto tEnd = std::chrono::high_resolution_clock::now();
 
 //    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+}
+
+//_________________________________________________________________________________________________
+bool MIDoccupancy::EnoughStatistics() {
+    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[](stripMapping strip){ return strip.digitsCounter > 10; });
+    return nOfActiveStrips > (0.5 * fStripVector.size());
 }
 
 //_________________________________________________________________________________________________
@@ -261,39 +284,89 @@ void MIDoccupancy::ComputeAllRates() {
 
     auto tStart = std::chrono::high_resolution_clock::now();
 
+    auto lambdaSortStrips = [](const stripMapping *a, const stripMapping *b) { return a->digitsCounter < b->digitsCounter; };
+    auto lambdaIfNotZero = [](const stripMapping *strip){ return strip->digitsCounter>0; };
+    auto lambdaSumDigits = [](uint64_t sum, const stripMapping *strip){ return sum + strip->digitsCounter; };
+
+
     stripMapping *strip;
     int previousColumnID = 0 ;
-    Float_t ratesSum = 0;
-    Int_t nRates = 0;
 
-
-    for(auto vecIteratorRead : fStripVector){
+    for(auto &vecIteratorRead : fStripVector){
         strip = &vecIteratorRead;
         ComputeRate(strip);
         int currentColumnID = strip->columnID;
 
         if (previousColumnID != currentColumnID) {
 
-            if ( nRates == 0 ) continue;
+            if ( fStructsBuffer.size() == 0 ) {
+                fStructsBuffer.clear();
+                continue;
+            }
 
-            Float_t meanRate = ratesSum / (Float_t)nRates;
+//            LOG(DEBUG) << "Counting items (without zeroes) " << fStructsBuffer.size();
 
-            for (int iStrip = 0; iStrip < nRates; ++iStrip) {
-                Float_t rate = (*fStructsBuffer[iStrip]).rate;
+            std::sort(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaSortStrips);
+            uint64_t totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end(),0ull,lambdaSumDigits);
+            uint64_t nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaIfNotZero);
 
-                if ( rate < 0.001 * meanRate ) (*fStructsBuffer[iStrip]).isDead = true;
-                else if ( rate > 100000 * meanRate ) (*fStructsBuffer[iStrip]).isNoisy = true;
+            if ( nStrips<fStructsBuffer.size()/10 ) {
+                fStructsBuffer.clear();
+                continue;
+            }
+
+            Double_t meanCounts = (Double_t)totalDigits/(Double_t)nStrips;
+            Double_t nextMeanCounts = 0.;
+            Double_t meanCountsSqrt = 0.;
+
+            Int_t cutOut = 1;
+
+//            LOG(DEBUG) << "Starting while loop";
+
+            do{
+
+                totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
+                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
+
+                if ( nStrips == 0 ) break;
+
+                nextMeanCounts = (Double_t)totalDigits/(Double_t)nStrips;
+                meanCountsSqrt = TMath::Sqrt(meanCounts);
+
+                if ( meanCounts - nextMeanCounts < meanCountsSqrt ){
+                    break;
+                } else {
+                    meanCounts = nextMeanCounts;
+                }
+
+                cutOut++;
+
+            } while ( cutOut < fStructsBuffer.size() );
+
+//            LOG(DEBUG) << "Mean counts for column " << currentColumnID << " are " << meanCounts << " obtained with " << cutOut << " calls.";
+
+            for( auto &stripIterator : fStructsBuffer ){
+                uint64_t digitsCounter = stripIterator->digitsCounter;
+                if ( digitsCounter > meanCounts + 5 * meanCountsSqrt ){
+//                    LOG(ERROR) << "Strip is noisy " << digitsCounter << " " << meanCounts;
+                    (&*stripIterator)->isNoisy = true;
+                }
+//                else if ( digitsCounter < 0.01 * meanCounts ) (&*stripIterator)->isDead = true;
+                else {
+                    (&*stripIterator)->isNoisy = false;
+                    (&*stripIterator)->isDead = false;
+                }
             }
 
             previousColumnID = currentColumnID;
-            ratesSum = strip->rate;
-            nRates = 1;
-        } else {
-            ratesSum += strip->rate;
-            nRates++;
+
+            fStructsBuffer.clear();
         }
 
-        fStructsBuffer[nRates-1] = &vecIteratorRead;
+        fStructsBuffer.emplace_back(&vecIteratorRead);
+
+//        LOG(DEBUG) << "Added Strip" << &vecIteratorRead;
+
     }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
