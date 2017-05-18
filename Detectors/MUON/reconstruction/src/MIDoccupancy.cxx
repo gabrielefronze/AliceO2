@@ -300,8 +300,8 @@ void MIDoccupancy::ComputeAllRates() {
     int previousColumnID = 0 ;
 
     for( auto &vecIteratorRead : fStripVector){
-        strip = &vecIteratorRead;
 
+        strip = &vecIteratorRead;
 
         ComputeRate(strip);
 
@@ -311,7 +311,9 @@ void MIDoccupancy::ComputeAllRates() {
 
         if (previousColumnID != currentColumnID) {
 
-            if ( fStructsBuffer.size() == 0 ) {
+            uint64_t nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaIfNotZero);
+
+            if ( fStructsBuffer.size() == 0 || nStrips<fStructsBuffer.size()/10 ) {
                 fStructsBuffer.clear();
                 continue;
             }
@@ -319,39 +321,33 @@ void MIDoccupancy::ComputeAllRates() {
 //            LOG(DEBUG) << "Counting items (without zeroes) " << fStructsBuffer.size();
 
             std::sort(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaSortStrips);
-            uint64_t totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end(),0ull,lambdaSumDigits);
-            uint64_t nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaIfNotZero);
-
-            if ( nStrips<fStructsBuffer.size()/10 ) {
-                fStructsBuffer.clear();
-                continue;
-            }
+            uint64_t totalDigits = 0;// = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end(),0ull,lambdaSumDigits);
 
             Double_t meanCounts = (Double_t)totalDigits/(Double_t)nStrips;
             Double_t nextMeanCounts = 0.;
             Double_t meanCountsSqrt = 0.;
 
-            Int_t cutOut = 1;
+            Int_t cutOut = 0;
 
 //            LOG(DEBUG) << "Starting while loop";
 
             do{
 
-                totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
-                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
-
                 if ( nStrips == 0 ) break;
+
+                totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
 
                 nextMeanCounts = (Double_t)totalDigits/(Double_t)nStrips;
                 meanCountsSqrt = TMath::Sqrt(meanCounts);
 
                 if ( meanCounts - nextMeanCounts < meanCountsSqrt ){
+                    cutOut--;
                     break;
-                } else {
-                    meanCounts = nextMeanCounts;
                 }
-
+                
                 cutOut++;
+                meanCounts = nextMeanCounts;
+                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
 
             } while ( cutOut < fStructsBuffer.size() );
 
@@ -372,7 +368,6 @@ void MIDoccupancy::ComputeAllRates() {
             }
 
             previousColumnID = currentColumnID;
-
             fStructsBuffer.clear();
         }
 
