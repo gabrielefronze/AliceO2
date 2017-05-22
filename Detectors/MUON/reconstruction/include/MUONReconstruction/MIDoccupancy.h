@@ -62,6 +62,7 @@ namespace AliceO2 {
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();
 
+            bool SendMask();
         };
 
     }
