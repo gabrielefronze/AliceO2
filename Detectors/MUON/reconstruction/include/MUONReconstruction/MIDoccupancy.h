@@ -11,6 +11,7 @@
 #include "string.h"
 #include <unordered_map>
 #include <unordered_set>
+#include "TPave.h"
 
 namespace AliceO2 {
 
@@ -34,6 +35,7 @@ namespace AliceO2 {
                 uint64_t digitsCounter; // counter of time the strip has been fired
                 UShort_t columnID;
                 Float_t area; // 1D area
+                Float_t coord[2][2];
                 Float_t rate; // rate in Hz/cm2 or 1/cm2
                 Bool_t isDead;
                 Bool_t isNoisy;
