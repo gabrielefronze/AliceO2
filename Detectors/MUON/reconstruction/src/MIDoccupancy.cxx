@@ -76,7 +76,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     uint32_t *uniqueIDBuffer;
 
-    LOG(INFO) << "Received valid message";
+//    LOG(INFO) << "Received valid message";
 
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
 //        LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
@@ -105,6 +105,12 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     }
 
     LOG(INFO) << "Received valid message containing "<<counter<<" digits";
+
+    if ( !EnoughStatistics() ) {
+        LOG(INFO) << "Not enough statistics: waiting for more.";
+        return true;
+    };
+
     MIDoccupancy::ComputeAllRates();
 
     const stripMapping* strip;
@@ -214,10 +220,14 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             // read the iPad-th pad and the number of pads
             Mapping::mpPad& pad(de.pads[iPad]);
 
+            bufferStripMapping.coord[0][0] = pad.area[0][0];
+            bufferStripMapping.coord[0][1] = pad.area[0][1];
+            bufferStripMapping.coord[1][0] = pad.area[1][0];
+            bufferStripMapping.coord[1][1] = pad.area[1][1];
+
             Float_t deltaX = pad.area[0][1] - pad.area[0][0];
             Float_t deltaY = - pad.area[1][0] + pad.area[1][1];
             bufferStripMapping.area = deltaX * deltaY;
-
             bufferStripMapping.columnID = pad.iDigit;
 
 //            LOG(DEBUG) << "Inserting the internal mapping entry";
@@ -271,7 +281,7 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 //_________________________________________________________________________________________________
 bool MIDoccupancy::EnoughStatistics() {
     long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[](stripMapping strip){ return strip.digitsCounter > 10; });
-    return nOfActiveStrips > (0.5 * fStripVector.size());
+    return nOfActiveStrips > (0.001 * fStripVector.size());
 }
 
 //_________________________________________________________________________________________________
@@ -300,8 +310,8 @@ void MIDoccupancy::ComputeAllRates() {
     int previousColumnID = 0 ;
 
     for( auto &vecIteratorRead : fStripVector){
-
         strip = &vecIteratorRead;
+
 
         ComputeRate(strip);
 
@@ -313,7 +323,12 @@ void MIDoccupancy::ComputeAllRates() {
 
             uint64_t nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaIfNotZero);
 
-            if ( fStructsBuffer.size() == 0 || nStrips<fStructsBuffer.size()/10 ) {
+            if ( fStructsBuffer.size() == 0 ) {
+                fStructsBuffer.clear();
+                continue;
+            }
+
+            if ( nStrips<fStructsBuffer.size()/10 ){
                 fStructsBuffer.clear();
                 continue;
             }
@@ -321,35 +336,34 @@ void MIDoccupancy::ComputeAllRates() {
 //            LOG(DEBUG) << "Counting items (without zeroes) " << fStructsBuffer.size();
 
             std::sort(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaSortStrips);
-            uint64_t totalDigits = 0;// = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end(),0ull,lambdaSumDigits);
+            uint64_t totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end(),0ull,lambdaSumDigits);
 
             Double_t meanCounts = (Double_t)totalDigits/(Double_t)nStrips;
             Double_t nextMeanCounts = 0.;
             Double_t meanCountsSqrt = 0.;
 
-            Int_t cutOut = 0;
+            Int_t cutOut = 1;
 
 //            LOG(DEBUG) << "Starting while loop";
 
-            do{
-
-                if ( nStrips == 0 ) break;
+            while ( cutOut < fStructsBuffer.size() ){
 
                 totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
+                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
+
+                if ( nStrips == 0 ) break;
 
                 nextMeanCounts = (Double_t)totalDigits/(Double_t)nStrips;
                 meanCountsSqrt = TMath::Sqrt(meanCounts);
 
                 if ( meanCounts - nextMeanCounts < meanCountsSqrt ){
-                    cutOut--;
                     break;
                 }
-                
-                cutOut++;
-                meanCounts = nextMeanCounts;
-                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
 
-            } while ( cutOut < fStructsBuffer.size() );
+                meanCounts = nextMeanCounts;
+                cutOut++;
+
+            }
 
 //            LOG(DEBUG) << "Mean counts for column " << currentColumnID << " are " << meanCounts << " obtained with " << cutOut << " calls.";
 
@@ -368,6 +382,7 @@ void MIDoccupancy::ComputeAllRates() {
             }
 
             previousColumnID = currentColumnID;
+
             fStructsBuffer.clear();
         }
 
