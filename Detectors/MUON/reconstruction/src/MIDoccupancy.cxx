@@ -396,3 +396,40 @@ void MIDoccupancy::ComputeAllRates() {
 
     LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
+
+//_________________________________________________________________________________________________
+bool MIDoccupancy::SendMask(){
+
+    int msgMaskSize = sizeof(fStructMask.nDead) + sizeof(fStructMask.nNoisy) + (fStructMask.nDead + fStructMask.nNoisy) * sizeof(uint32_t);
+    FairMQMessagePtr msgMask(NewMessage(msgMaskSize));
+
+    uint32_t *msgAddr = reinterpret_cast<uint32_t*>(msgMask->GetData());
+
+    UShort_t *nDead = reinterpret_cast<UShort_t*>(msgAddr);
+    UShort_t *nNoisy = reinterpret_cast<UShort_t*>(&(nDead[1]));
+
+    nDead = &(fStructMask.nDead);
+    nNoisy = &(fStructMask.nNoisy);
+
+    uint32_t *deadIDs = &(msgAddr[1]);
+    uint32_t *noisyIDs = &(msgAddr[1+*nDead]);
+
+    int iDead = 0;
+    for( auto& deadIt : fStructMask.deadStripsIDs ){
+        deadIDs[iDead++] = deadIt;
+    }
+
+    int iNoisy = 0;
+    for( auto& noisyIt : fStructMask.noisyStripsIDs ){
+        noisyIDs[iNoisy++] = noisyIt;
+    }
+
+    if ( Send(msgMask, "mask-out") < 0 ){
+        LOG(ERROR) << "problem sending mask";
+        return false;
+    }
+
+    return true;
+
+}
+
