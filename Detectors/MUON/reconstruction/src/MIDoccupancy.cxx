@@ -433,3 +433,43 @@ bool MIDoccupancy::SendMask(){
 
 }
 
+//_________________________________________________________________________________________________
+int MIDoccupancy::InitMonitor(){
+    int msgSize = 5 * 20992 * sizeof(uint32_t);
+    FairMQMessagePtr msgInit(NewMessage(msgSize));
+
+    uint32_t *ID = reinterpret_cast<uint32_t*>(msgInit->GetData());
+    Float_t *coord = reinterpret_cast<Float_t*>(msgInit->GetData());
+
+    int iID = 0;
+    for( auto& uniqueIDsIt : fInternalMapping ){
+        ID[iID++] = uniqueIDsIt.first;
+        coord[iID++] = uniqueIDsIt.second->coord[0][0];
+        coord[iID++] = uniqueIDsIt.second->coord[0][1];
+        coord[iID++] = uniqueIDsIt.second->coord[1][0];
+        coord[iID++] = uniqueIDsIt.second->coord[1][1];
+    }
+
+    if ( Send(msgInit, "init-out") < 0 ){
+        LOG(ERROR) << "problem sending IDs and coords";
+        return false;
+    }
+}
+
+//_________________________________________________________________________________________________
+int MIDoccupancy::SendMonitorData(){
+    int msgSize = 20992 * sizeof(Float_t);
+    FairMQMessagePtr msgMonitor(NewMessage(msgSize));
+
+    Float_t *rate = reinterpret_cast<Float_t*>(msgMonitor->GetData());
+
+    int iRate = 0;
+    for( auto& uniqueIDsIt : fInternalMapping ){
+        rate[iRate++] = uniqueIDsIt.second->rate;
+    }
+
+    if ( Send(msgMonitor, "rate-out") < 0 ){
+        LOG(ERROR) << "problem sending rates";
+        return false;
+    }
+}
