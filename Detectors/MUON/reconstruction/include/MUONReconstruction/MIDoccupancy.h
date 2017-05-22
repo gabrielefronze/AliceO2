@@ -63,6 +63,9 @@ namespace AliceO2 {
             void ComputeAllRates();
 
             bool SendMask();
+            int InitMonitor();
+            int SendMonitorData();
+
         };
 
     }
