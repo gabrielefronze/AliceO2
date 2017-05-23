@@ -1199,3 +1199,16 @@ o2_define_bucket(
     INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Detectors/MUON/base/include
 )
+
+o2_define_bucket(
+    NAME
+    muon_monitoring_bucket
+
+    DEPENDENCIES
+    root_base_bucket
+    fairroot_base_bucket
+
+    INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/Detectors/MUON/base/include
+    ${CMAKE_SOURCE_DIR}/Detectors/MUON/reconstruction/include
+)
