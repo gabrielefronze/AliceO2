@@ -32,17 +32,28 @@ namespace AliceO2 {
 
         private:
 
+            enum digitType {
+                kPhysics,
+                kFET,
+                kTriggered,
+                kSize
+            };
+
             struct stripMapping{
-                uint64_t startTS; // timestamp of first added run
-                uint64_t stopTS; // timestamp of last added run
-                uint64_t digitsCounter; // counter of time the strip has been fired
+                uint64_t startTS[kSize]; // timestamp of first added run
+                uint64_t stopTS[kSize]; // timestamp of last added run
+                uint64_t digitsCounter[kSize]; // counter of time the strip has been fired
                 UShort_t columnID;
                 Float_t area; // 1D area
                 Float_t coord[2][2];
-                Float_t rate; // rate in Hz/cm2 or 1/cm2
+                Float_t rate[kSize]; // rate in Hz/cm2 or 1/cm2
                 Bool_t isDead;
                 Bool_t isNoisy;
             };
+
+            std::unordered_map<uint32_t,stripMapping*> fInternalMapping;
+            std::array<stripMapping,20992> fStripVector;
+            std::vector<stripMapping*> fStructsBuffer;
 
             struct stripMask{
                 UShort_t nDead; // number of elements for deadStripsIDs
@@ -51,16 +62,13 @@ namespace AliceO2 {
                 std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };
 
-            std::unordered_map<uint32_t,stripMapping*> fInternalMapping;
-            std::array<stripMapping,20992> fStripVector;
-            std::vector<stripMapping*> fStructsBuffer;
             stripMask fStructMask;
             stripMask fStructMaskSim;
 
             bool ReadMapping(const char*);
 
             void ResetCounters(uint64_t newStartTS);
-            bool EnoughStatistics();
+            bool EnoughStatistics(digitType type);
 
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();

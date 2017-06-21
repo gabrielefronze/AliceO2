@@ -84,6 +84,8 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
         counter++;
 
+        MIDoccupancy::digitType digitType = MIDoccupancy::kSize;
+
         stripMapping* strip;
 
         try {
@@ -93,9 +95,18 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
             continue;
         }
 
-        strip->digitsCounter++;
+        // TODO: here we need to check the kind of event. No clue on where it is stored for the moment.
+        if ( true /*physics*/ ){
+            digitType = MIDoccupancy::kPhysics;
+        } else if ( false /*FET*/ ){
+            digitType = MIDoccupancy::kFET;
+        } else if ( false /*Triggered*/ ){
+            digitType = MIDoccupancy::kTriggered;
+        } else continue;
+
+        strip->digitsCounter[digitType]++;
         if ( gRandom->Rndm() > 0.99 ){
-            strip->digitsCounter+=999999;
+            strip->digitsCounter[digitType]+=999999;
 //            LOG(ERROR) << "Simulating noisy strip " << *uniqueIDBuffer;
             fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
             fStructMaskSim.nNoisy++;
@@ -168,10 +179,10 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     stripMapping bufferStripMapping;
 
     // initialization of the buffer struct
-    bufferStripMapping.startTS = 0;
-    bufferStripMapping.stopTS = 0;
-    bufferStripMapping.digitsCounter = 0;
-    bufferStripMapping.rate = 0;
+    bufferStripMapping.startTS = {0, 0, 0};
+    bufferStripMapping.stopTS = {0, 0, 0};
+    bufferStripMapping.rate = {0, 0, 0};
+    bufferStripMapping.digitsCounter = {0, 0, 0};
     bufferStripMapping.isDead = false;
     bufferStripMapping.isNoisy = false;
 
@@ -265,8 +276,8 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
     for( auto &vecIterator : fStripVector){
         stripMapping* strip = &vecIterator;
         strip->digitsCounter=0;
-        strip->startTS=newStartTS;
-        strip->stopTS=0;
+        (strip->startTS)[MIDoccupancy::kPhysics]=newStartTS;
+        strip->stopTS={0, 0, 0};
         strip->isNoisy = false;
         strip->isDead = false;
         strip->rate = 0;
@@ -278,32 +289,34 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 }
 
 //_________________________________________________________________________________________________
-bool MIDoccupancy::EnoughStatistics() {
-    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[](stripMapping strip){ return strip.digitsCounter > 10; });
+bool MIDoccupancy::EnoughStatistics(digitType type) {
+    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[](stripMapping strip){ return strip.digitsCounter[type] > 10; });
     return nOfActiveStrips > (0.001 * fStripVector.size());
 }
 
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeRate(stripMapping* strip) {
-    strip->rate = (Float_t)(strip->digitsCounter) / strip->area;
 
-    uint64_t startTS = strip->startTS;
-    uint64_t stopTS = strip->stopTS;
+    for (int iType = 0; iType < MIDoccupancy::kSize; ++iType) {
+        strip->rate[iType] = (Float_t)(strip->digitsCounter[iType]) / strip->area;
 
-    if ( stopTS > startTS ){
-        strip->rate/=(stopTS-startTS);
+        uint64_t startTS = strip->startTS[iType];
+        uint64_t stopTS = strip->stopTS[iType];
+
+        if ( stopTS > startTS ){
+            strip->rate[iType]/=(stopTS-startTS);
+        }
     }
 }
 
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeAllRates() {
 
+    auto lambdaSortStrips = [](const stripMapping *a, const stripMapping *b) { return a->digitsCounter[MIDoccupancy::kPhysics] < b->digitsCounter[MIDoccupancy::kPhysics]; };
+    auto lambdaIfNotZero = [](const stripMapping *strip){ return strip->digitsCounter[MIDoccupancy::kPhysics]>0; };
+    auto lambdaSumDigits = [](uint64_t sum, const stripMapping *strip){ return sum + strip->digitsCounter[MIDoccupancy::kPhysics]; };
+
     auto tStart = std::chrono::high_resolution_clock::now();
-
-    auto lambdaSortStrips = [](const stripMapping *a, const stripMapping *b) { return a->digitsCounter < b->digitsCounter; };
-    auto lambdaIfNotZero = [](const stripMapping *strip){ return strip->digitsCounter>0; };
-    auto lambdaSumDigits = [](uint64_t sum, const stripMapping *strip){ return sum + strip->digitsCounter; };
-
 
     stripMapping *strip;
     int previousColumnID = 0 ;
@@ -367,7 +380,7 @@ void MIDoccupancy::ComputeAllRates() {
 //            LOG(DEBUG) << "Mean counts for column " << currentColumnID << " are " << meanCounts << " obtained with " << cutOut << " calls.";
 
             for( const auto stripIterator : fStructsBuffer ){
-                uint64_t digitsCounter = (*stripIterator).digitsCounter;
+                uint64_t digitsCounter = (*stripIterator).digitsCounter[MIDoccupancy::kPhysics];
 //                LOG(DEBUG) << digitsCounter;
                 if ( digitsCounter > meanCounts * 42 /* So long and thanks for all the fish */){
 //                    LOG(ERROR) << "Strip is noisy " << digitsCounter << " " << meanCounts;
