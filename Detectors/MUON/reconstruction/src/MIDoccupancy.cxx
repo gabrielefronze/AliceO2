@@ -78,7 +78,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 //    LOG(INFO) << "Received valid message";
 
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
-//        LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
+       LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
 
         if ( ((*uniqueIDBuffer) & 0xFFF) < 1100 ) continue;
 
@@ -108,7 +108,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         if ( gRandom->Rndm() > 0.99 ){
             strip->digitsCounter[digitType]+=999999;
 //            LOG(ERROR) << "Simulating noisy strip " << *uniqueIDBuffer;
-            fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
+            auto dummy = fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
             fStructMaskSim.nNoisy++;
         }
 
@@ -116,7 +116,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     LOG(INFO) << "Received valid message containing "<<counter<<" digits";
 
-    if ( !EnoughStatistics() ) {
+    if ( !EnoughStatistics(MIDoccupancy::kPhysics) ) {
         LOG(INFO) << "Not enough statistics: waiting for more.";
         return true;
     };
@@ -179,10 +179,18 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     stripMapping bufferStripMapping;
 
     // initialization of the buffer struct
-    bufferStripMapping.startTS = {0, 0, 0};
-    bufferStripMapping.stopTS = {0, 0, 0};
-    bufferStripMapping.rate = {0, 0, 0};
-    bufferStripMapping.digitsCounter = {0, 0, 0};
+    bufferStripMapping.startTS[0] = 0;
+    bufferStripMapping.startTS[1] = 0;
+    bufferStripMapping.startTS[2] = 0;
+    bufferStripMapping.stopTS[0] = 0;
+    bufferStripMapping.stopTS[1] = 0;
+    bufferStripMapping.stopTS[2] = 0;
+    bufferStripMapping.rate[0] = 0;
+    bufferStripMapping.rate[1] = 0;
+    bufferStripMapping.rate[2] = 0;
+    bufferStripMapping.digitsCounter[0] = 0;
+    bufferStripMapping.digitsCounter[1] = 0;
+    bufferStripMapping.digitsCounter[2] = 0;
     bufferStripMapping.isDead = false;
     bufferStripMapping.isNoisy = false;
 
@@ -269,18 +277,18 @@ bool MIDoccupancy::ReadMapping( const char * filename )
 }
 
 //_________________________________________________________________________________________________
-void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
+void MIDoccupancy::ResetCounters(uint64_t newStartTS, digitType type) {
 
     auto tStart = std::chrono::high_resolution_clock::now();
 
     for( auto &vecIterator : fStripVector){
         stripMapping* strip = &vecIterator;
-        strip->digitsCounter=0;
-        (strip->startTS)[MIDoccupancy::kPhysics]=newStartTS;
-        strip->stopTS={0, 0, 0};
+        strip->digitsCounter[type]=0;
+        strip->startTS[type]=newStartTS;
+        strip->stopTS[type]=0;
         strip->isNoisy = false;
         strip->isDead = false;
-        strip->rate = 0;
+        strip->rate[type] = 0;
     }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
@@ -290,7 +298,7 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS) {
 
 //_________________________________________________________________________________________________
 bool MIDoccupancy::EnoughStatistics(digitType type) {
-    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[](stripMapping strip){ return strip.digitsCounter[type] > 10; });
+    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[type](stripMapping strip){ return strip.digitsCounter[type] > 10; });
     return nOfActiveStrips > (0.001 * fStripVector.size());
 }
 
@@ -409,79 +417,79 @@ void MIDoccupancy::ComputeAllRates() {
     LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
-//_________________________________________________________________________________________________
-bool MIDoccupancy::SendMask(){
-
-    int msgMaskSize = sizeof(fStructMask.nDead) + sizeof(fStructMask.nNoisy) + (fStructMask.nDead + fStructMask.nNoisy) * sizeof(uint32_t);
-    FairMQMessagePtr msgMask(NewMessage(msgMaskSize));
-
-    uint32_t *msgAddr = reinterpret_cast<uint32_t*>(msgMask->GetData());
-
-    UShort_t *nDead = reinterpret_cast<UShort_t*>(msgAddr);
-    UShort_t *nNoisy = reinterpret_cast<UShort_t*>(&(nDead[1]));
-
-    nDead = &(fStructMask.nDead);
-    nNoisy = &(fStructMask.nNoisy);
-
-    uint32_t *deadIDs = &(msgAddr[1]);
-    uint32_t *noisyIDs = &(msgAddr[1+*nDead]);
-
-    int iDead = 0;
-    for( auto& deadIt : fStructMask.deadStripsIDs ){
-        deadIDs[iDead++] = deadIt;
-    }
-
-    int iNoisy = 0;
-    for( auto& noisyIt : fStructMask.noisyStripsIDs ){
-        noisyIDs[iNoisy++] = noisyIt;
-    }
-
-    if ( Send(msgMask, "mask-out") < 0 ){
-        LOG(ERROR) << "problem sending mask";
-        return false;
-    }
-
-    return true;
-
-}
-
-//_________________________________________________________________________________________________
-int MIDoccupancy::InitMonitor(){
-    int msgSize = 5 * 20992 * sizeof(uint32_t);
-    FairMQMessagePtr msgInit(NewMessage(msgSize));
-
-    uint32_t *ID = reinterpret_cast<uint32_t*>(msgInit->GetData());
-    Float_t *coord = reinterpret_cast<Float_t*>(msgInit->GetData());
-
-    int iID = 0;
-    for( auto& uniqueIDsIt : fInternalMapping ){
-        ID[iID++] = uniqueIDsIt.first;
-        coord[iID++] = uniqueIDsIt.second->coord[0][0];
-        coord[iID++] = uniqueIDsIt.second->coord[0][1];
-        coord[iID++] = uniqueIDsIt.second->coord[1][0];
-        coord[iID++] = uniqueIDsIt.second->coord[1][1];
-    }
-
-    if ( Send(msgInit, "init-out") < 0 ){
-        LOG(ERROR) << "problem sending IDs and coords";
-        return false;
-    }
-}
-
-//_________________________________________________________________________________________________
-int MIDoccupancy::SendMonitorData(){
-    int msgSize = 20992 * sizeof(Float_t);
-    FairMQMessagePtr msgMonitor(NewMessage(msgSize));
-
-    Float_t *rate = reinterpret_cast<Float_t*>(msgMonitor->GetData());
-
-    int iRate = 0;
-    for( auto& uniqueIDsIt : fInternalMapping ){
-        rate[iRate++] = uniqueIDsIt.second->rate;
-    }
-
-    if ( Send(msgMonitor, "rate-out") < 0 ){
-        LOG(ERROR) << "problem sending rates";
-        return false;
-    }
-}
+////_________________________________________________________________________________________________
+//bool MIDoccupancy::SendMask(){
+//
+//    int msgMaskSize = sizeof(fStructMask.nDead) + sizeof(fStructMask.nNoisy) + (fStructMask.nDead + fStructMask.nNoisy) * sizeof(uint32_t);
+//    FairMQMessagePtr msgMask(NewMessage(msgMaskSize));
+//
+//    uint32_t *msgAddr = reinterpret_cast<uint32_t*>(msgMask->GetData());
+//
+//    UShort_t *nDead = reinterpret_cast<UShort_t*>(msgAddr);
+//    UShort_t *nNoisy = reinterpret_cast<UShort_t*>(&(nDead[1]));
+//
+//    nDead = &(fStructMask.nDead);
+//    nNoisy = &(fStructMask.nNoisy);
+//
+//    uint32_t *deadIDs = &(msgAddr[1]);
+//    uint32_t *noisyIDs = &(msgAddr[1+*nDead]);
+//
+//    int iDead = 0;
+//    for( auto& deadIt : fStructMask.deadStripsIDs ){
+//        deadIDs[iDead++] = deadIt;
+//    }
+//
+//    int iNoisy = 0;
+//    for( auto& noisyIt : fStructMask.noisyStripsIDs ){
+//        noisyIDs[iNoisy++] = noisyIt;
+//    }
+//
+//    if ( Send(msgMask, "mask-out") < 0 ){
+//        LOG(ERROR) << "problem sending mask";
+//        return false;
+//    }
+//
+//    return true;
+//
+//}
+//
+////_________________________________________________________________________________________________
+//int MIDoccupancy::InitMonitor(){
+//    int msgSize = 5 * 20992 * sizeof(uint32_t);
+//    FairMQMessagePtr msgInit(NewMessage(msgSize));
+//
+//    uint32_t *ID = reinterpret_cast<uint32_t*>(msgInit->GetData());
+//    Float_t *coord = reinterpret_cast<Float_t*>(msgInit->GetData());
+//
+//    int iID = 0;
+//    for( auto& uniqueIDsIt : fInternalMapping ){
+//        ID[iID++] = uniqueIDsIt.first;
+//        coord[iID++] = uniqueIDsIt.second->coord[0][0];
+//        coord[iID++] = uniqueIDsIt.second->coord[0][1];
+//        coord[iID++] = uniqueIDsIt.second->coord[1][0];
+//        coord[iID++] = uniqueIDsIt.second->coord[1][1];
+//    }
+//
+//    if ( Send(msgInit, "init-out") < 0 ){
+//        LOG(ERROR) << "problem sending IDs and coords";
+//        return false;
+//    }
+//}
+//
+////_________________________________________________________________________________________________
+//int MIDoccupancy::SendMonitorData(){
+//    int msgSize = 20992 * sizeof(Float_t);
+//    FairMQMessagePtr msgMonitor(NewMessage(msgSize));
+//
+//    Float_t *rate = reinterpret_cast<Float_t*>(msgMonitor->GetData());
+//
+//    int iRate = 0;
+//    for( auto& uniqueIDsIt : fInternalMapping ){
+//        rate[iRate++] = uniqueIDsIt.second->rate;
+//    }
+//
+//    if ( Send(msgMonitor, "rate-out") < 0 ){
+//        LOG(ERROR) << "problem sending rates";
+//        return false;
+//    }
+//}
