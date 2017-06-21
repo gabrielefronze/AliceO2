@@ -67,15 +67,15 @@ namespace AliceO2 {
 
             bool ReadMapping(const char*);
 
-            void ResetCounters(uint64_t newStartTS);
+            void ResetCounters(uint64_t newStartTS, digitType type);
             bool EnoughStatistics(digitType type);
 
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();
             
-            bool SendMask();
-            int InitMonitor();
-            int SendMonitorData();
+//            bool SendMask();
+//            int InitMonitor();
+//            int SendMonitorData();
 
         };
 
