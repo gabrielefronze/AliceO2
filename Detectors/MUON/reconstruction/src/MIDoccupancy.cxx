@@ -54,7 +54,6 @@ void MIDoccupancy::InitTask() {
     fStructsBuffer.reserve(64);
 
     std::cout<< &fInternalMapping << std::endl;
-
 }
 
 //_________________________________________________________________________________________________

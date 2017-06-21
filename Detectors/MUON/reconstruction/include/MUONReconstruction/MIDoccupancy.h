@@ -9,9 +9,12 @@
 #include "FairMQDevice.h"
 #include "MUONBase/Mapping.h"
 #include "string.h"
+#include <array>
+#include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include "TPave.h"
+
 
 namespace AliceO2 {
 
@@ -61,7 +64,7 @@ namespace AliceO2 {
 
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();
-
+            
             bool SendMask();
             int InitMonitor();
             int SendMonitorData();
