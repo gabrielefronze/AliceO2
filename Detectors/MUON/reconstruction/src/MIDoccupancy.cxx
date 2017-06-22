@@ -28,7 +28,7 @@ fInternalMapping(0x0)
 MIDoccupancy::~MIDoccupancy() {
     LOG(DEBUG) << "Detected noisy strips:";
     for(const auto &itMask : fStructMask.noisyStripsIDs){
-        LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter;
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter[MIDoccupancy::kPhysics];
     }
 
     LOG(DEBUG) << "\nSimulated noisy strips:";
@@ -78,7 +78,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 //    LOG(INFO) << "Received valid message";
 
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
-       LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
+    //    LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
 
         if ( ((*uniqueIDBuffer) & 0xFFF) < 1100 ) continue;
 
