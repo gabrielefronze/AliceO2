@@ -35,7 +35,10 @@ namespace AliceO2 {
         inline deserializerDataStruct* operator() (){ return NextDigit(); }
 
         uint32_t * NextUniqueID();
-        inline uint32_t * CurrentUniqueID(){ return &fUniqueID; }
+        inline uint32_t* CurrentUniqueID(){ return &fUniqueID; }
+        inline uint32_t* GetCurrentData(){ return fData; }
+        inline uint32_t* GetHeader(){ return reinterpret_cast<uint32_t(&)[25]>(reinterpret_cast<uint8_t(&)[100]>(fDataPtr)); }
+        inline uint32_t* GetDataPointer(){ return fDigitsDataPtr; }
 
     private:
         // Const values to exclude first 100 bytes of message and perform deserialization
@@ -47,6 +50,7 @@ namespace AliceO2 {
         uint32_t fOffset;
         uint32_t fDigitCounter;
         uint32_t fUniqueID;
+        uint32_t fData[2];
 
         // Internal data container
         deserializerDataStruct fOutputDataStruct;

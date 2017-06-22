@@ -50,6 +50,9 @@ Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
     // Loading data in the data member used by ApplyMask
     fUniqueID = fDigitsDataPtr[fOffset];
 
+    fData[0] = fDigitsDataPtr[fOffset];
+    fData[1] = fDigitsDataPtr[fOffset+1];
+
     fOutputDataStruct.fDetElemID = fUniqueID & 0xFFF;
     fOutputDataStruct.fBoardID = ( fUniqueID >> 12 ) & 0xFFF;
     fOutputDataStruct.fChannel = ( fUniqueID >> 24 ) & 0x3F;
@@ -74,6 +77,9 @@ uint32_t* Deserializer::NextUniqueID() {
 
     // Loading data in the data member used by ApplyMask
     fUniqueID = fDigitsDataPtr[fOffset];
+
+    fData[0] = fDigitsDataPtr[fOffset];
+    fData[1] = fDigitsDataPtr[fOffset+1];
 
     // Go to the following digit leaping unwanted data
     fOffset+=2;
