@@ -11,8 +11,8 @@
                                 "type": "pull",
                                 "method": "connect",
                                 "address": "tcp://localhost:23000",
-                                "sndBufSize": 1000,
-                                "rcvBufSize": 1000,
+                                "sndBufSize": 1500,
+                                "rcvBufSize": 1500,
                                 "rateLogging": 0
                             }
                         ]
