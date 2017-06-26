@@ -298,7 +298,7 @@ void MIDoccupancy::ResetCounters(uint64_t newStartTS, digitType type) {
 
 //_________________________________________________________________________________________________
 bool MIDoccupancy::EnoughStatistics(digitType type) {
-    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[type](stripMapping strip){ return strip.digitsCounter[type] > 10; });
+    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[type](stripMapping strip)->bool{ return strip.digitsCounter[type] > 10; });
     return nOfActiveStrips > (0.001 * fStripVector.size());
 }
 
@@ -320,9 +320,9 @@ void MIDoccupancy::ComputeRate(stripMapping* strip) {
 //_________________________________________________________________________________________________
 void MIDoccupancy::ComputeAllRates() {
 
-    auto lambdaSortStrips = [](const stripMapping *a, const stripMapping *b) { return a->digitsCounter[MIDoccupancy::kPhysics] < b->digitsCounter[MIDoccupancy::kPhysics]; };
-    auto lambdaIfNotZero = [](const stripMapping *strip){ return strip->digitsCounter[MIDoccupancy::kPhysics]>0; };
-    auto lambdaSumDigits = [](uint64_t sum, const stripMapping *strip){ return sum + strip->digitsCounter[MIDoccupancy::kPhysics]; };
+    auto lambdaSortStrips = [](const stripMapping *a, const stripMapping *b)->bool{ return a->digitsCounter[MIDoccupancy::kPhysics] < b->digitsCounter[MIDoccupancy::kPhysics]; };
+    auto lambdaIfNotZero = [](const stripMapping *strip)->bool{ return strip->digitsCounter[MIDoccupancy::kPhysics]>0; };
+    auto lambdaSumDigits = [](uint64_t sum, const stripMapping *strip)->uint64_t{ return sum + strip->digitsCounter[MIDoccupancy::kPhysics]; };
 
     auto tStart = std::chrono::high_resolution_clock::now();
 
