@@ -122,7 +122,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     MIDRatesComputer::ComputeAllRates();
 
     // Try to send newly computed rates and catch errors
-    switch (MIDRatesComputer::SendRates()) {
+    switch (MIDRatesComputer::SendRates<Float_t>()) {
         case kShortMsg:
             LOG(ERROR) << "Message shorter than expected. Skipping.";
             return true;
