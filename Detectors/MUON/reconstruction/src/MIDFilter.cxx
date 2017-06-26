@@ -6,7 +6,7 @@
 #include "MUONBase/Deserializer.h"
 #include "FairMQLogger.h"
 #include "options/FairMQProgOptions.h"
-#include "flatbuffers/flatbuffers.h"
+//#include "flatbuffers/flatbuffers.h"
 
 using namespace AliceO2::MUON;
 
@@ -156,7 +156,7 @@ bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {
 //_________________________________________________________________________________________________
 template<typename T> errMsg MIDFilter::SendMsg(uint64_t msgSize, T* data){
     // Create unique pointer to a message of the right size
-    FairMQMessagePtr msgOut(NewMessage(msgSize * sizeof(T)));
+    FairMQMessagePtr msgOut(NewMessage((int)(msgSize * sizeof(T))));
 
     // Cast the pointer to the message payload to std::vector pointer to simplify copy
     T *dataPointer = reinterpret_cast<T *>(msgOut->GetData());
