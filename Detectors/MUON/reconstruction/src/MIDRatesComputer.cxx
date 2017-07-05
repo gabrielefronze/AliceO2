@@ -215,9 +215,9 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
 
     // Copy OutputData in the payload of the message
     for ( int iData = 0; iData < fStripVector.size(); iData++ ) {
-        dataPointer[iData*3] = fStripVector[iData].rate[0];
-        dataPointer[iData*3+1] = fStripVector[iData].rate[1];
-        dataPointer[iData*3+2] = fStripVector[iData].rate[2];
+        for (int iType = 0; iType < digitType::kSize; iType++ ) {
+            dataPointer[iData * 3 + iType] = fStripVector[iData].rate[iType];
+        }
     }
 
     // Try to send the message. If unable trigger a error and abort killing the device
