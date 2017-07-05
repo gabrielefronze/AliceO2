@@ -16,7 +16,7 @@ namespace AliceO2 {
 
         public:
             MIDMaskGenerator();
-            virtual ~MIDMaskGenerator();
+            virtual ~MIDMaskGenerator(){};
 
         protected:
             bool HandleData(FairMQMessagePtr&, int);
@@ -32,6 +32,14 @@ namespace AliceO2 {
 
             stripMask fStructMask;
             stripMask fStructMaskSim;
+
+            void FindNoisy(digitType type);
+            void FindDead(digitType type);
+
+            void ResetAll();
+            void FillMask();
+
+            bool SendMask();
         };
     }
 }
