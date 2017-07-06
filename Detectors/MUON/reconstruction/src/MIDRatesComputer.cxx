@@ -14,8 +14,7 @@ using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
 MIDRatesComputer::MIDRatesComputer():
-        FairMQDevice(),
-        fInternalMapping(0x0)
+        FairMQDevice()
 {
     // The input of this device is the digits stream
     FairMQDevice::OnData("data-in", &MIDRatesComputer::HandleData);

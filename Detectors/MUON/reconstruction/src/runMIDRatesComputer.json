@@ -21,7 +21,7 @@
               {
                 "type": "push",
                 "method": "pull",
-                "address": "tcp://localhost:22000",
+                "address": "tcp://localhost:22500",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0
