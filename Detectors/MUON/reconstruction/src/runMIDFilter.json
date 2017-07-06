@@ -10,7 +10,7 @@
               {
                 "type": "pull",
                 "method": "connect",
-                "address": "tcp://localhost:777",
+                "address": "tcp://localhost:21000",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0
@@ -21,7 +21,7 @@
               {
                 "type": "pull",
                 "method": "connect",
-                "address": "tcp://localhost:12345",
+                "address": "tcp://localhost:23000",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0
@@ -32,7 +32,7 @@
               {
                 "type": "push",
                 "method": "pull",
-                "address": "tcp://localhost:54321",
+                "address": "tcp://localhost:24000",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0
