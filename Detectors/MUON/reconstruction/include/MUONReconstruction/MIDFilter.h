@@ -8,6 +8,7 @@
 #include "Rtypes.h"
 #include "FairMQDevice.h"
 #include "MUONBase/Mapping.h"
+#include "MUONBase/Enums.h"
 #include "string.h"
 #include <array>
 #include <vector>
@@ -31,8 +32,6 @@ namespace AliceO2 {
 
             bool HandleMask(FairMQMessagePtr &, int);
 
-            virtual void InitTask();
-
         private:
 
             struct stripMask {
@@ -43,12 +42,6 @@ namespace AliceO2 {
             };
 
             stripMask fMask;
-
-            enum errMsg{
-                kShortMsg,
-                kFailedSend,
-                kOk
-            };
 
             template<typename T> errMsg SendMsg(uint64_t msgSize, T* data);
         };
