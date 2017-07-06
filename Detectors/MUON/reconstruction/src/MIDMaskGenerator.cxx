@@ -10,8 +10,8 @@ using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
 MIDMaskGenerator::MIDMaskGenerator():
-        FairMQDevice(),
-        fInternalMapping(0x0){
+        FairMQDevice()
+{
     fStructMask.nDead = 0;
     fStructMask.nNoisy = 0;
 
@@ -51,7 +51,7 @@ bool MIDMaskGenerator::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
     MIDMaskGenerator::FindNoisy(digitType::kPhysics);
     MIDMaskGenerator::FindDead(digitType::kPhysics);
 
-    MIDMaskGenerator::SendMask();
+    return MIDMaskGenerator::SendMask();
 }
 
 //_________________________________________________________________________________________________

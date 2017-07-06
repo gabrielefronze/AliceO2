@@ -6,6 +6,7 @@
 #define O2_DEV_ALO_MIDMASKGENERATOR_H
 
 #include "FairMQDevice.h"
+#include "MUONBase/Enums.h"
 #include "MUONBase/OccupancyMapping.h"
 
 namespace AliceO2 {
