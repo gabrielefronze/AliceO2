@@ -36,36 +36,21 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
     LOG(INFO) << "Received valid message";
 
+    // Check if no noisy strip is found. If none simply forward the message
+    if ( fMask.nNoisy == 0 ) {
+
+        auto returnValue = (SendAsync(msg, "digits-out") < 0);
+
+        if (returnValue) LOG(ERROR) << "Problems forwarding digits. Aborting.";
+
+        return !returnValue;
+    }
+
     // Deserializer will simplify the reading of the input message
     Deserializer MessageDeserializer(msg);
 
     // Getting the header as 32bit integer pointer (instead of 8bit) to push it back in output message
     uint32_t* DataHeader = MessageDeserializer.GetHeader();
-
-    // Check if no noisy strip is found. If none simply forward the message
-    if ( fMask.nNoisy == 0 ) {
-
-        // Total size is 100 bytes for header + 4 byte for NDigits + 4*NDigits bytes for the digits themselves,
-        // since uint32_t are 4 bytes everything can be rescaled by a factor 4
-        int size32 = (int)(25 + 1 + 1 * MessageDeserializer.GetNDigits());
-
-        // Using templated function and creating meaningful output
-        switch (SendMsg(size32, MessageDeserializer.GetCurrentData())) {
-            case kShortMsg:
-                LOG(ERROR) << "Message shorter than expected. Skipping.";
-                return true;
-
-            case kFailedSend:
-                LOG(ERROR) << "Problems forwarding digits. Aborting.";
-                return false;
-
-            case kOk:
-                return true;
-
-            default:
-                return true;
-        }
-    }
 
     // This vector will contain the full message
     std::vector<uint32_t> OutputData;
@@ -147,8 +132,8 @@ bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {
     fMask.nNoisy = maskHeader[1];
 
     // Load the unique IDs in the mask object
-    fMask.deadStripsIDs = std::unordered_set<uint32_t>(maskData[0],maskData[fMask.nDead-1]);
-    fMask.noisyStripsIDs = std::unordered_set<uint32_t>(maskData[fMask.nDead],maskData[fMask.nDead+fMask.nNoisy-1]);
+    fMask.deadStripsIDs = std::unordered_set<uint32_t>(&(maskData[0]),&(maskData[fMask.nDead-1]));
+    fMask.noisyStripsIDs = std::unordered_set<uint32_t>(&(maskData[fMask.nDead]),&(maskData[fMask.nDead+fMask.nNoisy-1]));
 
     return true;
 }
@@ -166,6 +151,7 @@ template<typename T> errMsg MIDFilter::SendMsg(uint64_t msgSize, T* data){
     // Copy OutputData in the payload of the message
     for ( int iData = 0; iData < msgSize; iData++ ) {
         dataPointer[iData] = data[iData];
+        counter++;
     }
 
     // Just a check that will be deleted after some testing
@@ -173,8 +159,10 @@ template<typename T> errMsg MIDFilter::SendMsg(uint64_t msgSize, T* data){
         return kShortMsg;
     }
 
+//    std::cout<< "Sending message" << std::endl;
+
     // Try to send the message. If unable trigger a error and abort killing the device
-    if (Send(msgOut, "digits-out") < 0) {
+    if (SendAsync(msgOut, "digits-out") < 0) {
         return kFailedSend;
     }
 
