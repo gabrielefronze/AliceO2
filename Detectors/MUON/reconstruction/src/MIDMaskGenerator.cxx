@@ -100,11 +100,10 @@ void MIDMaskGenerator::FindNoisy(digitType type){
 
 //            LOG(DEBUG) << "Starting while loop";
 
-            while ( cutOut < fStructsBuffer.size() ){
-                totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
-                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
+            //TODO: indeed might be better to use a fixed size for loop!
+            while ( (nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero)) > 0 ){
 
-                if ( nStrips == 0 ) break;
+                totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
 
                 nextMeanCounts = (Double_t)totalDigits/(Double_t)nStrips;
 
@@ -120,7 +119,7 @@ void MIDMaskGenerator::FindNoisy(digitType type){
 
 //            LOG(DEBUG) << "Mean counts for column " << currentColumnID << " are " << meanCounts << " obtained with " << cutOut << " calls.";
 
-            for( const auto stripIterator : fStructsBuffer ){
+            for( const auto &stripIterator : fStructsBuffer ){
 //                LOG(DEBUG) << digitsCounter;
                 (*stripIterator).isNoisy = ( (*stripIterator).digitsCounter[type] > meanCounts * 42 /* So long and thanks for all the fish */);
             }
@@ -175,10 +174,9 @@ void MIDMaskGenerator::FillMask(){
             auto alreadyThere = fStructMask.deadStripsIDs.insert(uniqueID).second;
 
             if(alreadyThere){
-                fStructMask.nDead++;
-//                LOG(ERROR)<<uniqueID<<" is dead.";
+                LOG(ERROR)<<uniqueID<<" is dead.";
             } else {
-//                LOG(INFO)<<uniqueID<<" already set.";
+                LOG(INFO)<<uniqueID<<" already set.";
             }
 
         } else if ( strip->isNoisy ) {
@@ -186,15 +184,17 @@ void MIDMaskGenerator::FillMask(){
             auto alreadyThere = fStructMask.noisyStripsIDs.insert(uniqueID).second;
 
             if(alreadyThere){
-                fStructMask.nNoisy++;
-//                LOG(ERROR)<<uniqueID<<" is noisy.";
+                LOG(ERROR)<<uniqueID<<" is noisy.";
             } else {
-//                LOG(INFO)<<uniqueID<<" already set.";
+                LOG(INFO)<<uniqueID<<" already set.";
             }
 
         }
 //        else LOG(INFO)<<uniqueID<<" is working as expected.";
     }
+
+    fStructMask.nDead = (UShort_t)fStructMask.deadStripsIDs.size();
+    fStructMask.nNoisy = (UShort_t)fStructMask.noisyStripsIDs.size();
 
     return;
 };
