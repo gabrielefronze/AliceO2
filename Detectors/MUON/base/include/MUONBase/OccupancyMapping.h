@@ -5,21 +5,16 @@
 #ifndef O2_DEV_ALO_OCCUPANCYMAPPING_H
 #define O2_DEV_ALO_OCCUPANCYMAPPING_H
 
+#include "Rtypes.h"
 #include <array>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include "MUONBase/Enums.h"
 
 namespace AliceO2 {
 
     namespace MUON {
-
-        enum digitType {
-            kPhysics,
-            kFET,
-            kTriggered,
-            kSize
-        };
 
         struct stripMapping {
             uint64_t startTS[kSize]; // timestamp of first added run
