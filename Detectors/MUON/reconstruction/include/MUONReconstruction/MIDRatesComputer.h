@@ -7,6 +7,7 @@
 
 #include "Rtypes.h"
 #include "FairMQDevice.h"
+#include "MUONBase/Enums.h"
 #include "MUONBase/OccupancyMapping.h"
 #include "MUONBase/Mapping.h"
 #include "string.h"
@@ -48,12 +49,6 @@ namespace AliceO2 {
 
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();
-
-            enum errMsg{
-                kShortMsg,
-                kFailedSend,
-                kOk
-            };
 
             template<typename T> errMsg SendRates();
         };
