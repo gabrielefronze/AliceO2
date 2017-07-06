@@ -3,19 +3,29 @@ set(MODULE_NAME "MUONReconstruction")
 O2_SETUP(NAME ${MODULE_NAME})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDclustering.json ${CMAKE_BINARY_DIR}/bin/config/runMIDclustering.json)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDoccupancy.json ${CMAKE_BINARY_DIR}/bin/config/runMIDoccupancy.json)
+#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDoccupancy.json ${CMAKE_BINARY_DIR}/bin/config/runMIDoccupancy.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDFilter.json ${CMAKE_BINARY_DIR}/bin/config/runMIDFilter.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDMaskGenerator.json ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGenerator.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDRatesComputer.json ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputer.json)
+
 
 
 link_directories(${LINK_DIRECTORIES})
 
 set(SRCS
         src/MIDclustering.cxx
-        src/MIDoccupancy.cxx
+#        src/MIDoccupancy.cxx
+        src/MIDFilter.cxx
+        src/MIDMaskGenerator.cxx
+        src/MIDRatesComputer.cxx
         )
 
 set(HEADERS
         include/${MODULE_NAME}/MIDclustering.h
-        include/${MODULE_NAME}/MIDoccupancy.h
+#        include/${MODULE_NAME}/MIDoccupancy.h
+        include/${MODULE_NAME}/MIDFilter.h
+        include/${MODULE_NAME}/MIDMaskGenerator.h
+        include/${MODULE_NAME}/MIDRatesComputer.h
         )
 
 Set(LIBRARY_NAME ${MODULE_NAME})
@@ -25,12 +35,18 @@ O2_GENERATE_LIBRARY()
 
 Set(Exe_Names
         runMIDclustering
-        runMIDoccupancy
+#        runMIDoccupancy
+        runMIDFilter
+        runMIDMaskGenerator
+        runMIDRatesComputer
         )
 
 set(Exe_Source
         src/runMIDclustering.cxx
-        src/runMIDoccupancy.cxx
+#        src/runMIDoccupancy.cxx
+        src/runMIDFilter.cxx
+        src/runMIDMaskGenerator.cxx
+        src/runMIDRatesComputer.cxx
         )
 
 # todo we repeat ourselves because the above macro dares deleting the variables we pass to it.
@@ -53,5 +69,11 @@ EndForEach (_file RANGE 0 ${_length})
 
 install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDclustering.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
-install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDoccupancy.json
+#install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDoccupancy.json
+#        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDFilter.json
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGenerator.json
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputer.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
