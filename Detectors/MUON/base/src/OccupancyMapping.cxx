@@ -2,7 +2,7 @@
 // Created by Gabriele Gaetano Fronzé on 26/06/2017.
 //
 
-#include "OccupancyMapping.h"
+#include "MUONBase/OccupancyMapping.h"
 #include <chrono>
 #include "FairMQLogger.h"
 #include "options/FairMQProgOptions.h"
