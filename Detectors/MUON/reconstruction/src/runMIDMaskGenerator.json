@@ -15,7 +15,9 @@
                 "rcvBufSize": 1500,
                 "rateLogging": 0
               }
-            ],
+            ]
+          },
+          {
             "name": "mask-out",
             "sockets": [
               {
