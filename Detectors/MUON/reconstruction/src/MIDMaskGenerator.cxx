@@ -19,6 +19,14 @@ MIDMaskGenerator::MIDMaskGenerator():
 }
 
 //_________________________________________________________________________________________________
+MIDMaskGenerator::~MIDMaskGenerator(){
+    LOG(DEBUG) << "Detected noisy strips:";
+    for(const auto &itMask : fStructMask.noisyStripsIDs){
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter[digitType::kPhysics];
+    }
+}
+
+//_________________________________________________________________________________________________
 void MIDMaskGenerator::InitTask() {
 
     LOG(INFO) << "Initializing device";

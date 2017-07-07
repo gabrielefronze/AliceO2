@@ -17,7 +17,7 @@ namespace AliceO2 {
 
         public:
             MIDMaskGenerator();
-            virtual ~MIDMaskGenerator(){};
+            virtual ~MIDMaskGenerator();
 
         protected:
             bool HandleData(FairMQMessagePtr&, int);
