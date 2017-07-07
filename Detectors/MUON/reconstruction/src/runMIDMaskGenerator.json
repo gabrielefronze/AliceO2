@@ -2,7 +2,7 @@
   "fairMQOptions": {
     "devices": [
       {
-        "key": "MIDRatesComputer",
+        "key": "MIDMaskGenerator",
         "channels": [
           {
             "name": "rates-in",
@@ -10,9 +10,9 @@
               {
                 "type": "pull",
                 "method": "connect",
-                "address": "tcp://localhost:22000",
-                "sndBufSize": 1500,
-                "rcvBufSize": 1500,
+                "address": "tcp://localhost:22500",
+                "sndBufSize": 252000,
+                "rcvBufSize": 252000,
                 "rateLogging": 0
               }
             ]
@@ -22,8 +22,8 @@
             "sockets": [
               {
                 "type": "push",
-                "method": "pull",
-                "address": "tcp://localhost:21000",
+                "method": "bind",
+                "address": "tcp://*:25000",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0

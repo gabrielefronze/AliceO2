@@ -22,10 +22,10 @@
             "sockets": [
               {
                 "type": "push",
-                "method": "connect",
-                "address": "tcp://localhost:22500",
-                "sndBufSize": 1500,
-                "rcvBufSize": 1500,
+                "method": "bind",
+                "address": "tcp://*:22500",
+                "sndBufSize": 252000,
+                "rcvBufSize": 252000,
                 "rateLogging": 0
               }
             ]
