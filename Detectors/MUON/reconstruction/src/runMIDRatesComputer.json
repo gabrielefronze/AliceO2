@@ -15,12 +15,14 @@
                 "rcvBufSize": 1500,
                 "rateLogging": 0
               }
-            ],
+            ]
+          },
+          {
             "name": "rates-out",
             "sockets": [
               {
                 "type": "push",
-                "method": "pull",
+                "method": "connect",
                 "address": "tcp://localhost:22500",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
