@@ -10,7 +10,7 @@
               {
                 "type": "pull",
                 "method": "connect",
-                "address": "tcp://localhost:22500",
+                "address": "tcp://localhost:25000",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0
