@@ -59,12 +59,12 @@ bool MIDMaskGenerator::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
     LOG(DEBUG) << "Received valid message";
 
-    Float_t *dataPointer = reinterpret_cast<Float_t*>(msg->GetData());
+    uint64_t *dataPointer = reinterpret_cast<uint64_t*>(msg->GetData());
 
     // Copy the payload of the message in the internal data container
     for ( int iData = 0; iData < fStripVector.size(); iData++ ) {
         for (int iType = 0; iType < digitType::kSize; iType++ ) {
-            fStripVector[iData].rate[iType] = dataPointer[iData*3 + iType];
+            fStripVector[iData].digitsCounter[iType] = dataPointer[iData*3 + iType];
         }
     }
 
@@ -72,6 +72,8 @@ bool MIDMaskGenerator::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
     MIDMaskGenerator::FindNoisy(digitType::kPhysics);
     MIDMaskGenerator::FindDead(digitType::kPhysics);
+
+    MIDMaskGenerator::FillMask();
 
     LOG(DEBUG) << "Sending mask...";
 
@@ -93,6 +95,9 @@ void MIDMaskGenerator::FindNoisy(digitType type){
     for( auto &vecIteratorRead : fStripVector){
         strip = &vecIteratorRead;
 
+
+//        ComputeRate(strip);
+
 //        LOG(DEBUG) << strip->digitsCounter;
 
         int currentColumnID = strip->columnID;
@@ -100,6 +105,8 @@ void MIDMaskGenerator::FindNoisy(digitType type){
         if (previousColumnID != currentColumnID) {
 
             uint64_t nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaIfNotZero);
+
+            if ( nStrips == 0 ) continue;
 
             if ( fStructsBuffer.size() == 0 ) {
                 fStructsBuffer.clear();
@@ -124,28 +131,39 @@ void MIDMaskGenerator::FindNoisy(digitType type){
 
 //            LOG(DEBUG) << "Starting while loop";
 
-            //TODO: indeed might be better to use a fixed size for loop!
-            while ( (nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero)) > 0 ){
+            while ( cutOut < fStructsBuffer.size() ){
 
                 totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
+                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
+
+                if ( nStrips == 0 ) break;
 
                 nextMeanCounts = (Double_t)totalDigits/(Double_t)nStrips;
+                meanCountsSqrt = TMath::Sqrt(meanCounts);
 
                 if ( meanCounts - nextMeanCounts < meanCountsSqrt ){
                     break;
                 }
 
-                meanCountsSqrt = TMath::Sqrt(meanCounts);
-
                 meanCounts = nextMeanCounts;
                 cutOut++;
+
             }
 
 //            LOG(DEBUG) << "Mean counts for column " << currentColumnID << " are " << meanCounts << " obtained with " << cutOut << " calls.";
 
             for( const auto &stripIterator : fStructsBuffer ){
+                uint64_t digitsCounter = (*stripIterator).digitsCounter[type];
 //                LOG(DEBUG) << digitsCounter;
-                (*stripIterator).isNoisy = ( (*stripIterator).digitsCounter[type] > meanCounts * 42 /* So long and thanks for all the fish */);
+                if ( digitsCounter > meanCounts * 42 /* So long and thanks for all the fish */){
+                    LOG(ERROR) << "Strip is noisy " << digitsCounter << " " << meanCounts;
+                    stripIterator->isNoisy = true;
+                }
+//                else if ( digitsCounter < 0.01 * meanCounts ) (&*stripIterator)->isDead = true;
+//                else {
+//                    (*stripIterator).isNoisy = false;
+//                    (*stripIterator).isDead = false;
+//                }
             }
 
             previousColumnID = currentColumnID;
@@ -162,6 +180,7 @@ void MIDMaskGenerator::FindNoisy(digitType type){
     auto tEnd = std::chrono::high_resolution_clock::now();
 
     LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+
     return;
 }
 

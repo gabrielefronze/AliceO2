@@ -113,7 +113,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     // Check if enough statistics is already present for a given digitType
     if ( !EnoughStatistics(digitType::kPhysics) ) {
-        LOG(INFO) << "Not enough statistics: waiting for more.";
+//        LOG(INFO) << "Not enough statistics: waiting for more.";
         return true;
     };
 
@@ -121,7 +121,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     MIDRatesComputer::ComputeAllRates();
 
     // Try to send newly computed rates and catch errors
-    switch (MIDRatesComputer::SendRates<Float_t>()) {
+    switch (MIDRatesComputer::SendRates<uint64_t>()) {
         case kShortMsg:
             LOG(ERROR) << "Message shorter than expected. Skipping.";
             return true;
@@ -196,7 +196,7 @@ void MIDRatesComputer::ComputeAllRates() {
 
     auto tEnd = std::chrono::high_resolution_clock::now();
 
-    LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+//    LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
 //_________________________________________________________________________________________________
@@ -206,7 +206,7 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
     // Message size is kSize T elements for each strip
     uint64_t msgSize = fStripVector.size() * digitType::kSize;
 
-    LOG(DEBUG) << "Msgsize is " << msgSize;
+//    LOG(DEBUG) << "Msgsize is " << msgSize;
 
     // Instance message as unique pointer
     FairMQMessagePtr msgOut(NewMessage((int)(msgSize* sizeof(T))));
@@ -217,14 +217,14 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
     // Copy OutputData in the payload of the message
     for ( int iData = 0; iData < fStripVector.size(); iData++ ) {
         for (int iType = 0; iType < digitType::kSize; iType++ ) {
-            dataPointer[iData * 3 + iType] = fStripVector[iData].rate[iType];
+            dataPointer[iData * 3 + iType] = fStripVector[iData].digitsCounter[iType];
         }
     }
 
     // Try to send the message. If unable trigger a error and abort killing the device
     auto status = Send(msgOut, "rates-out");
 
-    LOG(DEBUG) << "Send sent " << status << " bits";
+//    LOG(DEBUG) << "Send sent " << status << " bits";
 
     if ( status < 0) {
         return kFailedSend;
@@ -232,7 +232,7 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
 
     auto tEnd = std::chrono::high_resolution_clock::now();
 
-    LOG(DEBUG) << "Rates sent in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+//    LOG(DEBUG) << "Rates sent in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 
     return kOk;
 }
