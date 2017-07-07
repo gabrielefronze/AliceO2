@@ -37,7 +37,19 @@ void MIDMaskGenerator::InitTask() {
 //_________________________________________________________________________________________________
 bool MIDMaskGenerator::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
-    uint64_t msgSize = fStripVector.size() * digitType::kSize;
+    // If the message is empty something is going wrong. The process should be aborted.
+    if ( !msg ) {
+        LOG(ERROR) << "Message pointer not valid, aborting";
+        return false;
+    }
+
+    // If the input is smaller than the header size the message is empty and we should skip.
+    if ( msg->GetSize() < 1 ) {
+        LOG(ERROR) << "Message empty, skipping";
+        return true;
+    }
+
+    LOG(DEBUG) << "Received valid message";
 
     Float_t *dataPointer = reinterpret_cast<Float_t*>(msg->GetData());
 
@@ -48,8 +60,12 @@ bool MIDMaskGenerator::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
         }
     }
 
+    LOG(DEBUG) << "Message parsing done!";
+
     MIDMaskGenerator::FindNoisy(digitType::kPhysics);
     MIDMaskGenerator::FindDead(digitType::kPhysics);
+
+    LOG(DEBUG) << "Sending mask...";
 
     return MIDMaskGenerator::SendMask();
 }

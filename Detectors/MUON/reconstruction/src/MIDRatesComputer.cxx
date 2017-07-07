@@ -57,7 +57,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     // If the input is smaller than the header size the message is empty and we should skip.
     if ( msg->GetSize()<100 ) {
-        LOG(ERROR) << "Message empty, skipping";
+//        LOG(ERROR) << "Message empty, skipping";
         return true;
     }
 
@@ -206,11 +206,13 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
     // Message size is kSize T elements for each strip
     uint64_t msgSize = fStripVector.size() * digitType::kSize;
 
+    LOG(DEBUG) << "Msgsize is " << msgSize;
+
     // Instance message as unique pointer
     FairMQMessagePtr msgOut(NewMessage((int)(msgSize* sizeof(T))));
 
     // Pointer to message payload
-    T *dataPointer = reinterpret_cast<T *>(msgOut->GetData());
+    T *dataPointer = reinterpret_cast<T*>(msgOut->GetData());
 
     // Copy OutputData in the payload of the message
     for ( int iData = 0; iData < fStripVector.size(); iData++ ) {
@@ -220,7 +222,11 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
     }
 
     // Try to send the message. If unable trigger a error and abort killing the device
-    if (Send(msgOut, "rates-out") < 0) {
+    auto status = Send(msgOut, "rates-out");
+
+    LOG(DEBUG) << "Send sent " << status << " bits";
+
+    if ( status < 0) {
         return kFailedSend;
     }
 
