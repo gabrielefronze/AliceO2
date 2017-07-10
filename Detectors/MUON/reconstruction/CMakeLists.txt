@@ -7,6 +7,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDclustering.json ${CMAKE_BIN
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDFilter.json ${CMAKE_BINARY_DIR}/bin/config/runMIDFilter.json)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDMaskGenerator.json ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGenerator.json)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDRatesComputer.json ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputer.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runBroadcaster.json ${CMAKE_BINARY_DIR}/bin/config/runBroadcaster.json)
 
 
 
@@ -18,6 +19,7 @@ set(SRCS
         src/MIDFilter.cxx
         src/MIDMaskGenerator.cxx
         src/MIDRatesComputer.cxx
+        src/Broadcaster.cxx
         )
 
 set(HEADERS
@@ -26,6 +28,7 @@ set(HEADERS
         include/${MODULE_NAME}/MIDFilter.h
         include/${MODULE_NAME}/MIDMaskGenerator.h
         include/${MODULE_NAME}/MIDRatesComputer.h
+        include/${MODULE_NAME}/Broadcaster.h
         )
 
 Set(LIBRARY_NAME ${MODULE_NAME})
@@ -39,6 +42,7 @@ Set(Exe_Names
         runMIDFilter
         runMIDMaskGenerator
         runMIDRatesComputer
+        runBroadcaster
         )
 
 set(Exe_Source
@@ -47,6 +51,7 @@ set(Exe_Source
         src/runMIDFilter.cxx
         src/runMIDMaskGenerator.cxx
         src/runMIDRatesComputer.cxx
+        src/runBroadcaster.cxx
         )
 
 # todo we repeat ourselves because the above macro dares deleting the variables we pass to it.
@@ -76,4 +81,6 @@ install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDFilter.json
 install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGenerator.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
 install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputer.json
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runBroadcaster.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
