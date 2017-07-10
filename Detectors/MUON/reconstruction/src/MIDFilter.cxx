@@ -39,6 +39,8 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
     LOG(INFO) << "Received valid message containing " << MessageDeserializer.GetNDigits() << " digits";
 
+    return true;
+
     // Check if no noisy strip is found. If none simply forward the message
     if ( fMask.nNoisy == 0 ) {
 
@@ -48,6 +50,8 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
         return !returnValue;
     }
+
+    LOG(DEBUG) << "Processing message";
 
     // Getting the header as 32bit integer pointer (instead of 8bit) to push it back in output message
     uint32_t* DataHeader = MessageDeserializer.GetHeader();
@@ -82,6 +86,8 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
         }
     }
 
+    LOG(DEBUG) << "Ready to send";
+
     // The first element after the header of the reacreated message should be the NEW number of digits
     OutputData.push_back(nDigits);
 
@@ -107,7 +113,9 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 }
 
 //_________________________________________________________________________________________________
-bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {
+bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {\
+
+    LOG(DEBUG) << "Mask has been received";
 
     // Clearing the mask data. The new mask is a complete information (not a diff).
     fMask.nDead = 0;
