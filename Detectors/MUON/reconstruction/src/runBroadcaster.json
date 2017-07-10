@@ -1,0 +1,50 @@
+{
+  "fairMQOptions": {
+    "devices": [
+      {
+        "key": "Broadcaster",
+        "channels": [
+          {
+            "name": "input",
+            "sockets": [
+              {
+                "type": "pull",
+                "method": "connect",
+                "address": "tcp://localhost:22777",
+                "sndBufSize": 1000,
+                "rcvBufSize": 1000,
+                "rateLogging": 0
+              }
+            ]
+          },
+          {
+            "name": "to-rates",
+            "sockets": [
+              {
+                "type": "push",
+                "method": "bind",
+                "address": "tcp://*:23000",
+                "sndBufSize": 1000,
+                "rcvBufSize": 1000,
+                "rateLogging": 0
+              }
+            ]
+          },
+          {
+            "name": "to-filter",
+            "sockets": [
+              {
+                "type": "push",
+                "method": "bind",
+                "address": "tcp://*:23500",
+                "sndBufSize": 1000,
+                "rcvBufSize": 1000,
+                "rateLogging": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

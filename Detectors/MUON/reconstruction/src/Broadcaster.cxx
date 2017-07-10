@@ -2,15 +2,18 @@
 // Created by Gabriele Gaetano Fronzé on 10/07/2017.
 //
 
-#include "Broadcaster.h"
-#include <boost/range/adaptor/reversed.hpp>
+#include "MUONReconstruction/Broadcaster.h"
 
 using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
 Broadcaster::Broadcaster( bool waiting ){
-
     fWaiting = waiting;
+    FairMQDevice::OnData("input", &Broadcaster::Broadcast);
+}
+
+//_________________________________________________________________________________________________
+void Broadcaster::InitTask(){
 
     for ( const auto &chIt : fChannels ){
         for ( const auto &sockIt : chIt.second ){
@@ -23,29 +26,25 @@ Broadcaster::Broadcaster( bool waiting ){
     }
 
     LOG(DEBUG) << "Broadcaster has been configured with " << fOutputChannelNames.size() << " output channels.";
-
-    FairMQDevice::OnData("input", &Broadcaster::Broadcast);
 }
 
 //_________________________________________________________________________________________________
 bool Broadcaster::Broadcast( FairMQMessagePtr &msg, int /*index*/ ){
+
+    bool returnValue = true;
+
+    LOG(DEBUG) << "Sending message...";
+
     for ( auto const &chNameIt : fOutputChannelNames ){
-        fSendQueue.emplace_front(std::async(Broadcaster::Send,msg,chNameIt));
+
+        FairMQMessagePtr ptr = NewMessage(msg->GetSize());
+        ptr->Copy(msg);
+
+        LOG(DEBUG) <<  "\tTo channel " << chNameIt;
+        returnValue &= (FairMQDevice::SendAsync(ptr, chNameIt) > 0);
     }
 
-    if ( fWaiting ){
+    LOG(DEBUG) << "Sent!";
 
-        int Pos = 0;
-
-        for (auto &futIt : fSendQueue) {
-            futIt.wait();
-            fSendQueue.erase(fSendQueue.begin() + Pos);
-            Pos++;
-        }
-    }
-}
-
-//_________________________________________________________________________________________________
-bool Broadcaster::BroadSend( FairMQMessagePtr &msg, std::string channelName ){
-    FairMQDevice::Send(msg, channelName);
+    return ( returnValue || fWaiting ) ;
 }
