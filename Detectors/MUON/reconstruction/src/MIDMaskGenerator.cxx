@@ -243,6 +243,31 @@ void MIDMaskGenerator::FillMask(){
 };
 
 //_________________________________________________________________________________________________
-bool MIDMaskGenerator::SendMask(){
-    return true;
+errMsg MIDMaskGenerator::SendMask(){
+
+    int msgSize = sizeof(fStructMask.nDead) + sizeof(fStructMask.nNoisy) + (fStructMask.nDead + fStructMask.nNoisy) * sizeof(IDType);
+    FairMQMessagePtr msgOut(NewMessage(msgSize));
+
+    auto header = reinterpret_cast<UShort_t*>(msgOut->GetData());
+    header[0] = fStructMask.nDead;
+    header[1] = fStructMask.nNoisy;
+    auto payload = reinterpret_cast<IDType*>(&(header[2]));
+
+    int position = 0;
+
+    for( auto const &itDead : fStructMask.deadStripsIDs ){
+        payload[position++] = itDead;
+    }
+    for( auto const &itNoisy : fStructMask.noisyStripsIDs ){
+        payload[position++] = itNoisy;
+    }
+
+//    std::cout<< "Sending message" << std::endl;
+
+    // Try to send the message. If unable trigger a error and abort killing the device
+    if (SendAsync(msgOut, "mask-out") < 0) {
+        return kFailedSend;
+    }
+
+    return kOk;
 }
