@@ -23,7 +23,7 @@
               {
                 "type": "pull",
                 "method": "connect",
-                "address": "tcp://localhost:23000",
+                "address": "tcp://localhost:23500",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0
@@ -35,8 +35,8 @@
             "sockets": [
               {
                 "type": "push",
-                "method": "connect",
-                "address": "tcp://localhost:24000",
+                "method": "bind",
+                "address": "tcp://*:24000",
                 "sndBufSize": 1500,
                 "rcvBufSize": 1500,
                 "rateLogging": 0
