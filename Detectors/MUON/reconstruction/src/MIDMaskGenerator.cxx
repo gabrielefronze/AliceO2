@@ -245,7 +245,11 @@ void MIDMaskGenerator::FillMask(){
 //_________________________________________________________________________________________________
 errMsg MIDMaskGenerator::SendMask(){
 
-    int msgSize = sizeof(fStructMask.nDead) + sizeof(fStructMask.nNoisy) + (fStructMask.nDead + fStructMask.nNoisy) * sizeof(IDType);
+    auto sum = fStructMask.nDead + fStructMask.nNoisy;
+
+    if (sum==0) return kOk;
+
+    int msgSize = sizeof(fStructMask.nDead) + sizeof(fStructMask.nNoisy) + sum * sizeof(IDType);
     FairMQMessagePtr msgOut(NewMessage(msgSize));
 
     auto header = reinterpret_cast<UShort_t*>(msgOut->GetData());
