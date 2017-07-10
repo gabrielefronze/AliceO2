@@ -133,15 +133,17 @@ bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {\
     }
 
     // Load unique IDs in maskData
-    uint32_t* maskData = reinterpret_cast<uint32_t*>(maskHeader + 2);
+    uint32_t* maskData = reinterpret_cast<uint32_t*>(&(maskHeader[2]));
 
     // Load the number of dead and noisy strips in the mask
     fMask.nDead = maskHeader[0];
     fMask.nNoisy = maskHeader[1];
 
     // Load the unique IDs in the mask object
-    fMask.deadStripsIDs = std::unordered_set<uint32_t>(&(maskData[0]),&(maskData[fMask.nDead-1]));
-    fMask.noisyStripsIDs = std::unordered_set<uint32_t>(&(maskData[fMask.nDead]),&(maskData[fMask.nDead+fMask.nNoisy-1]));
+    if(fMask.nDead>0)fMask.deadStripsIDs = std::unordered_set<uint32_t>(&(maskData[0]),&(maskData[fMask.nDead-1]));
+    if(fMask.nNoisy>0)fMask.noisyStripsIDs = std::unordered_set<uint32_t>(&(maskData[fMask.nDead]),&(maskData[fMask.nDead+fMask.nNoisy-1]));
+
+    LOG(DEBUG) << "Mask correctly loaded with " << fMask.nDead + fMask.nNoisy << " problematic strips";
 
     return true;
 }
