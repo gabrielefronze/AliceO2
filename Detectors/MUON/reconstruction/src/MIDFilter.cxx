@@ -34,7 +34,10 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
         return true;
     }
 
-    LOG(INFO) << "Received valid message";
+    // Deserializer will simplify the reading of the input message
+    Deserializer MessageDeserializer(msg);
+
+    LOG(INFO) << "Received valid message containing " << MessageDeserializer.GetNDigits() << " digits";
 
     // Check if no noisy strip is found. If none simply forward the message
     if ( fMask.nNoisy == 0 ) {
@@ -45,9 +48,6 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
         return !returnValue;
     }
-
-    // Deserializer will simplify the reading of the input message
-    Deserializer MessageDeserializer(msg);
 
     // Getting the header as 32bit integer pointer (instead of 8bit) to push it back in output message
     uint32_t* DataHeader = MessageDeserializer.GetHeader();
