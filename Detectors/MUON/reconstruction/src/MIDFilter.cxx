@@ -45,19 +45,21 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
     LOG(INFO) << "Received valid message containing " << MessageDeserializer.GetNDigits() << " digits";
 
-    return true;
 
     // Check if no noisy strip is found. If none simply forward the message
     if ( fMask.nNoisy == 0 ) {
 
-        auto returnValue = (SendAsync(msg, "digits-out") < 0);
+        LOG(INFO) << "Forwarding message";
+
+        FairMQMessagePtr ptr = NewMessage((int)msg->GetSize());
+        ptr->Copy(msg);
+
+        auto returnValue = (SendAsync(ptr, "digits-out") < 0);
 
         if (returnValue) LOG(ERROR) << "Problems forwarding digits. Aborting.";
 
         return !returnValue;
     }
-
-    LOG(DEBUG) << "Processing message";
 
     // Getting the header as 32bit integer pointer (instead of 8bit) to push it back in output message
     uint32_t* DataHeader = MessageDeserializer.GetHeader();
