@@ -12,6 +12,12 @@ using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
 MIDFilter::MIDFilter(){
+
+    fMask.nDead = 0;
+    fMask.nNoisy = 0;
+    fMask.deadStripsIDs.clear();
+    fMask.noisyStripsIDs.clear();
+
     FairMQDevice::OnData("mask-in", &MIDFilter::HandleMask);
     FairMQDevice::OnData("digits-in", &MIDFilter::HandleData);
 }
