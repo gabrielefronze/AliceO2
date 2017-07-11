@@ -34,7 +34,7 @@ bool Broadcaster::Broadcast( FairMQMessagePtr &msg, int /*index*/ ){
 
     if ( msg->GetSize()<=100 ) return returnValue;
 
-    LOG(DEBUG) << "Sending message...";
+    LOG(DEBUG) << "Sending message..." << msg->GetSize();
 
     for ( auto const &chNameIt : fOutputChannelNames ){
 
