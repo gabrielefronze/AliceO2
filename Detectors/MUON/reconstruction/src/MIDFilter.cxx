@@ -91,10 +91,10 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
             OutputDataDigits.push_back(Data[0]);
             OutputDataDigits.push_back(Data[1]);
             nDigits++;
+        } else {
+            LOG(ERROR) << "Strip " << *uniqueIDBuffer << " has been masked";
         }
     }
-
-    LOG(DEBUG) << "Ready to send";
 
     // The first element after the header of the reacreated message should be the NEW number of digits
     OutputData.push_back(nDigits);
@@ -158,6 +158,7 @@ bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {\
 
 //_________________________________________________________________________________________________
 template<typename T> errMsg MIDFilter::SendMsg(uint64_t msgSize, T* data){
+
     // Create unique pointer to a message of the right size
     FairMQMessagePtr msgOut(NewMessage((int)(msgSize * sizeof(T))));
 
@@ -177,10 +178,13 @@ template<typename T> errMsg MIDFilter::SendMsg(uint64_t msgSize, T* data){
         return kShortMsg;
     }
 
-//    std::cout<< "Sending message" << std::endl;
+    LOG(INFO) << "Sending masked message containing " << counter << " digits";
 
     // Try to send the message. If unable trigger a error and abort killing the device
-    if (SendAsync(msgOut, "digits-out") < 0) {
+    auto returnValue = SendAsync(msgOut, "digits-out");
+
+    if ( returnValue < 0) {
+        LOG(ERROR) << "Send failed with error code: " << returnValue;
         return kFailedSend;
     }
 
