@@ -66,7 +66,7 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
     std::vector<uint32_t> OutputData;
 
     // The first 100bytes are the header. It should remain the same.
-    OutputData.assign(DataHeader[0], DataHeader[0] + 25);
+    OutputData.assign(DataHeader, DataHeader + 25);
 
     // This container will contain the digits from non problematic strips
     std::vector<uint32_t> OutputDataDigits;
