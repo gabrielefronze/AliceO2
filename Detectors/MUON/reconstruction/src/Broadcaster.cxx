@@ -42,7 +42,7 @@ bool Broadcaster::Broadcast( FairMQMessagePtr &msg, int /*index*/ ){
         ptr->Copy(msg);
 
         LOG(DEBUG) <<  "\tTo channel " << chNameIt;
-        returnValue &= (FairMQDevice::SendAsync(ptr, chNameIt) > 0);
+        returnValue &= (FairMQDevice::Send(ptr, chNameIt) > 0);
     }
 
     LOG(DEBUG) << "Sent!";
