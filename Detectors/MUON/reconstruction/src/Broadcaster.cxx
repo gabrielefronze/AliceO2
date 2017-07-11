@@ -38,7 +38,7 @@ bool Broadcaster::Broadcast( FairMQMessagePtr &msg, int /*index*/ ){
 
     for ( auto const &chNameIt : fOutputChannelNames ){
 
-        FairMQMessagePtr ptr = NewMessage(msg->GetSize());
+        FairMQMessagePtr ptr = NewMessage((int)msg->GetSize());
         ptr->Copy(msg);
 
         LOG(DEBUG) <<  "\tTo channel " << chNameIt;
