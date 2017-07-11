@@ -32,7 +32,7 @@ void Broadcaster::InitTask(){
 bool Broadcaster::Broadcast( FairMQMessagePtr &msg, int /*index*/ ){
     bool returnValue = true;
 
-    if ( msg->GetData()==0 ) return returnValue;
+    if ( msg->GetSize()<=100 ) return returnValue;
 
     LOG(DEBUG) << "Sending message...";
 
