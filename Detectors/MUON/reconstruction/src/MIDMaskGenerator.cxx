@@ -22,7 +22,7 @@ MIDMaskGenerator::MIDMaskGenerator():
 MIDMaskGenerator::~MIDMaskGenerator(){
     LOG(DEBUG) << "Detected noisy strips:";
     for(const auto &itMask : fStructMask.noisyStripsIDs){
-        LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter[digitType::kPhysics];
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping.fIDMap.at(itMask)->digitsCounter[digitType::kPhysics];
     }
 }
 
@@ -33,11 +33,13 @@ void MIDMaskGenerator::InitTask() {
 
     // Loading mapping at startup
     std::string mapFilename = fConfig->GetValue<std::string>("binmapfile");
-    if ( !(ReadMapping(mapFilename.c_str())) ){
+    if ( !(fMapping.ReadMapping(mapFilename.c_str())) ){
         LOG(ERROR) << "Error reading the mapping from " << mapFilename;
     } else {
         LOG(INFO) << "Mapping correctly loaded.";
     }
+
+
 
     return;
 }
@@ -62,9 +64,9 @@ bool MIDMaskGenerator::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
     uint64_t *dataPointer = reinterpret_cast<uint64_t*>(msg->GetData());
 
     // Copy the payload of the message in the internal data container
-    for ( int iData = 0; iData < fStripVector.size(); iData++ ) {
+    for ( int iData = 0; iData < fMapping.fStripVector.size(); iData++ ) {
         for (int iType = 0; iType < digitType::kSize; iType++ ) {
-            fStripVector[iData].digitsCounter[iType] = dataPointer[iData*3 + iType];
+            fMapping.fStripVector[iData].digitsCounter[iType] = dataPointer[iData*3 + iType];
         }
     }
 
@@ -92,7 +94,7 @@ void MIDMaskGenerator::FindNoisy(digitType type){
     stripMapping *strip;
     int previousColumnID = 0 ;
 
-    for( auto &vecIteratorRead : fStripVector){
+    for( auto &vecIteratorRead : fMapping.fStripVector){
         strip = &vecIteratorRead;
 
 
@@ -104,24 +106,24 @@ void MIDMaskGenerator::FindNoisy(digitType type){
 
         if (previousColumnID != currentColumnID) {
 
-            uint64_t nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaIfNotZero);
+            uint64_t nStrips = (uint64_t)std::count_if(fMapping.fStructsBuffer.begin(),fMapping.fStructsBuffer.end(),lambdaIfNotZero);
 
             if ( nStrips == 0 ) continue;
 
-            if ( fStructsBuffer.size() == 0 ) {
-                fStructsBuffer.clear();
+            if ( fMapping.fStructsBuffer.size() == 0 ) {
+                fMapping.fStructsBuffer.clear();
                 continue;
             }
 
-            if ( nStrips<fStructsBuffer.size()/10 ){
-                fStructsBuffer.clear();
+            if ( nStrips<fMapping.fStructsBuffer.size()/10 ){
+                fMapping.fStructsBuffer.clear();
                 continue;
             }
 
 //            LOG(DEBUG) << "Counting items (without zeroes) " << fStructsBuffer.size();
 
-            std::sort(fStructsBuffer.begin(),fStructsBuffer.end(),lambdaSortStrips);
-            uint64_t totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end(),0ull,lambdaSumDigits);
+            std::sort(fMapping.fStructsBuffer.begin(),fMapping.fStructsBuffer.end(),lambdaSortStrips);
+            uint64_t totalDigits = std::accumulate(fMapping.fStructsBuffer.begin(),fMapping.fStructsBuffer.end(),0ull,lambdaSumDigits);
 
             Double_t meanCounts = (Double_t)totalDigits/(Double_t)nStrips;
             Double_t nextMeanCounts = 0.;
@@ -131,10 +133,10 @@ void MIDMaskGenerator::FindNoisy(digitType type){
 
 //            LOG(DEBUG) << "Starting while loop";
 
-            while ( cutOut < fStructsBuffer.size() ){
+            while ( cutOut < fMapping.fStructsBuffer.size() ){
 
-                totalDigits = std::accumulate(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
-                nStrips = (uint64_t)std::count_if(fStructsBuffer.begin(),fStructsBuffer.end()-cutOut,lambdaIfNotZero);
+                totalDigits = std::accumulate(fMapping.fStructsBuffer.begin(),fMapping.fStructsBuffer.end()-cutOut,0ull,lambdaSumDigits);
+                nStrips = (uint64_t)std::count_if(fMapping.fStructsBuffer.begin(),fMapping.fStructsBuffer.end()-cutOut,lambdaIfNotZero);
 
                 if ( nStrips == 0 ) break;
 
@@ -152,7 +154,7 @@ void MIDMaskGenerator::FindNoisy(digitType type){
 
 //            LOG(DEBUG) << "Mean counts for column " << currentColumnID << " are " << meanCounts << " obtained with " << cutOut << " calls.";
 
-            for( const auto &stripIterator : fStructsBuffer ){
+            for( const auto &stripIterator : fMapping.fStructsBuffer ){
                 uint64_t digitsCounter = (*stripIterator).digitsCounter[type];
 //                LOG(DEBUG) << digitsCounter;
                 if ( digitsCounter > meanCounts * 42 /* So long and thanks for all the fish */){
@@ -168,10 +170,10 @@ void MIDMaskGenerator::FindNoisy(digitType type){
 
             previousColumnID = currentColumnID;
 
-            fStructsBuffer.clear();
+            fMapping.fStructsBuffer.clear();
         }
 
-        fStructsBuffer.emplace_back(strip);
+        fMapping.fStructsBuffer.emplace_back(strip);
 
 //        LOG(DEBUG) << "Added Strip" << &vecIteratorRead;
 
@@ -192,7 +194,7 @@ void MIDMaskGenerator::FindDead(digitType type){
 //_________________________________________________________________________________________________
 void MIDMaskGenerator::ResetAll(){
 
-    for( auto &vecIteratorRead : fStripVector){
+    for( auto &vecIteratorRead : fMapping.fStripVector){
         vecIteratorRead.isNoisy = kFALSE;
         vecIteratorRead.isDead = kFALSE;
     }
@@ -208,7 +210,7 @@ void MIDMaskGenerator::ResetAll(){
 //_________________________________________________________________________________________________
 void MIDMaskGenerator::FillMask(){
 
-    for(const auto &mapIterator : fInternalMapping){
+    for(const auto &mapIterator : fMapping.fIDMap){
         auto uniqueID = mapIterator.first;
         auto strip = mapIterator.second;
 

@@ -15,7 +15,7 @@ using namespace AliceO2::MUON;
 //_________________________________________________________________________________________________
 MIDoccupancy::MIDoccupancy():
 FairMQDevice(),
-fInternalMapping(0x0)
+fIDMap(0x0)
 {
 
     fStructMask.nDead = 0;
@@ -28,7 +28,7 @@ fInternalMapping(0x0)
 MIDoccupancy::~MIDoccupancy() {
     LOG(DEBUG) << "Detected noisy strips:";
     for(const auto &itMask : fStructMask.noisyStripsIDs){
-        LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter[MIDoccupancy::kPhysics];
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fIDMap.at(itMask)->digitsCounter[MIDoccupancy::kPhysics];
     }
 
     LOG(DEBUG) << "\nSimulated noisy strips:";
@@ -53,7 +53,7 @@ void MIDoccupancy::InitTask() {
 
     fStructsBuffer.reserve(64);
 
-    std::cout<< &fInternalMapping << std::endl;
+    std::cout<< &fIDMap << std::endl;
 }
 
 //_________________________________________________________________________________________________
@@ -89,7 +89,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         stripMapping* strip;
 
         try {
-            strip = fInternalMapping.at(*uniqueIDBuffer);
+            strip = fIDMap.at(*uniqueIDBuffer);
         } catch (std::out_of_range err){
             LOG(ERROR) << "No stripMapping struct found for ID "<< *uniqueIDBuffer;
             continue;
@@ -126,7 +126,7 @@ bool MIDoccupancy::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     const stripMapping* strip;
     uint32_t uniqueID;
 
-    for(const auto &mapIterator : fInternalMapping){
+    for(const auto &mapIterator : fIDMap){
         uniqueID = mapIterator.first;
         strip = mapIterator.second;
 
@@ -170,7 +170,7 @@ bool MIDoccupancy::ReadMapping( const char * filename )
     Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
 
 //    fStripVector.reserve(23000);
-    fInternalMapping.reserve(20992);
+    fIDMap.reserve(20992);
 
     LOG(DEBUG) << "\t"<<numberOfDetectionElements<<" DE found";
     LOG(DEBUG) << "Initializing buffer struct";
@@ -260,9 +260,9 @@ bool MIDoccupancy::ReadMapping( const char * filename )
             }
 
             // save the buffer struct at the iPad position in the map
-            //fInternalMapping.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
+            //fIDMap.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
             fStripVector[nStrips2] = bufferStripMapping;
-            fInternalMapping[padUniqueID] = &(fStripVector[nStrips2]);
+            fIDMap[padUniqueID] = &(fStripVector[nStrips2]);
             nStrips2++;
 
             //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
@@ -462,7 +462,7 @@ void MIDoccupancy::ComputeAllRates() {
 //    Float_t *coord = reinterpret_cast<Float_t*>(msgInit->GetData());
 //
 //    int iID = 0;
-//    for( auto& uniqueIDsIt : fInternalMapping ){
+//    for( auto& uniqueIDsIt : fIDMap ){
 //        ID[iID++] = uniqueIDsIt.first;
 //        coord[iID++] = uniqueIDsIt.second->coord[0][0];
 //        coord[iID++] = uniqueIDsIt.second->coord[0][1];
@@ -484,7 +484,7 @@ void MIDoccupancy::ComputeAllRates() {
 //    Float_t *rate = reinterpret_cast<Float_t*>(msgMonitor->GetData());
 //
 //    int iRate = 0;
-//    for( auto& uniqueIDsIt : fInternalMapping ){
+//    for( auto& uniqueIDsIt : fIDMap ){
 //        rate[iRate++] = uniqueIDsIt.second->rate;
 //    }
 //
