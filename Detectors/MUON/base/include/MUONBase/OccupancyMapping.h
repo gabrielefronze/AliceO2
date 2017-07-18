@@ -31,6 +31,8 @@ namespace AliceO2 {
         class OccupancyMapping {
 
         public:
+            bool ReadMapping(const char*,int elementID);
+            bool ReadMapping(const char*,std::vector<int> elementIDs);
             bool ReadMapping(const char*);
 
             std::unordered_map<uint32_t, stripMapping*> fIDMap;
