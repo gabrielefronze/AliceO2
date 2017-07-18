@@ -15,8 +15,7 @@ export _DYLD_LIBRARY_PATH=${_LD_LIBRARY_PATH}
 
 ALISOFT=$1
 ALICE_WORK_DIR=${ALISOFT}"/sw"
-O2_ROOT=${ALICE_WORK_DIR}"/osx_x86-64/O2/O2-dev-alo-1"
-RUNDIR="$ALISOFT/test_device_data"
+RUNDIR=`pwd`
 JSONDIR="$O2_ROOT/bin/config"
 
 EXECUTABLES=("runMIDFilter" "runMIDMaskGenerator" "runMIDRatesComputer" "runBroadcaster")
