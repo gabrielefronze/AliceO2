@@ -20,7 +20,7 @@ bool OccupancyMapping::ReadMapping( const char * filename )
     int numberOfDetectionElements = 0;
     Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
 
-//    fStripVector.reserve(23000);
+    fStripVector.reserve(20992);
     fIDMap.reserve(20992);
 
     LOG(DEBUG) << "\t"<<numberOfDetectionElements<<" DE found";
@@ -112,8 +112,8 @@ bool OccupancyMapping::ReadMapping( const char * filename )
 
             // save the buffer struct at the iPad position in the map
             //fIDMap.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
-            fStripVector[nStrips2] = bufferStripMapping;
-            fIDMap[padUniqueID] = &(fStripVector[nStrips2]);
+            fStripVector.emplace_back(bufferStripMapping);
+            fIDMap[padUniqueID] = &(fStripVector.back());
             nStrips2++;
 
             //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;

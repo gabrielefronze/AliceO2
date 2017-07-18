@@ -31,13 +31,10 @@ namespace AliceO2 {
         class OccupancyMapping {
 
         public:
-//            inline std::unordered_map<uint32_t, stripMapping*>* GetInternalMapping(){ return &fIDMap; };
-//            inline std::array<stripMapping, 20992>* GetStripVector(){ return &fStripVector; };
-//            inline std::vector<stripMapping *>* GetStructBuffer(){ return &fStructsBuffer; };
             bool ReadMapping(const char*);
 
             std::unordered_map<uint32_t, stripMapping*> fIDMap;
-            std::array<stripMapping, 20992> fStripVector;
+            std::vector<stripMapping> fStripVector;
             std::vector<stripMapping *> fStructsBuffer;
         };
     }
