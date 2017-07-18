@@ -22,8 +22,7 @@ namespace AliceO2 {
 
     namespace MUON {
 
-        class MIDRatesComputer : public FairMQDevice, public OccupancyMapping
-        {
+        class MIDRatesComputer : public FairMQDevice{
         public:
             MIDRatesComputer();
             virtual ~MIDRatesComputer();
@@ -33,6 +32,9 @@ namespace AliceO2 {
             virtual void InitTask();
 
         private:
+
+            OccupancyMapping fMapping;
+
             struct stripMask{
                 UShort_t nDead; // number of elements for deadStripsIDs
                 UShort_t nNoisy; // number of elements for noisyStripsIDs

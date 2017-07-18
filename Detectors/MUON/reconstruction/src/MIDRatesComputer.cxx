@@ -25,7 +25,7 @@ MIDRatesComputer::~MIDRatesComputer() {
     // Output of simulated noisy strips
     LOG(DEBUG) << "Simulated noisy strips:";
     for(const auto &itMask : fStructMaskSim.noisyStripsIDs){
-        LOG(DEBUG) << "\t" << itMask << "\t\t" << fInternalMapping.at(itMask)->digitsCounter[digitType::kPhysics];
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping.fIDMap.at(itMask)->digitsCounter[digitType::kPhysics];
     }
 }
 
@@ -36,7 +36,7 @@ void MIDRatesComputer::InitTask() {
 
     // Loading mapping at startup
     std::string mapFilename = fConfig->GetValue<std::string>("binmapfile");
-    if ( !(ReadMapping(mapFilename.c_str())) ){
+    if ( !(fMapping.ReadMapping(mapFilename.c_str())) ){
         LOG(ERROR) << "Error reading the mapping from " << mapFilename;
     } else {
         LOG(INFO) << "Mapping correctly loaded.";
@@ -84,7 +84,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         // Try to retrieve a pointer to the data member to modify
         stripMapping* strip;
         try {
-            strip = fInternalMapping.at(*uniqueIDBuffer);
+            strip = fMapping.fIDMap.at(*uniqueIDBuffer);
         } catch (std::out_of_range err){
             LOG(ERROR) << "No stripMapping struct found for ID "<< *uniqueIDBuffer;
             continue;
@@ -146,7 +146,7 @@ void MIDRatesComputer::ResetCounters(uint64_t newStartTS, digitType type) {
     auto tStart = std::chrono::high_resolution_clock::now();
 
     //  Reset all counters and timestamps
-    for( auto &vecIterator : fStripVector){
+    for( auto &vecIterator : fMapping.fStripVector){
         stripMapping* strip = &vecIterator;
         strip->digitsCounter[type]=0;
         strip->startTS[type]=newStartTS;
@@ -164,8 +164,8 @@ void MIDRatesComputer::ResetCounters(uint64_t newStartTS, digitType type) {
 //_________________________________________________________________________________________________
 bool MIDRatesComputer::EnoughStatistics(digitType type) {
     // Return if enough statistics has been collected. Customizable.
-    long nOfActiveStrips = std::count_if(fStripVector.begin(),fStripVector.end(),[type](stripMapping strip)->bool{ return strip.digitsCounter[type] > 10; });
-    return nOfActiveStrips > (0.001 * fStripVector.size());
+    long nOfActiveStrips = std::count_if(fMapping.fStripVector.begin(),fMapping.fStripVector.end(),[type](stripMapping strip)->bool{ return strip.digitsCounter[type] > 10; });
+    return nOfActiveStrips > (0.001 * fMapping.fStripVector.size());
 }
 
 //_________________________________________________________________________________________________
@@ -190,7 +190,7 @@ void MIDRatesComputer::ComputeAllRates() {
     auto tStart = std::chrono::high_resolution_clock::now();
 
     // Compute all rates
-    for(auto &stripIt : fStripVector){
+    for(auto &stripIt : fMapping.fStripVector){
         ComputeRate(&stripIt);
     }
 
@@ -204,7 +204,7 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
     auto tStart = std::chrono::high_resolution_clock::now();
 
     // Message size is kSize T elements for each strip
-    uint64_t msgSize = fStripVector.size() * digitType::kSize;
+    uint64_t msgSize = fMapping.fStripVector.size() * digitType::kSize;
 
 //    LOG(DEBUG) << "Msgsize is " << msgSize;
 
@@ -215,9 +215,9 @@ template<typename T> errMsg MIDRatesComputer::SendRates(){
     T *dataPointer = reinterpret_cast<T*>(msgOut->GetData());
 
     // Copy OutputData in the payload of the message
-    for ( int iData = 0; iData < fStripVector.size(); iData++ ) {
+    for ( int iData = 0; iData < fMapping.fStripVector.size(); iData++ ) {
         for (int iType = 0; iType < digitType::kSize; iType++ ) {
-            dataPointer[iData * 3 + iType] = fStripVector[iData].digitsCounter[iType];
+            dataPointer[iData * 3 + iType] = fMapping.fStripVector[iData].digitsCounter[iType];
         }
     }
 

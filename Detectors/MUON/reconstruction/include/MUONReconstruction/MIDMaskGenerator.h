@@ -13,7 +13,7 @@ namespace AliceO2 {
 
     namespace MUON {
 
-        class MIDMaskGenerator : public FairMQDevice, public OccupancyMapping{
+        class MIDMaskGenerator : public FairMQDevice{
 
         public:
             MIDMaskGenerator();
@@ -24,6 +24,8 @@ namespace AliceO2 {
             virtual void InitTask();
 
         private:
+
+            OccupancyMapping fMapping;
 
             using IDType = uint32_t ;
 

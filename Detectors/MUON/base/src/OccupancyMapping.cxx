@@ -21,7 +21,7 @@ bool OccupancyMapping::ReadMapping( const char * filename )
     Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename,numberOfDetectionElements);
 
 //    fStripVector.reserve(23000);
-    fInternalMapping.reserve(20992);
+    fIDMap.reserve(20992);
 
     LOG(DEBUG) << "\t"<<numberOfDetectionElements<<" DE found";
     LOG(DEBUG) << "Initializing buffer struct";
@@ -111,9 +111,9 @@ bool OccupancyMapping::ReadMapping( const char * filename )
             }
 
             // save the buffer struct at the iPad position in the map
-            //fInternalMapping.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
+            //fIDMap.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
             fStripVector[nStrips2] = bufferStripMapping;
-            fInternalMapping[padUniqueID] = &(fStripVector[nStrips2]);
+            fIDMap[padUniqueID] = &(fStripVector[nStrips2]);
             nStrips2++;
 
             //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
