@@ -1,10 +1,22 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-ALISOFT="/Users/Gabriele/alice_sw"
-O2_ROOT="/Users/Gabriele/alice_sw/sw/osx_x86-64/O2/O2-dev-alo-1"
+if [ -z $1 ]; then
+    echo "Gimme the damn ALISOFT!"
+    exit 1;
+fi
 
+if [ -z $2 ]; then
+    echo "Gimme the damn [DY]LD_LIBRARY_PATH!"
+    exit 2;
+fi
+
+export _LD_LIBRARY_PATH=$2
+export _DYLD_LIBRARY_PATH=${_LD_LIBRARY_PATH}
+
+ALISOFT=$1
+ALICE_WORK_DIR=${ALISOFT}"/sw"
+O2_ROOT=${ALICE_WORK_DIR}"/osx_x86-64/O2/O2-dev-alo-1"
 RUNDIR="$ALISOFT/test_device_data"
-
 JSONDIR="$O2_ROOT/bin/config"
 
 EXECUTABLES=("runMIDFilter" "runMIDMaskGenerator" "runMIDRatesComputer" "runBroadcaster")
@@ -31,29 +43,29 @@ GENERATOR_EXECUTABLE="aliceHLTWrapperApp 'DigitReader' 1 -x --output type=push,s
 
 echo "Following commands will be executed:"
 echo ${GENERATOR_EXECUTABLE}
+
 for index in ${originalindices};
 do
-    screen -D -RR ${EXECUTABLES[$index]} -X quit || true
-#    screen -dmS ${EXECUTABLES[$index]} bash -c "echo bravo;$SHELL";
-    screen -dmS ${EXECUTABLES[$index]} bash -c '$SHELL'
-    screen -S ${EXECUTABLES[$index]} -p 0 -X stuff $'eval \"`~/Library/Python/2.7/bin/alienv -w $ALICE_WORK_DIR load O2/latest,alo/latest,AliRoot-OCDB/latest`\"\n'
-    sleep 1
 
-    COMMAND=${EXECUTABLES[$index]}" --id '"${IDS[$index]}"' --mq-config '"${JSONS[$index]}"' "${OPTIONS[$index]}
-    echo ${COMMAND}
+    EXPORT_COMMAND='export PATH='${PATH}'; export LD_LIBRARY_PATH='${_LD_LIBRARY_PATH}'; export DYLD_LIBRARY_PATH='${_DYLD_LIBRARY_PATH}
+    CD_COMMAND='cd '${RUNDIR}
+    RUN_COMMAND=${EXECUTABLES[$index]}" --id '"${IDS[$index]}"' --mq-config '"${JSONS[$index]}"' "${OPTIONS[$index]}
 
-    screen -S ${EXECUTABLES[$index]} -p 0 -X stuff "cd $RUNDIR"
-    screen -S ${EXECUTABLES[$index]} -p 0 -X stuff $'\n'
-    screen -S ${EXECUTABLES[$index]} -p 0 -X stuff "${COMMAND}"
-    screen -S ${EXECUTABLES[$index]} -p 0 -X stuff $'\n'
+    echo "$RUN_COMMAND"
 
-#    eval "`screen -S ${EXECUTABLES[$index]} -p 0 -X stuff ${COMMAND}`"
-
+    screen -dmS ${EXECUTABLES[$index]} bash -c "$EXPORT_COMMAND; $CD_COMMAND; $RUN_COMMAND"
 done
 
-#read -p "Press any key to kill all screens..."
-#for index in ${originalindices};
-#do
-#    screen -S ${EXECUTABLES[$index]} -p 0 -X stuff "^C"
-#done
-#screen -ls | grep Detached | cut -d. -f1 | awk '{print $1}' | xargs kill
+read -p "Press any key to kill all screens..."
+for index in ${originalindices};
+do
+    killall ${EXECUTABLES[$index]}
+done
+screen -ls | grep Detached | cut -d. -f1 | awk '{print $1}' | xargs kill
+wait 1
+for index in ${originalindices};
+do
+    killall ${EXECUTABLES[$index]}
+done
+
+exit 0
