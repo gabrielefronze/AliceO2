@@ -25,3 +25,9 @@ In another terminal:
 ```bash
 runMIDclustering --id 'MIDclustering' --binmapfile 'binmapfile_MID.dat' --source 'tcp://localhost:45000' --mq-config "$O2_ROOT/bin/config/runMIDclustering.json"
 ```
+
+### Digits filtering chain
+The Digits filtering chain performs the detection of dead and noisy strips online.
+After the detection of the problematic strips their digits are purged from the data that will be forwarded to the reconstruction devices (e.g. the above cited MIDclustering).
+
+![alt text](https://github.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.png)
