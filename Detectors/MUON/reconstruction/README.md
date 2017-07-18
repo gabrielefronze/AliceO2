@@ -53,13 +53,13 @@ runBroadcaster --id 'Broadcaster' --mq-config '$O2_ROOT/bin/config/runBroadcaste
 ```
 
 ### Start MIDRatesComputer
-In one terminal launch:
+In another terminal launch:
 ```bash
 runMIDRatesComputer --id 'MIDRatesComputer' --mq-config '$O2_ROOT/bin/config/runMIDRatesComputer.json' --binmapfile 'binmapfile.dat'
 ```
 
 ### Start MIDMaskGenerator
-In one terminal launch:
+In another terminal launch:
 ```bash
 runMIDMaskGenerator --id 'MIDMaskGenerator' --mq-config '$O2_ROOT/bin/config/runMIDMaskGenerator.json' --binmapfile 'binmapfile.dat'
 ```
@@ -71,7 +71,7 @@ runMIDFilter --id 'MIDFilter' --mq-config '$O2_ROOT/bin/config/runMIDFilter.json
 ```
 
 ### Start digits reader
-In one terminal launch:
+In another terminal launch:
 ```bash
 aliceHLTWrapperApp 'DigitReader' 1 -x --output type=push,size=10,method=bind,address=tcp://*:22777 --library libdhlt.dylib --component MUONDigitReader --parameter '-datafile merged.digits.MB.196099.root'
 ```
@@ -94,10 +94,33 @@ Environment variables corresponding to the two parameters are set by alienv ente
 
 The correct `alienv enter(load)` command has to be run prior the script execution.
 
+### Screen sessions naming
+A screen session running the device `A` will be called `runA` and always contains a single instance of `runA` application being executed.
+The output of `screen -ls` after the script execution will be similar to:
+```bash
+There are screens on:
+	30877.runMIDFilter	(Detached)
+	30880.runMIDMaskGenerator	(Detached)
+	30883.runMIDRatesComputer	(Detached)
+	30886.runBroadcaster	(Detached)
+4 Sockets in /var/folders/[...]/.screen.
+```
+
 ### Run the script
-Execute the automatic script within the correct environment loaded with `alienv`.
+In one terminal execute the automatic script within the correct environment loaded with `alienv`.
 ```bash
 runFilteringChain.sh $ALISOFT $LD_LIBRARY_PATH
 ```
 
-### Screen sessions naming
+### Start digits reader
+In another terminal launch:
+```bash
+aliceHLTWrapperApp 'DigitReader' 1 -x --output type=push,size=10,method=bind,address=tcp://*:22777 --library libdhlt.dylib --component MUONDigitReader --parameter '-datafile merged.digits.MB.196099.root'
+```
+
+### Connect to screen session
+In several other terminal sessions:
+```bash
+screen -r [sessionName]
+```
+Choose sessionName based on `screen -ls` output.
