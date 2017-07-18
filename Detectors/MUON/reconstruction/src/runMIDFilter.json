@@ -34,7 +34,7 @@
             "name": "digits-out",
             "sockets": [
               {
-                "type": "push",
+                "type": "pub",
                 "method": "bind",
                 "address": "tcp://*:24000",
                 "sndBufSize": 1500,
