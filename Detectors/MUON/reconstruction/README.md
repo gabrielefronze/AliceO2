@@ -31,6 +31,9 @@ The following diagram represents the data flows and the devices used to perform 
 
 <center><img src="https://github.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.svg"></center>
 
+![svg_diagram](https://github.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.svg)
+<img src="https://github.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.svg">
+
 Here some details on the devices:
 
 * The digits generator devices still has to be defined. For testing purposes `aliHLTWrapper` works well as described in the above section.
