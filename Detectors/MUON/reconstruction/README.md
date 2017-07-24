@@ -29,7 +29,7 @@ The Digits filtering chain performs the detection of dead and noisy strips onlin
 After the detection of the problematic strips their digits are purged from the data that will be forwarded to the reconstruction devices (e.g. the above cited MIDclustering).
 The following diagram represents the data flows and the devices used to perform the filtering.
 
-<center><img src="https://github.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.png"></center>
+<center><img src="https://github.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.svg"></center>
 
 Here some details on the devices:
 
