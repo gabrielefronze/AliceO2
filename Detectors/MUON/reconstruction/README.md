@@ -31,8 +31,9 @@ The following diagram represents the data flows and the devices used to perform 
 
 <center><img src="https://github.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.png"></center>
 
-![svg_diagram](https://rawgithub.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.svg)
-<img src="https://rawgithub.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.svg">
+<a href="https://pippo">
+  <img src="https://rawgithub.com/gabrielefronze/AliceO2/blob/my-dev-occupancy/Detectors/MUON/MIDFiltering_diagram.svg" width="100%" height="144">
+</a>
 
 Here some details on the devices:
 
