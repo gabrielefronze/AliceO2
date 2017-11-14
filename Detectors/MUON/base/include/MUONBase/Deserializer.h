@@ -5,7 +5,6 @@
 #ifndef DESERIALIZER_H
 #define DESERIALIZER_H
 
-#include "Rtypes.h"
 #include "FairMQMessage.h"
 
 namespace AliceO2 {

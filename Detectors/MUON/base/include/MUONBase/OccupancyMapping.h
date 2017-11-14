@@ -5,7 +5,6 @@
 #ifndef O2_DEV_ALO_OCCUPANCYMAPPING_H
 #define O2_DEV_ALO_OCCUPANCYMAPPING_H
 
-#include "Rtypes.h"
 #include <array>
 #include <vector>
 #include <unordered_map>
@@ -21,11 +20,11 @@ namespace AliceO2 {
             uint64_t stopTS[kSize]; // timestamp of last added run
             uint64_t digitsCounter[kSize]; // counter of time the strip has been fired
             UShort_t columnID;
-            Float_t area; // 1D area
-            Float_t coord[2][2];
-            Float_t rate[kSize]; // rate in Hz/cm2 or 1/cm2
-            Bool_t isDead;
-            Bool_t isNoisy;
+            float area; // 1D area
+            float coord[2][2];
+            float rate[kSize]; // rate in Hz/cm2 or 1/cm2
+            bool isDead;
+            bool isNoisy;
         };
 
         class OccupancyMapping {
