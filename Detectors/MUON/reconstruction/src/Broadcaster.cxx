@@ -1,7 +1,3 @@
-//
-// Created by Gabriele Gaetano Fronzé on 10/07/2017.
-//
-
 #include "MUONReconstruction/Broadcaster.h"
 
 using namespace AliceO2::MUON;

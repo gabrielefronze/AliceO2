@@ -1,9 +1,12 @@
-//
-// Created by Gabriele Gaetano Fronzé on 28/04/2017.
-//
-
 #ifndef DESERIALIZER_H
 #define DESERIALIZER_H
+
+///
+///  @file   Deserializer
+///  @author Gabriele G. Fronzé <gfronze at cern.ch>
+///  @date   24 July 2017
+///  @brief  Little deserializer app to unpack MID messages
+///
 
 #include "FairMQMessage.h"
 

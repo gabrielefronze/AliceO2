@@ -1,9 +1,12 @@
-//
-// Created by Gabriele Gaetano Fronzé on 02/05/2017.
-//
-
 #ifndef MIDOCCUPANCY_H
 #define MIDOCCUPANCY_H
+
+///
+///  @file   MIDoccupancy
+///  @author Gabriele G. Fronzé <gfronze at cern.ch>
+///  @date   24 July 2017
+///  @brief  Occupancy container device for MID
+///
 
 #include "Rtypes.h"
 #include "FairMQDevice.h"

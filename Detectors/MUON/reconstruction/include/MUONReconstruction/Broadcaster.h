@@ -1,9 +1,12 @@
-//
-// Created by Gabriele Gaetano Fronzé on 10/07/2017.
-//
-
 #ifndef O2_DEV_ALO_BROADCASTER_H
 #define O2_DEV_ALO_BROADCASTER_H
+
+///
+///  @file   Broadcaster
+///  @author Gabriele G. Fronzé <gfronze at cern.ch>
+///  @date   24 July 2017
+///  @brief  Device to perform BCast of the
+///
 
 #include "FairMQDevice.h"
 #include "FairMQChannel.h"

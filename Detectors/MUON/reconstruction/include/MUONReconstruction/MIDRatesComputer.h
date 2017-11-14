@@ -1,9 +1,12 @@
-//
-// Created by Gabriele Gaetano Fronzé on 26/06/2017.
-//
-
 #ifndef O2_DEV_ALO_MIDRATESCOMPUTER_H
 #define O2_DEV_ALO_MIDRATESCOMPUTER_H
+
+///
+///  @file   MIDRatesComputer
+///  @author Gabriele G. Fronzé <gfronze at cern.ch>
+///  @date   24 July 2017
+///  @brief  Device to compute rates based on occupancy information for MID
+///
 
 #include "FairMQDevice.h"
 #include "MUONBase/Enums.h"
