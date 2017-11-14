@@ -30,8 +30,8 @@ namespace AliceO2 {
             using IDType = uint32_t ;
 
             struct stripMask{
-                UShort_t nDead; // number of elements for deadStripsIDs
-                UShort_t nNoisy; // number of elements for noisyStripsIDs
+                short nDead; // number of elements for deadStripsIDs
+                short nNoisy; // number of elements for noisyStripsIDs
                 std::unordered_set<IDType> deadStripsIDs; // container of UniqueIDs of dead strips
                 std::unordered_set<IDType> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };

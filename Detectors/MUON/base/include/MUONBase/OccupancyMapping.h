@@ -19,7 +19,7 @@ namespace AliceO2 {
             uint64_t startTS[kSize]; // timestamp of first added run
             uint64_t stopTS[kSize]; // timestamp of last added run
             uint64_t digitsCounter[kSize]; // counter of time the strip has been fired
-            UShort_t columnID;
+            short columnID;
             float area; // 1D area
             float coord[2][2];
             float rate[kSize]; // rate in Hz/cm2 or 1/cm2
