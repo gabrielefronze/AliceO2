@@ -14,7 +14,6 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include "TPave.h"
 
 
 namespace AliceO2 {

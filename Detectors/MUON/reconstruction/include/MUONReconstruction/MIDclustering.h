@@ -1,7 +1,6 @@
 #ifndef MIDclustering_h
 #define MIDclustering_h
 
-
 ///
 ///  @file   MIDclustering
 ///  @author Diego Stocco <Diego.Stocco at cern.ch>
