@@ -57,7 +57,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
     // If the input is smaller than the header size the message is empty and we should skip.
     if ( msg->GetSize()<100 ) {
-//        LOG(ERROR) << "Message empty, skipping";
+        LOG(ERROR) << "Message empty, skipping";
         return true;
     }
 
@@ -67,12 +67,12 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     // Counter of received digits
     int counter = 0;
 
-//    LOG(INFO) << "Received valid message";
+    LOG(INFO) << "Received valid message";
 
     // Loop over the digits of the message.
     uint32_t *uniqueIDBuffer;
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
-        //    LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
+            LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
 
         // We want to discard MCH digits (if any)
         if ( ((*uniqueIDBuffer) & 0xFFF) < 1100 ) continue;
@@ -103,7 +103,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         strip->digitsCounter[digitType]++;
         if ( gRandom->Rndm() > 0.99 ){
             strip->digitsCounter[digitType]+=999999;
-//            LOG(ERROR) << "Simulating noisy strip " << *uniqueIDBuffer;
+            LOG(ERROR) << "Simulating noisy strip " << *uniqueIDBuffer;
             auto dummy = fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
             fStructMaskSim.nNoisy++;
         }
