@@ -45,8 +45,6 @@ namespace AliceO2 {
 
             stripMask fStructMaskSim;
 
-//            bool ReadMapping(const char*);
-
             void ResetCounters(uint64_t newStartTS, digitType type);
             bool EnoughStatistics(digitType type);
 
