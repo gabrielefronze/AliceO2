@@ -36,6 +36,8 @@ bool Deserializer::Rewind(){
     // It is enough to reset the digits counter and the offset
     fDigitCounter = 0;
     fOffset = 1;
+
+    return true;
 }
 
 //_________________________________________________________________________________________________
