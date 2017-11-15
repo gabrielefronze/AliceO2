@@ -16,13 +16,13 @@ namespace AliceO2 {
     namespace MUON {
 
         struct stripMapping {
-            uint64_t startTS[kSize]; // timestamp of first added run
-            uint64_t stopTS[kSize]; // timestamp of last added run
-            uint64_t digitsCounter[kSize]; // counter of time the strip has been fired
+            uint64_t startTS[digitType::kSize]; // timestamp of first added run
+            uint64_t stopTS[digitType::kSize]; // timestamp of last added run
+            uint64_t digitsCounter[digitType::kSize]; // counter of time the strip has been fired
             unsigned short columnID;
             float area; // 1D area
             float coord[2][2];
-            float rate[kSize]; // rate in Hz/cm2 or 1/cm2
+            float rate[digitType::kSize]; // rate in Hz/cm2 or 1/cm2
             bool isDead;
             bool isNoisy;
         };
