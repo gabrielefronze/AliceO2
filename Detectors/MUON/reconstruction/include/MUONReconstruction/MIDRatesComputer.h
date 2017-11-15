@@ -37,8 +37,8 @@ namespace AliceO2 {
             OccupancyMapping fMapping;
 
             struct stripMask{
-                unsigned short nDead; // number of elements for deadStripsIDs
-                unsigned short nNoisy; // number of elements for noisyStripsIDs
+                ushort_t nDead; // number of elements for deadStripsIDs
+                ushort_t nNoisy; // number of elements for noisyStripsIDs
                 std::unordered_set<uint32_t> deadStripsIDs; // container of UniqueIDs of dead strips
                 std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };

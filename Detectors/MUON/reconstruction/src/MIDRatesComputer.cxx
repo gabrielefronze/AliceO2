@@ -173,7 +173,7 @@ void MIDRatesComputer::ComputeRate(stripMapping* strip) {
 
     // Compute all the rates for a given strip
     for (int iType = 0; iType < digitType::kSize; ++iType) {
-        strip->rate[iType] = (Float_t)(strip->digitsCounter[iType]) / strip->area;
+        strip->rate[iType] = (float_t)(strip->digitsCounter[iType]) / strip->area;
 
         uint64_t startTS = strip->startTS[iType];
         uint64_t stopTS = strip->stopTS[iType];
