@@ -35,8 +35,8 @@ namespace AliceO2 {
         private:
 
             struct stripMask {
-                UShort_t nDead; // number of elements for deadStripsIDs
-                UShort_t nNoisy; // number of elements for noisyStripsIDs
+                unsigned short nDead; // number of elements for deadStripsIDs
+                unsigned short nNoisy; // number of elements for noisyStripsIDs
                 std::unordered_set<uint32_t> deadStripsIDs; // container of UniqueIDs of dead strips
                 std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };
