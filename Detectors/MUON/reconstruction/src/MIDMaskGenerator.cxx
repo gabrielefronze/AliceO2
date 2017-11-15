@@ -38,10 +38,6 @@ void MIDMaskGenerator::InitTask() {
     } else {
         LOG(INFO) << "Mapping correctly loaded.";
     }
-
-
-
-    return;
 }
 
 //_________________________________________________________________________________________________
