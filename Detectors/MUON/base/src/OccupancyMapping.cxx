@@ -28,18 +28,14 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
     stripMapping bufferStripMapping;
 
     // initialization of the buffer struct
-    bufferStripMapping.startTS[0] = 0;
-    bufferStripMapping.startTS[1] = 0;
-    bufferStripMapping.startTS[2] = 0;
-    bufferStripMapping.stopTS[0] = 0;
-    bufferStripMapping.stopTS[1] = 0;
-    bufferStripMapping.stopTS[2] = 0;
-    bufferStripMapping.rate[0] = 0;
-    bufferStripMapping.rate[1] = 0;
-    bufferStripMapping.rate[2] = 0;
-    bufferStripMapping.digitsCounter[0] = 0;
-    bufferStripMapping.digitsCounter[1] = 0;
-    bufferStripMapping.digitsCounter[2] = 0;
+    for (int iDigitType = 0; iDigitType < digitType::kSize; ++iDigitType) {
+        bufferStripMapping.startTS[iDigitType] = (uint64_t)0;
+        bufferStripMapping.stopTS[iDigitType] = (uint64_t)0;
+        bufferStripMapping.rate[iDigitType] = (uint64_t)0;
+        bufferStripMapping.digitsCounter[iDigitType] = (uint64_t)0;
+        bufferStripMapping.rate[iDigitType] = (float_t)0;
+    }
+
     bufferStripMapping.isDead = false;
     bufferStripMapping.isNoisy = false;
 
@@ -59,7 +55,7 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
     // the two maps have to be reversed to make iPad->UniqueID
     std::unordered_map<uint32_t, uint32_t> reversedPadIndexes;
 
-    // Using indecesIt1.second-1 because of theway the mapping has been filled
+    // Using indecesIt1.second-1 because of the way the mapping has been filled
     for (const auto &indecesIt1 : *padIndeces[0]){
         reversedPadIndexes.insert({(uint32_t)indecesIt1.second-1,(uint32_t)indecesIt1.first});
     }
