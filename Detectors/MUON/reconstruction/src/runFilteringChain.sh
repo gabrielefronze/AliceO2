@@ -15,7 +15,7 @@ export _DYLD_LIBRARY_PATH=${_LD_LIBRARY_PATH}
 
 ALISOFT=$1
 ALICE_WORK_DIR=${ALISOFT}"/sw"
-RUNDIR=`pwd`
+RUNDIR="$ALISOFT/test_device_data"
 JSONDIR="$O2_ROOT/bin/config"
 
 EXECUTABLES=("runMIDFilter" "runMIDMaskGenerator" "runMIDRatesComputer" "runBroadcaster")
@@ -38,7 +38,9 @@ OPTIONS=(
     ""
     )
 
-GENERATOR_EXECUTABLE="aliceHLTWrapperApp 'DigitReader' 1 -x --output type=push,size=10,method=bind,address=tcp://*:22777 --library libdhlt.dylib --component MUONDigitReader --parameter '-datafile digits.root'"
+#GENERATOR_EXECUTABLE="aliceHLTWrapperApp 'DigitReader' 1 -x --output type=push,size=10,method=bind,address=tcp://*:22777 --library libdhlt.dylib --component MUONDigitReader --parameter '-datafile digits.root'"
+
+GENERATOR_EXECUTABLE="AliceHLTWrapperDevice 'DigitReader' --id 1 --channel-config 'name=data-out,type=push,size=10,method=bind,address=tcp://*:22777' --library libdhlt --component MUONDigitReader --parameter '-datafile digits.root' --run 169099 -m 2"
 
 echo "Following commands will be executed:"
 echo ${GENERATOR_EXECUTABLE}
@@ -47,7 +49,7 @@ for index in ${originalindices};
 do
 
     EXPORT_COMMAND='export PATH='${PATH}'; export LD_LIBRARY_PATH='${_LD_LIBRARY_PATH}'; export DYLD_LIBRARY_PATH='${_DYLD_LIBRARY_PATH}
-    CD_COMMAND='cd '${RUNDIR}
+    CD_COMMAND='cd ~/alice_sw/test_device_data'
     RUN_COMMAND=${EXECUTABLES[$index]}" --id '"${IDS[$index]}"' --mq-config '"${JSONS[$index]}"' "${OPTIONS[$index]}
 
     echo "$RUN_COMMAND"
