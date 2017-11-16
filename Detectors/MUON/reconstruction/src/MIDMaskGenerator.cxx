@@ -208,7 +208,8 @@ void MIDMaskGenerator::FillMask(){
 
     for(const auto &mapIterator : fMapping.fIDMap){
         auto uniqueID = mapIterator.first;
-        auto strip = fMapping[mapIterator.second];
+        auto index = mapIterator.second;
+        auto strip = &(fMapping.fStripVector[index]);
 
         if ( strip->isDead ) {
 
