@@ -96,7 +96,7 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
         }
         padUniqueID = IDFinder->second;
 
-        LOG(DEBUG) << (padUniqueID & 0xFFF) << " " << iPad;
+//        LOG(DEBUG) << (padUniqueID & 0xFFF) << " " << iPad;
         fIDMap.insert(std::make_pair(padUniqueID, fStripVector.size()));
 
         nStrips2++;
