@@ -26,6 +26,7 @@ namespace AliceO2 {
             float_t rate[digitType::kSize]; // rate in Hz/cm2 or 1/cm2
             bool isDead;
             bool isNoisy;
+            stripMapping();
         };
 
         class OccupancyMapping {

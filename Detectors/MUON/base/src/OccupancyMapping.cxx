@@ -20,24 +20,8 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
     
     // Check if the required element ID is
     if ( elementID < 0 || elementID > numberOfDetectionElements ) return false;
-//
-//    LOG(DEBUG) << "\t"<<numberOfDetectionElements<<" DE found";
-//    LOG(DEBUG) << "Initializing buffer struct";
 
-    // struct to contain data from each strip
-    stripMapping bufferStripMapping;
-
-    // initialization of the buffer struct
-    for (int iDigitType = 0; iDigitType < digitType::kSize; ++iDigitType) {
-        bufferStripMapping.startTS[iDigitType] = (uint64_t)0;
-        bufferStripMapping.stopTS[iDigitType] = (uint64_t)0;
-        bufferStripMapping.rate[iDigitType] = (uint64_t)0;
-        bufferStripMapping.digitsCounter[iDigitType] = (uint64_t)0;
-        bufferStripMapping.rate[iDigitType] = (float_t)0;
-    }
-
-    bufferStripMapping.isDead = false;
-    bufferStripMapping.isNoisy = false;
+    LOG(DEBUG) << "\t"<<elementID<<" DE found ";
 
     Int_t nStrips = 0;
     Int_t nStrips2 = 0;
@@ -75,6 +59,10 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
 
     // loop over pads from each DE
     for ( uint32_t iPad = 0; iPad < numberOfPads; iPad++ ){
+
+        // struct to contain data from each strip
+//    LOG(DEBUG) << "Initializing buffer struct";
+        stripMapping bufferStripMapping = stripMapping();
 
 //            LOG(DEBUG) << "Processing pad "<<iPad;
 
@@ -148,4 +136,20 @@ bool OccupancyMapping::ReadMapping( const char * filename )
     LOG(DEBUG) << counter << " " << numberOfDetectionElements << " loaded";
 
     return counter==numberOfDetectionElements;
+}
+stripMapping::stripMapping() {
+    for (int iDigitType = 0; iDigitType < digitType::kSize; iDigitType++) {
+        startTS[iDigitType] = 0;
+        stopTS[iDigitType] = 0;
+        rate[iDigitType] = 0;
+        digitsCounter[iDigitType] = 0;
+    }
+    columnID = 0;
+    area = 0;
+    coord[0][0] = 0;
+    coord[0][1] = 0;
+    coord[1][1] = 0;
+    coord[1][0] = 0;
+    isDead = false;
+    isNoisy = false;
 }
