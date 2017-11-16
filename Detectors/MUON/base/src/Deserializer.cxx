@@ -43,7 +43,7 @@ bool Deserializer::Rewind(){
 //_________________________________________________________________________________________________
 Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
 
-    Advance();
+    if (!Advance()) return nullptr;
     Load();
 
     // If everything is ok return the pointer to the internal dataStruct
@@ -53,7 +53,7 @@ Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
 //_________________________________________________________________________________________________
 uint32_t* Deserializer::NextUniqueID(bool loadAllData) {
 
-    Advance();
+    if (!Advance()) return nullptr;
     if (loadAllData) Load();
 
     // If everything is ok return the pointer to the internal dataStruct
