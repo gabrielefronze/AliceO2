@@ -26,7 +26,7 @@ MIDRatesComputer::~MIDRatesComputer() {
     // Output of simulated noisy strips
     LOG(DEBUG) << "Simulated noisy strips:";
     for(const auto &itMask : fStructMaskSim.noisyStripsIDs){
-        LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping.fIDMap.at(itMask)->digitsCounter[digitType::kPhysics];
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
     }
 }
 
@@ -64,18 +64,20 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         return true;
     }
 
+//    LOG(INFO) << msg->GetSize();
+
     // Deserializer will help decoding the message
     Deserializer MessageDeserializer(msg);
 
     // Counter of received digits
     int counter = 0;
 
-    LOG(INFO) << "Received valid message";
+    LOG(INFO) << "Received valid message with " << MessageDeserializer.GetNDigits() <<" digits";
 
     // Loop over the digits of the message.
     uint32_t *uniqueIDBuffer;
     while((uniqueIDBuffer = MessageDeserializer.NextUniqueID())){
-            LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
+//        LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
 
         // We want to discard MCH digits (if any)
         if ( ((*uniqueIDBuffer) & 0xFFF) < 1100 ) continue;
@@ -84,14 +86,15 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
         digitType digitType = digitType::kSize;
 
+        LOG(ERROR) << (fMapping[134325324])->digitsCounter[0];
+
         // Try to retrieve a pointer to the data member to modify
-        stripMapping* strip;
-        try {
-            strip = fMapping.fIDMap.at(*uniqueIDBuffer);
-        } catch (std::out_of_range err){
-            LOG(ERROR) << "No stripMapping struct found for ID "<< *uniqueIDBuffer;
+        stripMapping* strip = fMapping[*uniqueIDBuffer];
+        if(!strip) {
+            LOG(ERROR) << "Mapping not found for that uniqueID: " << uniqueIDBuffer;
             continue;
         }
+
 
         // TODO: here we need to check the kind of event. No clue on where it is stored for the moment.
         if ( true /*physics*/ ){
@@ -102,24 +105,28 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
             digitType = digitType::kTriggered;
         } else continue;
 
+        LOG(INFO) << "StripMapping struct found for element: " << MessageDeserializer.PrintData() << " " << strip->digitsCounter[0];
+
         // Increase the counter of digits for the strip
         strip->digitsCounter[digitType]++;
-        if ( gRandom->Rndm() > 0.99 ){
-            strip->digitsCounter[digitType]+=999999;
-            LOG(ERROR) << "Simulating noisy strip " << *uniqueIDBuffer;
-            auto dummy = fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
-            fStructMaskSim.nNoisy++;
-        }
+        LOG(INFO) << (long int)strip->digitsCounter[digitType];
+//        if ( gRandom->Rndm() > 0.99 ){
+//            strip->digitsCounter[digitType]+=999999;
+//            LOG(ERROR) << "Simulating noisy strip " << ((*uniqueIDBuffer) & 0xFFF);
+//            auto dummy = fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
+//            fStructMaskSim.nNoisy++;
+//        }
     }
 
     LOG(INFO) << "Received valid message containing "<<counter<<" digits";
 
     // Check if enough statistics is already present for a given digitType
     if ( !EnoughStatistics(digitType::kPhysics) ) {
-//        LOG(INFO) << "Not enough statistics: waiting for more.";
+        LOG(INFO) << "Not enough statistics: waiting for more.";
         return true;
     };
 
+    LOG(INFO) << "Computing rates.";
     // If enough statistics compute all rates
     MIDRatesComputer::ComputeAllRates();
 
