@@ -12,6 +12,7 @@
 #include "MUONBase/Enums.h"
 #include "MUONBase/OccupancyMapping.h"
 #include "MUONBase/Mapping.h"
+#include "MUONBase/Chrono.h"
 #include "string.h"
 #include <array>
 #include <vector>
@@ -52,6 +53,9 @@ namespace AliceO2 {
             void ComputeAllRates();
 
             template<typename T> errMsg SendRates();
+
+            //Chrono object to compute duration
+            Chrono fChronometer;
         };
 
     }

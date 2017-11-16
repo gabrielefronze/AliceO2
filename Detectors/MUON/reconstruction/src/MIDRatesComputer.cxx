@@ -28,6 +28,8 @@ MIDRatesComputer::~MIDRatesComputer() {
     for(const auto &itMask : fStructMaskSim.noisyStripsIDs){
         LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
     }
+
+    LOG(INFO) << "Average performance: " << fChronometer.PrintStatus();
 }
 
 //_________________________________________________________________________________________________
@@ -47,6 +49,8 @@ void MIDRatesComputer::InitTask() {
 //_________________________________________________________________________________________________
 bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 {
+    DeltaT deltaT();
+    fChronometer.AddCall(deltaT());
 
     // If the message is empty something is going wrong. The process should be aborted.
     if ( !msg ) {
