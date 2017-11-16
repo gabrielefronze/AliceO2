@@ -44,7 +44,20 @@ namespace AliceO2 {
                 return &(fStripVector[stripFinder->second]);
             }
 
-            bool Consistent(){ return (fIDMap.size() == fStripVector.size()); };
+            bool Consistent(bool deep = false){
+
+                bool counterStatus = (fIDMap.size() == fStripVector.size());
+
+                if(deep && counterStatus){
+                    for(const auto &it : fStripVector){
+                        for (const auto &iCounter : it.digitsCounter) {
+                            counterStatus = counterStatus && iCounter;
+                        }
+                    }
+                }
+
+                return counterStatus;
+            };
 
             std::unordered_map<uint32_t, size_t> fIDMap;
             std::vector<stripMapping> fStripVector;
