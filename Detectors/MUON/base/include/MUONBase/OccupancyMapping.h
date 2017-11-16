@@ -36,7 +36,17 @@ namespace AliceO2 {
             bool ReadMapping(const char*,std::vector<int> elementIDs);
             bool ReadMapping(const char*);
 
-            std::unordered_map<uint32_t, stripMapping*> fIDMap;
+            stripMapping* operator[](uint32_t ID){
+                auto stripFinder = fIDMap.find(ID);
+                if (stripFinder == fIDMap.end()){
+                    return nullptr;
+                }
+                return &(fStripVector[stripFinder->second]);
+            }
+
+            bool Consistent(){ return (fIDMap.size() == fStripVector.size()); };
+
+            std::unordered_map<uint32_t, size_t> fIDMap;
             std::vector<stripMapping> fStripVector;
             std::vector<stripMapping *> fStructsBuffer;
         };

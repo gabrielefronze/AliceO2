@@ -55,7 +55,9 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
 
     // reserving the needed space for the following method
     fStripVector.reserve((unsigned int)numberOfPads);
-    fIDMap.reserve((unsigned int)numberOfPads);
+//    fIDMap.reserve((unsigned int)numberOfPads);
+
+    auto vectSize = fStripVector.size();
 
     // loop over pads from each DE
     for ( uint32_t iPad = 0; iPad < numberOfPads; iPad++ ){
@@ -81,19 +83,22 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
 
 //            LOG(DEBUG) << "Inserting the internal mapping entry";
 
-        uint32_t padUniqueID;
-        try {
-            padUniqueID = reversedPadIndexes.at(iPad);
-        } catch ( std::out_of_range err ){
-            LOG(ERROR) << "No reverse mapping found for pad "<< iPad;
-            LOG(ERROR) << "Aborting...";
-            return false;
-        }
-
         // save the buffer struct at the iPad position in the map
         //fIDMap.insert(std::pair<uint32_t, stripMapping>((uint32_t)padUniqueID, bufferStripMapping));
         fStripVector.emplace_back(bufferStripMapping);
-        fIDMap[padUniqueID] = &(fStripVector.back());
+//        fIDMap[padUniqueID] = &(fStripVector.back());
+
+        uint32_t padUniqueID;
+        auto IDFinder = reversedPadIndexes.find(iPad);
+        if (IDFinder == reversedPadIndexes.end()){
+            LOG(ERROR) << "No ID found for pad "<< iPad;
+            continue;
+        }
+        padUniqueID = IDFinder->second;
+
+        LOG(DEBUG) << (padUniqueID & 0xFFF) << " " << iPad;
+        fIDMap.insert(std::make_pair(padUniqueID, fStripVector.size()));
+
         nStrips2++;
 
         //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
@@ -137,6 +142,7 @@ bool OccupancyMapping::ReadMapping( const char * filename )
 
     return counter==numberOfDetectionElements;
 }
+
 stripMapping::stripMapping() {
     for (int iDigitType = 0; iDigitType < digitType::kSize; iDigitType++) {
         startTS[iDigitType] = 0;
