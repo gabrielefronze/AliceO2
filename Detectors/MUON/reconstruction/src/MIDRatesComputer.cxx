@@ -40,10 +40,12 @@ void MIDRatesComputer::InitTask() {
     if ( !(fMapping.ReadMapping(mapFilename.c_str())) ){
         LOG(ERROR) << "Error reading the mapping from " << mapFilename;
     } else {
-        LOG(INFO) << "Mapping correctly loaded.";
+        LOG(INFO) << "Mapping correctly loaded: " << fMapping.Consistent();
     }
 
-    return;
+    for(const auto &it : fMapping.fStripVector){
+        if(it.digitsCounter[0]!=0) LOG(ERROR) << "Non zero counter in vector!";
+    }
 }
 
 //_________________________________________________________________________________________________
