@@ -43,39 +43,29 @@ bool Deserializer::Rewind(){
 //_________________________________________________________________________________________________
 Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
 
-    // Keep track of how much digits have been read
-    fDigitCounter++;
-
-    // Avoid exceding the total number of digits
-    if ( fDigitCounter>fNDigits ) return 0x0;
-
-    // Loading data in the data member used by ApplyMask
-    fUniqueID = fDigitsDataPtr[fOffset];
-
-    fData[0] = fDigitsDataPtr[fOffset];
-    fData[1] = fDigitsDataPtr[fOffset+1];
-
-    fOutputDataStruct.fDetElemID = fUniqueID & 0xFFF;
-    fOutputDataStruct.fBoardID = ( fUniqueID >> 12 ) & 0xFFF;
-    fOutputDataStruct.fChannel = ( fUniqueID >> 24 ) & 0x3F;
-    fOutputDataStruct.fCathode = ( fUniqueID >> 30 ) & 0x4;
-
-
-    // Go to the following digit leaping unwanted data
-    fOffset+=2;
+    Advance();
+    Load();
 
     // If everything is ok return the pointer to the internal dataStruct
     return &fOutputDataStruct;
 }
 
 //_________________________________________________________________________________________________
-uint32_t* Deserializer::NextUniqueID() {
+uint32_t* Deserializer::NextUniqueID(bool loadAllData) {
 
+    Advance();
+    if (loadAllData) Load();
+
+    // If everything is ok return the pointer to the internal dataStruct
+    return &fUniqueID;
+}
+
+bool Deserializer::Advance() {
     // Keep track of how much digits have been read
     fDigitCounter++;
 
     // Avoid exceding the total number of digits
-    if ( fDigitCounter>fNDigits ) return 0x0;
+    if ( fDigitCounter>fNDigits ) return false;
 
     // Loading data in the data member used by ApplyMask
     fUniqueID = fDigitsDataPtr[fOffset];
@@ -83,14 +73,15 @@ uint32_t* Deserializer::NextUniqueID() {
     fData[0] = fDigitsDataPtr[fOffset];
     fData[1] = fDigitsDataPtr[fOffset+1];
 
+    // Go to the following digit leaping unwanted data
+    fOffset+=2;
+
+    return true;
+}
+
+void Deserializer::Load() {
     fOutputDataStruct.fDetElemID = fUniqueID & 0xFFF;
     fOutputDataStruct.fBoardID = ( fUniqueID >> 12 ) & 0xFFF;
     fOutputDataStruct.fChannel = ( fUniqueID >> 24 ) & 0x3F;
     fOutputDataStruct.fCathode = ( fUniqueID >> 30 ) & 0x4;
-
-    // Go to the following digit leaping unwanted data
-    fOffset+=2;
-
-    // If everything is ok return the pointer to the internal dataStruct
-    return &fUniqueID;
 }

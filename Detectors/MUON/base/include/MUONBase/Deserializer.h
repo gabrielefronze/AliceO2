@@ -31,12 +31,14 @@ namespace AliceO2 {
         };
 
         // Iterator like methods
+        bool Advance();
+        void Load();
         bool Rewind();
         deserializerDataStruct* NextDigit();
         inline deserializerDataStruct* CurrentDigit(){ return &fOutputDataStruct; }
         inline deserializerDataStruct* operator() (){ return NextDigit(); }
 
-        uint32_t * NextUniqueID();
+        uint32_t * NextUniqueID(bool loadAllData = false);
         inline uint32_t* CurrentUniqueID(){ return &fUniqueID; }
         inline uint32_t* GetCurrentData(){ return fData; }
         inline uint32_t* GetHeader(){ return reinterpret_cast<uint32_t(&)[25]>(reinterpret_cast<uint8_t(&)[100]>(fDataPtr)); }
