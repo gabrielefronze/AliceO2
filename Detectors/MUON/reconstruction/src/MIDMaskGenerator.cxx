@@ -22,7 +22,7 @@ MIDMaskGenerator::MIDMaskGenerator():
 MIDMaskGenerator::~MIDMaskGenerator(){
     LOG(DEBUG) << "Detected noisy strips:";
     for(const auto &itMask : fStructMask.noisyStripsIDs){
-        LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping.fIDMap.at(itMask)->digitsCounter[digitType::kPhysics];
+        LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
     }
 }
 
@@ -208,7 +208,7 @@ void MIDMaskGenerator::FillMask(){
 
     for(const auto &mapIterator : fMapping.fIDMap){
         auto uniqueID = mapIterator.first;
-        auto strip = mapIterator.second;
+        auto strip = fMapping[mapIterator.second];
 
         if ( strip->isDead ) {
 
@@ -217,7 +217,7 @@ void MIDMaskGenerator::FillMask(){
             if(alreadyThere){
                 LOG(ERROR)<<uniqueID<<" is dead.";
             } else {
-                LOG(INFO)<<uniqueID<<" already set.";
+//                LOG(INFO)<<uniqueID<<" already set.";
             }
 
         } else if ( strip->isNoisy ) {
@@ -227,7 +227,7 @@ void MIDMaskGenerator::FillMask(){
             if(alreadyThere){
                 LOG(ERROR)<<uniqueID<<" is noisy.";
             } else {
-                LOG(INFO)<<uniqueID<<" already set.";
+//                LOG(INFO)<<uniqueID<<" already set.";
             }
 
         }
