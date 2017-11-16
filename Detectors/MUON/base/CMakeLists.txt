@@ -15,6 +15,7 @@ set(HEADERS
         include/${MODULE_NAME}/Deserializer.h
         include/${MODULE_NAME}/Enums.h
         include/${MODULE_NAME}/OccupancyMapping.h
+        include/${MODULE_NAME}/Chrono.h
         )
 Set(LIBRARY_NAME ${MODULE_NAME})
 set(BUCKET_NAME muon_base_bucket)
