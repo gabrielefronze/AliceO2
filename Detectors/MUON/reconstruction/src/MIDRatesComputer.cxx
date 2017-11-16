@@ -99,11 +99,11 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
             digitType = digitType::kTriggered;
         } else continue;
 
-        LOG(INFO) << "StripMapping struct found for element: " << MessageDeserializer.PrintData() << " " << strip->digitsCounter[0];
+//        LOG(INFO) << "StripMapping struct found for element: " << MessageDeserializer.PrintData() << " " << strip->digitsCounter[0];
 
         // Increase the counter of digits for the strip
         strip->digitsCounter[digitType]++;
-        LOG(INFO) << (long int)strip->digitsCounter[digitType];
+//        LOG(INFO) << (long int)strip->digitsCounter[digitType];
 //        if ( gRandom->Rndm() > 0.99 ){
 //            strip->digitsCounter[digitType]+=999999;
 //            LOG(ERROR) << "Simulating noisy strip " << ((*uniqueIDBuffer) & 0xFFF);
