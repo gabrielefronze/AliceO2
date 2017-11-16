@@ -57,15 +57,15 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
 
     // Using indecesIt1.second-1 because of the way the mapping has been filled
     for (const auto &indecesIt1 : *padIndeces[0]){
-        reversedPadIndexes.insert({(uint32_t)indecesIt1.second-1,(uint32_t)indecesIt1.first});
+        reversedPadIndexes.insert(std::make_pair((uint32_t)indecesIt1.second-1,(uint32_t)indecesIt1.first));
     }
     for (const auto &indecesIt2 : *padIndeces[1]){
-        reversedPadIndexes.insert({(uint32_t)indecesIt2.second-1,(uint32_t)indecesIt2.first});
+        reversedPadIndexes.insert(std::make_pair((uint32_t)indecesIt2.second-1,(uint32_t)indecesIt2.first));
     }
 
     // original maps not needed anymore
-    padIndeces[0] = 0x0;
-    padIndeces[1] = 0x0;
+    padIndeces[0] = nullptr;
+    padIndeces[1] = nullptr;
 
     nStrips += numberOfPads;
 
@@ -81,15 +81,15 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
         // read the iPad-th pad and the number of pads
         Mapping::mpPad& pad(de.pads[iPad]);
 
-        bufferStripMapping.coord[0][0] = pad.area[0][0];
-        bufferStripMapping.coord[0][1] = pad.area[0][1];
-        bufferStripMapping.coord[1][0] = pad.area[1][0];
-        bufferStripMapping.coord[1][1] = pad.area[1][1];
+        bufferStripMapping.coord[0][0] = (float_t)pad.area[0][0];
+        bufferStripMapping.coord[0][1] = (float_t)pad.area[0][1];
+        bufferStripMapping.coord[1][0] = (float_t)pad.area[1][0];
+        bufferStripMapping.coord[1][1] = (float_t)pad.area[1][1];
 
-        Float_t deltaX = pad.area[0][1] - pad.area[0][0];
-        Float_t deltaY = - pad.area[1][0] + pad.area[1][1];
+        float_t deltaX = (float_t)pad.area[0][1] - (float_t)pad.area[0][0];
+        float_t deltaY = - (float_t)pad.area[1][0] + (float_t)pad.area[1][1];
         bufferStripMapping.area = deltaX * deltaY;
-        bufferStripMapping.columnID = pad.iDigit;
+        bufferStripMapping.columnID = (ushort_t)pad.iDigit;
 
 //            LOG(DEBUG) << "Inserting the internal mapping entry";
 
@@ -111,7 +111,7 @@ bool OccupancyMapping::ReadMapping( const char * filename, int elementID ){
         //LOG(DEBUG) << "\t"<< padUniqueID <<" "<< bufferStripMapping.nNeighbours;
     }
 
-    return true;
+    return nStrips == nStrips2;
 }
 
 //_________________________________________________________________________________________________
