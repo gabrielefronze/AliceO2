@@ -10,9 +10,9 @@ Deserializer::Deserializer():
 fDigitCounter(0),
 fOffset(1){
     // Internal pointers to data are kept locally
-    fDataPtr = 0x0;
-    fDigitsDataPtr = 0x0;
-    fNDigits = 0x0;
+    fDataPtr = nullptr;
+    fDigitsDataPtr = nullptr;
+    fNDigits = nullptr;
 }
 
 //_________________________________________________________________________________________________
@@ -27,8 +27,8 @@ fOffset(1){
 
 //_________________________________________________________________________________________________
 Deserializer::~Deserializer(){
-    fDataPtr = 0x0;
-    fDigitsDataPtr = 0x0;
+    fDataPtr = nullptr;
+    fDigitsDataPtr = nullptr;
 }
 
 //_________________________________________________________________________________________________
