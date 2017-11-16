@@ -151,15 +151,16 @@ void MIDRatesComputer::ResetCounters(uint64_t newStartTS, digitType type) {
     auto tStart = std::chrono::high_resolution_clock::now();
 
     //  Reset all counters and timestamps
-    for( auto &vecIterator : fMapping.fStripVector){
-        stripMapping* strip = &vecIterator;
-        strip->digitsCounter[type]=0;
-        strip->startTS[type]=newStartTS;
-        strip->stopTS[type]=0;
-        strip->isNoisy = false;
-        strip->isDead = false;
-        strip->rate[type] = 0;
-    }
+    std::for_each(fMapping.fStripVector.begin(),fMapping.fStripVector.end(),[](stripMapping &i){i = stripMapping();});
+//    for( auto &vecIterator : fMapping.fStripVector){
+//        stripMapping* strip = &vecIterator;
+//        strip->digitsCounter[type]=0;
+//        strip->startTS[type]=newStartTS;
+//        strip->stopTS[type]=0;
+//        strip->isNoisy = false;
+//        strip->isDead = false;
+//        strip->rate[type] = 0;
+//    }
 
     auto tEnd = std::chrono::high_resolution_clock::now();
 
