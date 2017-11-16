@@ -6,6 +6,7 @@
 #include "MUONBase/Deserializer.h"
 #include "FairMQLogger.h"
 #include "options/FairMQProgOptions.h"
+#include "MUONBase/Chrono.h"
 //#include "flatbuffers/flatbuffers.h"
 
 using namespace AliceO2::MUON;
@@ -19,16 +20,18 @@ MIDFilter::MIDFilter(){
     fMask.noisyStripsIDs.clear();
 
     FairMQDevice::OnData("mask-in", &MIDFilter::HandleMask);
-    FairMQDevice::OnData("digits-in", &MIDFilter::HandleData);
+//    FairMQDevice::OnData("digits-in", &MIDFilter::HandleData);
 }
 
 //_________________________________________________________________________________________________
 MIDFilter::~MIDFilter(){
-
+    LOG(INFO) << "Average performance: " << fChronometer.PrintStatus();
 }
 
 //_________________________________________________________________________________________________
 bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
+
+    DeltaT deltaT(&fChronometer);
 
     if ( !msg ) {
         LOG(ERROR) << "Message pointer not valid, aborting";
@@ -43,13 +46,13 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
     // Deserializer will simplify the reading of the input message
     Deserializer MessageDeserializer(msg);
 
-    LOG(INFO) << "Received valid message containing " << MessageDeserializer.GetNDigits() << " digits";
+//    LOG(INFO) << "Received valid message containing " << MessageDeserializer.GetNDigits() << " digits";
 
 
     // Check if no noisy strip is found. If none simply forward the message
     if ( fMask.nNoisy == 0 ) {
 
-        LOG(INFO) << "Forwarding message";
+//        LOG(INFO) << "Forwarding message";
 
         FairMQMessagePtr ptr = NewMessage((int)msg->GetSize());
         ptr->Copy(msg);

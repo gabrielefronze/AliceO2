@@ -5,17 +5,16 @@
 #ifndef MIDFILTER_H
 #define MIDFILTER_H
 
-#include "Rtypes.h"
 #include "FairMQDevice.h"
 #include "MUONBase/Mapping.h"
 #include "MUONBase/Enums.h"
+#include "MUONBase/Chrono.h"
 #include "string.h"
 #include <array>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include "TPave.h"
-
+#include <dtrace.h>
 
 namespace AliceO2 {
 
@@ -35,8 +34,8 @@ namespace AliceO2 {
         private:
 
             struct stripMask {
-                unsigned short nDead; // number of elements for deadStripsIDs
-                unsigned short nNoisy; // number of elements for noisyStripsIDs
+                ushort_t nDead; // number of elements for deadStripsIDs
+                ushort_t nNoisy; // number of elements for noisyStripsIDs
                 std::unordered_set<uint32_t> deadStripsIDs; // container of UniqueIDs of dead strips
                 std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };
@@ -44,6 +43,9 @@ namespace AliceO2 {
             stripMask fMask;
 
             template<typename T> errMsg SendMsg(uint64_t msgSize, T* data);
+
+            //Chrono object to compute duration
+            Chrono fChronometer;
         };
     }
 }

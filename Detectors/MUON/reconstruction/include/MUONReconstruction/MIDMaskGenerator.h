@@ -5,6 +5,7 @@
 #ifndef O2_DEV_ALO_MIDMASKGENERATOR_H
 #define O2_DEV_ALO_MIDMASKGENERATOR_H
 
+#include <dtrace.h>
 #include "FairMQDevice.h"
 #include "MUONBase/Enums.h"
 #include "MUONBase/OccupancyMapping.h"
@@ -30,8 +31,8 @@ namespace AliceO2 {
             using IDType = uint32_t ;
 
             struct stripMask{
-                short nDead; // number of elements for deadStripsIDs
-                short nNoisy; // number of elements for noisyStripsIDs
+                ushort_t nDead; // number of elements for deadStripsIDs
+                ushort_t nNoisy; // number of elements for noisyStripsIDs
                 std::unordered_set<IDType> deadStripsIDs; // container of UniqueIDs of dead strips
                 std::unordered_set<IDType> noisyStripsIDs; // container of UniqueIDs of noisy strips
             };
