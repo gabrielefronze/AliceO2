@@ -82,8 +82,6 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 
         digitType digitType = digitType::kSize;
 
-        LOG(ERROR) << (fMapping[134325324])->digitsCounter[0];
-
         // Try to retrieve a pointer to the data member to modify
         stripMapping* strip = fMapping[*uniqueIDBuffer];
         if(!strip) {
