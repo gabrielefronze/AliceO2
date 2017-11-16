@@ -60,6 +60,7 @@ uint32_t* Deserializer::NextUniqueID(bool loadAllData) {
     return &fUniqueID;
 }
 
+//_________________________________________________________________________________________________
 bool Deserializer::Advance() {
     // Keep track of how much digits have been read
     fDigitCounter++;
@@ -79,6 +80,7 @@ bool Deserializer::Advance() {
     return true;
 }
 
+//_________________________________________________________________________________________________
 void Deserializer::Load() {
     fOutputDataStruct.fDetElemID = fUniqueID & 0xFFF;
     fOutputDataStruct.fBoardID = ( fUniqueID >> 12 ) & 0xFFF;
