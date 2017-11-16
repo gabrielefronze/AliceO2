@@ -10,6 +10,7 @@
 
 #include "FairMQDevice.h"
 #include "FairMQChannel.h"
+#include "MUONBase/Chrono.h"
 #include <string>
 #include <vector>
 
@@ -27,6 +28,8 @@ namespace AliceO2 {
 
             std::vector<std::string> fOutputChannelNames;
             bool fWaiting;
+
+            Chrono fChronometer;
         };
     }
 

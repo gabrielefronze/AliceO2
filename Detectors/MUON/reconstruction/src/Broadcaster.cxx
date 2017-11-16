@@ -26,22 +26,25 @@ void Broadcaster::InitTask(){
 
 //_________________________________________________________________________________________________
 bool Broadcaster::Broadcast( FairMQMessagePtr &msg, int /*index*/ ){
+
+    DeltaT deltaT(&fChronometer);
+
     bool returnValue = true;
 
-    if ( msg->GetSize()<=100 ) return returnValue;
+//    if ( msg->GetSize()<=100 ) return returnValue;
 
-    LOG(DEBUG) << "Sending message..." << msg->GetSize();
+//    LOG(DEBUG) << "Sending message..." << msg->GetSize();
 
     for ( auto const &chNameIt : fOutputChannelNames ){
 
         FairMQMessagePtr ptr = NewMessage((int)msg->GetSize());
         ptr->Copy(msg);
 
-        LOG(DEBUG) <<  "\tTo channel " << chNameIt;
+//        LOG(DEBUG) <<  "\tTo channel " << chNameIt;
         returnValue &= (FairMQDevice::Send(ptr, chNameIt) > 0);
     }
 
-    LOG(DEBUG) << "Sent!";
+//    LOG(DEBUG) << "Sent!";
 
     return ( returnValue || fWaiting ) ;
 }
