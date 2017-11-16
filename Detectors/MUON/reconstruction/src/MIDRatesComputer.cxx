@@ -37,6 +37,8 @@ void MIDRatesComputer::InitTask() {
 
     LOG(INFO) << "Initializing device";
 
+    fCounter = 0;
+
     // Loading mapping at startup
     std::string mapFilename = fConfig->GetValue<std::string>("binmapfile");
     if ( !(fMapping.ReadMapping(mapFilename.c_str())) ){
@@ -50,6 +52,8 @@ void MIDRatesComputer::InitTask() {
 bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 {
     DeltaT deltaT(&fChronometer);
+
+    fCounter++;
 
     // If the message is empty something is going wrong. The process should be aborted.
     if ( !msg ) {
@@ -71,7 +75,7 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
     // Counter of received digits
     int counter = 0;
 
-    LOG(INFO) << "Received valid message with " << MessageDeserializer.GetNDigits() <<" digits";
+//    LOG(INFO) << "Received valid message with " << MessageDeserializer.GetNDigits() <<" digits";
 
     // Loop over the digits of the message.
     uint32_t *uniqueIDBuffer;
@@ -115,17 +119,16 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 //        }
     }
 
-    LOG(INFO) << "Received valid message containing "<<counter<<" digits";
 
-    // Check if enough statistics is already present for a given digitType
-    if ( !EnoughStatistics(digitType::kPhysics) ) {
-        LOG(INFO) << "Not enough statistics: waiting for more.";
+    //Compute rates every 100 events!
+    if( fCounter%100 != 0 ){
         return true;
-    };
+    }
 
-    LOG(INFO) << "Computing rates.";
+//    LOG(INFO) << "Computing rates.";
     // If enough statistics compute all rates
     MIDRatesComputer::ComputeAllRates();
+    MIDRatesComputer::ResetCounters(0,digitType::kPhysics);
 
     // Try to send newly computed rates and catch errors
     switch (MIDRatesComputer::SendRates<uint64_t>()) {

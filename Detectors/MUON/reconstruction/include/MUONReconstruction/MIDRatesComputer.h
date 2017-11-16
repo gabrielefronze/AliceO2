@@ -54,6 +54,8 @@ namespace AliceO2 {
 
             template<typename T> errMsg SendRates();
 
+            long fCounter;
+
             //Chrono object to compute duration
             Chrono fChronometer;
         };
