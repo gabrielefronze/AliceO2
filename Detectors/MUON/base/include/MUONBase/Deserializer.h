@@ -42,6 +42,14 @@ namespace AliceO2 {
         inline uint32_t* GetHeader(){ return reinterpret_cast<uint32_t(&)[25]>(reinterpret_cast<uint8_t(&)[100]>(fDataPtr)); }
         inline uint32_t* GetDataPointer(){ return fDigitsDataPtr; }
         inline uint32_t GetNDigits(){ return fNDigits; }
+        std::string PrintData(){
+            std::string outputString =  "UID="+std::to_string(fUniqueID)+
+                                       " ElemID="+std::to_string(fOutputDataStruct.fDetElemID)+
+                                       " Bd="+std::to_string(fOutputDataStruct.fBoardID)+
+                                       " Ch="+std::to_string(fOutputDataStruct.fChannel)+
+                                       " Cat="+std::to_string(fOutputDataStruct.fCathode);
+            return outputString;
+        };
 
     private:
         // Const values to exclude first 100 bytes of message and perform deserialization
