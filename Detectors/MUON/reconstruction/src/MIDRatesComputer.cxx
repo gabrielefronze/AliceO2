@@ -111,12 +111,12 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         // Increase the counter of digits for the strip
         strip->digitsCounter[digitType]++;
 //        LOG(INFO) << (long int)strip->digitsCounter[digitType];
-//        if ( gRandom->Rndm() > 0.99 ){
-//            strip->digitsCounter[digitType]+=999999;
-//            LOG(ERROR) << "Simulating noisy strip " << ((*uniqueIDBuffer) & 0xFFF);
-//            auto dummy = fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
-//            fStructMaskSim.nNoisy++;
-//        }
+        if ( gRandom->Rndm() > 0.99 ){
+            strip->digitsCounter[digitType]+=999999;
+            LOG(ERROR) << "Simulating noisy strip " << ((*uniqueIDBuffer) & 0xFFF);
+            auto dummy = fStructMaskSim.noisyStripsIDs.insert(*uniqueIDBuffer).second;
+            fStructMaskSim.nNoisy++;
+        }
     }
 
 
