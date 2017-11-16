@@ -49,8 +49,7 @@ void MIDRatesComputer::InitTask() {
 //_________________________________________________________________________________________________
 bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 {
-    DeltaT deltaT();
-    fChronometer.AddCall(deltaT());
+    DeltaT deltaT(&fChronometer);
 
     // If the message is empty something is going wrong. The process should be aborted.
     if ( !msg ) {
