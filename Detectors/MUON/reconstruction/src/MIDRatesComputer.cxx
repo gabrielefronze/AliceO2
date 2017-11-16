@@ -4,6 +4,7 @@
 
 #include <TRandom.h>
 #include <TMath.h>
+#include <FairLogger.h>
 #include "MUONReconstruction/MIDRatesComputer.h"
 #include "MUONBase/Deserializer.h"
 #include "FairMQLogger.h"
