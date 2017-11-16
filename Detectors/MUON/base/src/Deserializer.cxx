@@ -12,7 +12,7 @@ fOffset(1){
     // Internal pointers to data are kept locally
     fDataPtr = nullptr;
     fDigitsDataPtr = nullptr;
-    fNDigits = nullptr;
+    fNDigits = 0;
 }
 
 //_________________________________________________________________________________________________
