@@ -83,6 +83,11 @@ uint32_t* Deserializer::NextUniqueID() {
     fData[0] = fDigitsDataPtr[fOffset];
     fData[1] = fDigitsDataPtr[fOffset+1];
 
+    fOutputDataStruct.fDetElemID = fUniqueID & 0xFFF;
+    fOutputDataStruct.fBoardID = ( fUniqueID >> 12 ) & 0xFFF;
+    fOutputDataStruct.fChannel = ( fUniqueID >> 24 ) & 0x3F;
+    fOutputDataStruct.fCathode = ( fUniqueID >> 30 ) & 0x4;
+
     // Go to the following digit leaping unwanted data
     fOffset+=2;
 
