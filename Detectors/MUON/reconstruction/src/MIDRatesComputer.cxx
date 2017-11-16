@@ -140,8 +140,6 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         default:
             return true;
     }
-
-    return true;
 }
 
 //_________________________________________________________________________________________________
