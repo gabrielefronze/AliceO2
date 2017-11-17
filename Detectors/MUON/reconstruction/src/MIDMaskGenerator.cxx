@@ -85,7 +85,11 @@ bool MIDMaskGenerator::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
     LOG(DEBUG) << "Sending mask...";
 
-    return MIDMaskGenerator::SendMask();
+    auto returnValue = MIDMaskGenerator::SendMask();\
+
+    MIDMaskGenerator::ResetAll();
+
+    return returnValue;
 }
 
 //_________________________________________________________________________________________________
