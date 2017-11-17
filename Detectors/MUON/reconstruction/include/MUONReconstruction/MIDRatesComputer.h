@@ -59,7 +59,7 @@ namespace AliceO2 {
             stripMask fStructMaskSim;
 
             void ResetCounters(uint64_t newStartTS, digitType type);
-            bool EnoughStatistics(digitType type);
+            bool ShouldComputeRates(digitType type);
 
             void ComputeRate(stripMapping* strip);
             void ComputeAllRates();

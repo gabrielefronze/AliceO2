@@ -129,15 +129,9 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
         }
     }
 
-
-    //Compute rates every 100 events!
-    if( fCounter%100 != 0 ){
-        return true;
-    }
-
 //    LOG(INFO) << "Computing rates.";
     // If enough statistics compute all rates
-    MIDRatesComputer::ComputeAllRates();
+    if(MIDRatesComputer::ShouldComputeRates(digitType::kPhysics))MIDRatesComputer::ComputeAllRates();
 
     bool returnValue = true;
     // Try to send newly computed rates and catch errors
@@ -180,10 +174,12 @@ void MIDRatesComputer::ResetCounters(uint64_t newStartTS, digitType type) {
 }
 
 //_________________________________________________________________________________________________
-bool MIDRatesComputer::EnoughStatistics(digitType type) {
+bool MIDRatesComputer::ShouldComputeRates(digitType type) {
     // Return if enough statistics has been collected. Customizable.
-    long nOfActiveStrips = std::count_if(fMapping.fStripVector.begin(),fMapping.fStripVector.end(),[type](stripMapping strip)->bool{ return strip.digitsCounter[type] > 10; });
-    return nOfActiveStrips > (0.001 * fMapping.fStripVector.size());
+//    long nOfActiveStrips = std::count_if(fMapping.fStripVector.begin(),fMapping.fStripVector.end(),[type](stripMapping strip)->bool{ return strip.digitsCounter[type] > 10; });
+//    return nOfActiveStrips > (0.001 * fMapping.fStripVector.size());
+
+    return fCounter%100 != 0;
 }
 
 //_________________________________________________________________________________________________
