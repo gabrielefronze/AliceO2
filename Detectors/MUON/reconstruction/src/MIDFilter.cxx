@@ -20,7 +20,7 @@ MIDFilter::MIDFilter(){
     fMask.noisyStripsIDs.clear();
 
     FairMQDevice::OnData("mask-in", &MIDFilter::HandleMask);
-//    FairMQDevice::OnData("digits-in", &MIDFilter::HandleData);
+    FairMQDevice::OnData("digits-in", &MIDFilter::HandleData);
 }
 
 //_________________________________________________________________________________________________
