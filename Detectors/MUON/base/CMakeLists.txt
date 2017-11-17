@@ -21,3 +21,5 @@ Set(LIBRARY_NAME ${MODULE_NAME})
 set(BUCKET_NAME muon_base_bucket)
 
 O2_GENERATE_LIBRARY()
+
+add_subdirectory(test)
