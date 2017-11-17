@@ -128,24 +128,27 @@ bool MIDRatesComputer::HandleData( FairMQMessagePtr &msg, int /*index*/ )
 //    LOG(INFO) << "Computing rates.";
     // If enough statistics compute all rates
     MIDRatesComputer::ComputeAllRates();
-    MIDRatesComputer::ResetCounters(0,digitType::kPhysics);
 
+    bool returnValue = true;
     // Try to send newly computed rates and catch errors
     switch (MIDRatesComputer::SendRates<uint64_t>()) {
         case kShortMsg:
             LOG(ERROR) << "Message shorter than expected. Skipping.";
-            return true;
 
         case kFailedSend:
             LOG(ERROR) << "Problems sending rates. Aborting.";
-            return false;
+            returnValue = false;
 
         case kOk:
-            return true;
+            returnValue = true;
 
         default:
-            return true;
+            returnValue = true;
     }
+
+    MIDRatesComputer::ResetCounters(0,digitType::kPhysics);
+
+    return returnValue;
 }
 
 //_________________________________________________________________________________________________
