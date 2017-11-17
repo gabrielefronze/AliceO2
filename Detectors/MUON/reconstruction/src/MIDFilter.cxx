@@ -94,9 +94,10 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
             OutputDataDigits.push_back(Data[0]);
             OutputDataDigits.push_back(Data[1]);
             nDigits++;
-        } else {
-            LOG(ERROR) << "Strip " << *uniqueIDBuffer << " has been masked";
         }
+//        else {
+//            LOG(ERROR) << "Strip " << *uniqueIDBuffer << " has been masked";
+//        }
     }
 
     // The first element after the header of the reacreated message should be the NEW number of digits
@@ -126,7 +127,7 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 //_________________________________________________________________________________________________
 bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {\
 
-    LOG(DEBUG) << "Mask has been received";
+//    LOG(DEBUG) << "Mask has been received";
 
     // Clearing the mask data. The new mask is a complete information (not a diff).
     fMask.nDead = 0;
@@ -154,7 +155,7 @@ bool MIDFilter::HandleMask( FairMQMessagePtr &msg, int /*index*/ ) {\
     if(fMask.nDead>0)fMask.deadStripsIDs = std::unordered_set<uint32_t>(&(maskData[0]),&(maskData[fMask.nDead-1]));
     if(fMask.nNoisy>0)fMask.noisyStripsIDs = std::unordered_set<uint32_t>(&(maskData[fMask.nDead]),&(maskData[fMask.nDead+fMask.nNoisy-1]));
 
-    LOG(DEBUG) << "Mask correctly loaded with " << fMask.nDead + fMask.nNoisy << " problematic strips";
+//    LOG(DEBUG) << "Mask correctly loaded with " << fMask.nDead + fMask.nNoisy << " problematic strips";
 
     return true;
 }
@@ -181,7 +182,7 @@ template<typename T> errMsg MIDFilter::SendMsg(uint64_t msgSize, T* data){
         return kShortMsg;
     }
 
-    LOG(INFO) << "Sending masked message containing " << counter << " digits";
+//    LOG(INFO) << "Sending masked message containing " << counter << " digits";
 
     // Try to send the message. If unable trigger a error and abort killing the device
     auto returnValue = SendAsync(msgOut, "digits-out");
