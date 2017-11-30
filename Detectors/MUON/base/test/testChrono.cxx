@@ -19,7 +19,7 @@
 #include <boost/test/data/test_case.hpp>
 #include "MUONBase/Chrono.h"
 
-BOOST_AUTO_TEST_SUITE(Chronotest)
+BOOST_AUTO_TEST_SUITE(testChrono)
 
     BOOST_AUTO_TEST_CASE(Average){
         Chrono chronometer;
