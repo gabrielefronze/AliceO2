@@ -22,4 +22,18 @@ set(BUCKET_NAME muon_base_bucket)
 
 O2_GENERATE_LIBRARY()
 
-add_subdirectory(test)
+Set(MODULE_NAME "MUONBase")
+Set(LIBRARY_MODULE_NAME "MUONBase")
+Set(BUCKET_NAME muon_base_bucket)
+
+link_directories( ${LINK_DIRECTORIES})
+
+Set(TEST_SRCS
+        test/testChrono.cxx
+        )
+
+O2_GENERATE_TESTS(
+        BUCKET_NAME ${BUCKET_NAME}
+        MODULE_LIBRARY_NAME ${LIBRARY_MODULE_NAME}
+        TEST_SRCS ${TEST_SRCS}
+)
