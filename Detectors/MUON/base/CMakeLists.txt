@@ -6,6 +6,7 @@ link_directories( ${LINK_DIRECTORIES})
 
 set(SRCS
         src/Mapping.cxx
+        src/Serializer.cxx
         src/Deserializer.cxx
         src/OccupancyMapping.cxx
         )
