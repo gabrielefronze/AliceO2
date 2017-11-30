@@ -10,8 +10,6 @@ Set(TEST_SRCS
         testChrono.cxx
         )
 
-#target_include_directories(testChrono PUBLIC ${BOOST_INCLUDE_DIRS})
-
 O2_GENERATE_TESTS(
         BUCKET_NAME ${BUCKET_NAME}
         MODULE_LIBRARY_NAME ${LIBRARY_MODULE_NAME}
