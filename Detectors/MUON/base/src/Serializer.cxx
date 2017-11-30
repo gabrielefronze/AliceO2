@@ -26,7 +26,7 @@ Serializer::Serializer() {
 }
 
 //_________________________________________________________________________________________________
-FairMQMessage* Serializer::GetMessage() {
+uint32_t* Serializer::GetMessage() {
     // This vector will contain the full message
     std::vector<uint32_t> OutputData;
 
@@ -46,10 +46,5 @@ FairMQMessage* Serializer::GetMessage() {
         OutputData.emplace_back(digitBuffer);
     }
 
-    // Creating a message to send out
-    FairMQMessage* msgOut;
-    msgOut->Rebuild(OutputData.size());
-    msgOut->SetMessage(&OutputData[0],OutputData.size());
-
-    return msgOut;
+    return &(OutputData[0]);
 }

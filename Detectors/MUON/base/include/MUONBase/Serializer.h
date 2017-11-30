@@ -49,7 +49,7 @@ namespace AliceO2 {
 
             inline void AddDigit(uint32_t detElemID, uint32_t boardID, uint32_t channel, uint32_t cathode){ fData.emplace_back(detElemID,boardID,channel,cathode); };
             inline void AddDigit(serializerDataStruct dataStruct){ fData.emplace_back(dataStruct); };
-            FairMQMessage* GetMessage();
+            uint32_t* GetMessage();
 
 
         private:
