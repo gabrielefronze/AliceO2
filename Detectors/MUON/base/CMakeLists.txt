@@ -22,6 +22,7 @@ set(BUCKET_NAME muon_base_bucket)
 
 O2_GENERATE_LIBRARY()
 
+# Repeating because O2_GENERATE_LIBRARY hides previous config
 Set(MODULE_NAME "MUONBase")
 Set(LIBRARY_MODULE_NAME "MUONBase")
 Set(BUCKET_NAME muon_base_bucket)
