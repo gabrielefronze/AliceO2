@@ -34,6 +34,7 @@ link_directories( ${LINK_DIRECTORIES})
 
 Set(TEST_SRCS
         test/testChrono.cxx
+        test/testDeserializer.cxx
         )
 
 O2_GENERATE_TESTS(
