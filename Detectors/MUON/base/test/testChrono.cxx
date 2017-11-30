@@ -13,6 +13,7 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MAIN
 
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
