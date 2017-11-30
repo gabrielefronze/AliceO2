@@ -26,11 +26,14 @@ fOffset(1){
 }
 
 //_________________________________________________________________________________________________
-Deserializer::Deserializer(FairMQMessagePtr& msg):
+Deserializer::Deserializer(FairMQMessagePtr& msg):Deserializer(msg->GetData()){}
+
+//_________________________________________________________________________________________________
+Deserializer::Deserializer(void *payload):
 fDigitCounter(0),
 fOffset(1){
     // Internal pointers to data are kept locally
-    fDataPtr = reinterpret_cast<uint8_t*>(msg->GetData());
+    fDataPtr = reinterpret_cast<uint8_t*>(payload);
     fDigitsDataPtr = reinterpret_cast<uint32_t*>(fDataPtr + kHeaderLength);
     fNDigits = fDigitsDataPtr[0];
 }

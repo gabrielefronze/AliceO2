@@ -30,7 +30,8 @@ namespace AliceO2 {
     public:
 
         Deserializer();
-        Deserializer(FairMQMessagePtr& msg);
+        explicit Deserializer(FairMQMessagePtr& msg);
+        explicit Deserializer(void *payload);
         ~Deserializer();
 
         // Human readable data struct for output
