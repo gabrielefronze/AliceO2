@@ -1,6 +1,3 @@
-#ifndef O2_DEV_ALO_ENUMS_H
-#define O2_DEV_ALO_ENUMS_H
-
 //
 // Copyright CERN and copyright holders of ALICE O2. This software is
 // distributed under the terms of the GNU General Public License v3 (GPL
@@ -16,8 +13,11 @@
 ///  @file   Enums
 ///  @author Gabriele G. Fronzé <gfronze at cern.ch>
 ///  @date   24 July 2017
-///  @brief  Conatiner for usefull enumerators
+///  @brief  Container for usefull enumerators
 ///
+
+#ifndef ENUMS_H
+#define ENUMS_H
 
 namespace AliceO2 {
 
@@ -40,4 +40,4 @@ namespace AliceO2 {
     }
 }
 
-#endif //O2_DEV_ALO_ENUMS_H
+#endif //ENUMS_H
