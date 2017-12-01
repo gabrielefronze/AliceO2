@@ -30,8 +30,11 @@ uint32_t* Serializer::GetMessage() {
     // This vector will contain the full message
     std::vector<uint32_t> OutputData;
 
-    // The first 100bytes are the header. It should remain the same.
+    // The first 100bytes are the header.
     OutputData.assign(fHeader, fHeader + 25);
+
+    // Putting in the vector the number of digits before the payload
+    OutputData.emplace_back(fData.size());
 
     // Putting in OutputData the translated structs
     uint32_t digitBuffer = 0;
