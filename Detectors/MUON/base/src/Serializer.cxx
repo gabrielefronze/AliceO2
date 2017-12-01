@@ -18,7 +18,7 @@ using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
 Serializer::Serializer() {
-    for (int iHeader = 0; iHeader < kHeaderLength; ++iHeader) {
+    for (int iHeader = 0; iHeader < kHeaderLength/4; ++iHeader) {
         fHeader[iHeader] = (iHeader%2==0)?0xDEAD:0xBEEF;
     }
 }
