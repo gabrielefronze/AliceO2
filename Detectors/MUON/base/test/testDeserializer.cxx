@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
 
         Deserializer deserializer(serializer.GetMessage());
 
-        BOOST_TEST( deserializer.NextUniqueID() == serializer.GetUID(0) );
+        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(0) );
     }
 
     BOOST_AUTO_TEST_CASE(NextUniqueID){
