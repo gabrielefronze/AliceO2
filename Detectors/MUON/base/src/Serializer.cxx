@@ -13,8 +13,6 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #include "MUONBase/Serializer.h"
-#include "FairMQDevice.h"
-#include "FairMQTransportFactory.h"
 
 using namespace AliceO2::MUON;
 

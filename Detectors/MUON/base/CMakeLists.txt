@@ -16,6 +16,7 @@ set(HEADERS
         include/${MODULE_NAME}/Deserializer.h
         include/${MODULE_NAME}/Serializer.h
         include/${MODULE_NAME}/Enums.h
+        include/${MODULE_NAME}/DataStructs.h
         include/${MODULE_NAME}/OccupancyMapping.h
         include/${MODULE_NAME}/Chrono.h
         )

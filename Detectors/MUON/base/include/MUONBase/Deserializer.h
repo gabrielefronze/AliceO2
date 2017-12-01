@@ -20,6 +20,7 @@
 ///
 
 #include "FairMQMessage.h"
+#include "DataStructs.h"
 
 namespace AliceO2 {
 
@@ -33,14 +34,6 @@ namespace AliceO2 {
         explicit Deserializer(FairMQMessagePtr& msg);
         explicit Deserializer(void *payload);
         ~Deserializer();
-
-        // Human readable data struct for output
-        struct deserializerDataStruct {
-            uint32_t fDetElemID;
-            uint32_t fBoardID;
-            uint32_t fChannel;
-            uint32_t fCathode;
-        };
 
         // Iterator like methods
         bool Advance();
