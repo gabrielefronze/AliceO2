@@ -13,6 +13,8 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #include "MUONBase/Serializer.h"
+#include <assert.h>
+#include <regex.h>
 
 using namespace AliceO2::MUON;
 
@@ -37,6 +39,7 @@ uint32_t* Serializer::GetMessage() {
     // Putting in OutputData the translated structs
     for( const auto &itData : fData ){
         OutputData.emplace_back(GetUID(itData));
+        OutputData.emplace_back(GetUID(itData));
     }
 
     return &(OutputData[0]);
@@ -50,6 +53,23 @@ uint32_t Serializer::GetUID(deserializerDataStruct dataStruct) {
     digitBuffer |= dataStruct.fBoardID << 12; //shift of 12 bits
     digitBuffer |= dataStruct.fChannel << 24; //shift of 24 bits
     digitBuffer |= dataStruct.fCathode << 30; //shift of 30 bits
+
+    return digitBuffer;
+}
+
+//_________________________________________________________________________________________________
+uint32_t Serializer::GetUID(size_t index) {
+
+    auto index2 = index*2;
+
+    assert(index2 < fData.size());
+
+    uint32_t digitBuffer = 0;
+
+    digitBuffer |= fData[index2].fDetElemID;
+    digitBuffer |= fData[index2].fBoardID << 12; //shift of 12 bits
+    digitBuffer |= fData[index2].fChannel << 24; //shift of 24 bits
+    digitBuffer |= fData[index2].fCathode << 30; //shift of 30 bits
 
     return digitBuffer;
 }
