@@ -81,7 +81,7 @@ bool Deserializer::Advance() {
     // Avoid exceding the total number of digits
     if ( fDigitCounter>fNDigits ) return false;
 
-    // Loading data in the data member used by ApplyMask
+    // Loading UID and Data
     fUniqueID = fDigitsDataPtr[fOffset];
 
     fData[0] = fDigitsDataPtr[fOffset];
