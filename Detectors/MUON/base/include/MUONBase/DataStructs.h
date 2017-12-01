@@ -25,7 +25,10 @@ struct deserializerDataStruct {
     uint32_t fBoardID;
     uint32_t fChannel;
     uint32_t fCathode;
-    deserializerDataStruct(uint32_t detElemID, uint32_t boardID, uint32_t channel, uint32_t cathode){
+    deserializerDataStruct(uint32_t detElemID = 0,
+                           uint32_t boardID = 0,
+                           uint32_t channel = 0,
+                           uint32_t cathode = 0){
         fDetElemID = detElemID;
         fBoardID = boardID;
         fChannel = channel;
