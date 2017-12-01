@@ -36,14 +36,12 @@ namespace AliceO2 {
         ~Deserializer();
 
         // Iterator like methods
-        bool Advance();
-        void Load();
         bool Rewind();
         deserializerDataStruct* NextDigit();
         inline deserializerDataStruct* CurrentDigit(){ return &fOutputDataStruct; }
         inline deserializerDataStruct* operator() (){ return NextDigit(); }
 
-        uint32_t * NextUniqueID(bool loadAllData = false);
+        uint32_t* NextUniqueID(bool loadAllData = false);
         inline uint32_t* CurrentUniqueID(){ return &fUniqueID; }
         inline uint32_t* GetCurrentData(){ return fData; }
         inline uint32_t* GetHeader(){ return reinterpret_cast<uint32_t(&)[25]>(reinterpret_cast<uint8_t(&)[100]>(fDataPtr)); }
@@ -59,6 +57,9 @@ namespace AliceO2 {
         };
 
     private:
+        bool Advance();
+        void Load();
+
         // Const values to exclude first 100 bytes of message and perform deserialization
         const uint32_t kHeaderLength = 100;
 
