@@ -43,7 +43,7 @@ namespace AliceO2 {
         private:
             // Const values to exclude first 100 bytes of message and perform deserialization
             const uint32_t kHeaderLength = 100;
-            uint32_t fHeader[100];
+            uint32_t fHeader[25];
 
             // Internal data container
             std::vector<deserializerDataStruct> fData;
