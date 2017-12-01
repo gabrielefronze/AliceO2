@@ -35,17 +35,21 @@ uint32_t* Serializer::GetMessage() {
     OutputData.emplace_back(fData.size());
 
     // Putting in OutputData the translated structs
-    uint32_t digitBuffer = 0;
     for( const auto &itData : fData ){
-        digitBuffer = 0;
-
-        digitBuffer |= itData.fDetElemID;
-        digitBuffer |= itData.fBoardID << 12; //shift of 12 bits
-        digitBuffer |= itData.fChannel << 24; //shift of 24 bits
-        digitBuffer |= itData.fCathode << 30; //shift of 30 bits
-
-        OutputData.emplace_back(digitBuffer);
+        OutputData.emplace_back(GetUID(itData));
     }
 
     return &(OutputData[0]);
+}
+
+//_________________________________________________________________________________________________
+uint32_t Serializer::GetUID(deserializerDataStruct dataStruct) {
+    uint32_t digitBuffer = 0;
+
+    digitBuffer |= dataStruct.fDetElemID;
+    digitBuffer |= dataStruct.fBoardID << 12; //shift of 12 bits
+    digitBuffer |= dataStruct.fChannel << 24; //shift of 24 bits
+    digitBuffer |= dataStruct.fCathode << 30; //shift of 30 bits
+
+    return digitBuffer;
 }
