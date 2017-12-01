@@ -54,7 +54,7 @@ bool Deserializer::Rewind(){
 }
 
 //_________________________________________________________________________________________________
-Deserializer::deserializerDataStruct* Deserializer::NextDigit() {
+deserializerDataStruct* Deserializer::NextDigit() {
 
     if (!Advance()) return nullptr;
     Load();
