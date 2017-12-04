@@ -19,25 +19,11 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include <sys/dtrace.h>
-#include "MUONBase/Enums.h"
+#include "DataStructs.h"
 
 namespace AliceO2 {
 
     namespace MUON {
-
-        struct stripMapping {
-            uint64_t startTS[digitType::kSize]; // timestamp of first added run
-            uint64_t stopTS[digitType::kSize]; // timestamp of last added run
-            uint64_t digitsCounter[digitType::kSize]; // counter of time the strip has been fired
-            ushort_t columnID;
-            float_t area; // 1D area
-            float_t coord[2][2];
-            float_t rate[digitType::kSize]; // rate in Hz/cm2 or 1/cm2
-            bool isDead;
-            bool isNoisy;
-            stripMapping();
-        };
 
         class OccupancyMapping {
 
