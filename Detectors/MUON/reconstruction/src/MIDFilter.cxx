@@ -75,7 +75,7 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
     }
 
     // Getting the header as 32bit integer pointer (instead of 8bit) to push it back in output message
-    uint32_t* DataHeader = MessageDeserializer.GetHeader();
+    auto DataHeader = MessageDeserializer.GetHeader();
 
     // This vector will contain the full message
     std::vector<uint32_t> OutputData;
@@ -100,7 +100,7 @@ bool MIDFilter::HandleData( FairMQMessagePtr &msg, int /*index*/ ){
 
         // If the ID corresponds to a strip which is behaving well save it in the vector
         if ( IsStripOk ){
-            uint32_t* Data = MessageDeserializer.GetCurrentData();
+            auto Data = MessageDeserializer.GetCurrentData();
             OutputDataDigits.push_back(Data[0]);
             OutputDataDigits.push_back(Data[1]);
             nDigits++;

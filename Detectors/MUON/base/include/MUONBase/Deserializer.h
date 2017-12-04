@@ -42,12 +42,12 @@ namespace AliceO2 {
         inline deserializerDataStruct* operator() (){ return NextDigit(); }
 
         uint32_t* NextUniqueID(bool loadAllData = false);
-        inline uint32_t* CurrentUniqueID(){ return &fUniqueID; }
-        inline uint32_t* GetCurrentData(){ return fData; }
-        inline uint32_t* GetHeader(){ return (uint32_t*)(fDataPtr); }
-        inline uint32_t* GetDataPointer(){ return fDigitsDataPtr; }
-        inline uint32_t GetNDigits(){ return fNDigits; }
-        std::string PrintData(){
+        inline const uint32_t* CurrentUniqueID() const { return &fUniqueID; }
+        inline const uint32_t* GetCurrentData() const { return fData; }
+        inline const uint32_t* GetHeader() const { return (uint32_t*)(fDataPtr); }
+        inline const uint32_t* GetDataPointer() const { return fDigitsDataPtr; }
+        inline const uint32_t GetNDigits() const { return fNDigits; }
+        std::string PrintData() const{
             std::string outputString =  "UID="+std::to_string(fUniqueID)+
                                        " ElemID="+std::to_string(fOutputDataStruct.fDetElemID)+
                                        " Bd="+std::to_string(fOutputDataStruct.fBoardID)+
