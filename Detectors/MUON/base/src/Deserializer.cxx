@@ -35,6 +35,9 @@ fOffset(1){
     // Internal pointers to data are kept locally
     fDataPtr = reinterpret_cast<uint32_t*>(payload);
 
+    for (uint32_t iHeader = 0; iHeader < kHeaderLength; ++iHeader) {
+        std::cout<<fDataPtr[iHeader]<<std::endl;
+    }
 
     fDigitsDataPtr = fDataPtr + kHeaderLength;
     fNDigits = fDigitsDataPtr[0];
