@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
 
     BOOST_AUTO_TEST_CASE(UniqueID){
         Serializer serializer;
-        serializer.AddDigit(4,3,2,1);
+        serializer.AddDigit(0,0,0,0);
 
         Deserializer deserializer(serializer.GetMessage());
 
@@ -35,53 +35,47 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
 
     BOOST_AUTO_TEST_CASE(NextUniqueID){
         Serializer serializer;
-        serializer.AddDigit(4,3,2,1);
-        serializer.AddDigit(8,7,6,5);
-        serializer.AddDigit(12,11,10,9);
+
+        auto nDigits = 10;
+
+        for (uint32_t iDigit = 0; iDigit < nDigits; ++iDigit) {
+            serializer.AddDigit(iDigit,iDigit,iDigit,iDigit);
+        }
 
         Deserializer deserializer(serializer.GetMessage());
 
-        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(0) );
-        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(1) );
-        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(2) );
+        for (int iDigit = 0; iDigit < nDigits; ++iDigit) {
+            BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(iDigit) );
+        }
     }
 
     BOOST_AUTO_TEST_CASE(CurrentUniqueID){
         Serializer serializer;
-        serializer.AddDigit(4,3,2,1);
+        serializer.AddDigit(3,3,3,3);
 
         Deserializer deserializer(serializer.GetMessage());
 
-        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(0) );
+        deserializer.NextUniqueID();
         BOOST_TEST( *(deserializer.CurrentUniqueID()) == serializer.GetUID(0) );
-    }
-
-    BOOST_AUTO_TEST_CASE(CurrentData){
-        Serializer serializer;
-        serializer.AddDigit(4,3,2,1);
-
-        Deserializer deserializer(serializer.GetMessage());
-
-        BOOST_TEST( deserializer.GetDataPointer()[0] == serializer.GetUID(0) );
-        BOOST_TEST( deserializer.GetDataPointer()[1] == serializer.GetUID(0) );
     }
 
     BOOST_AUTO_TEST_CASE(Header){
         Serializer serializer;
 
+        serializer.DumpHeader();
+
         Deserializer deserializer(serializer.GetMessage());
 
-        BOOST_TEST( deserializer.GetHeader()[0] == 0xDEAD );
-        BOOST_TEST( deserializer.GetHeader()[100] == 0xDEAD );
-        BOOST_TEST( deserializer.GetHeader()[1] == 0xBEEF );
-        BOOST_TEST( deserializer.GetHeader()[99] == 0xBEEF );
+        for (int iHeader = 0; iHeader < 25; ++iHeader) {
+            BOOST_TEST( deserializer.GetHeader()[iHeader] == iHeader );
+        }
     }
 
     BOOST_AUTO_TEST_CASE(NDigits){
         Serializer serializer;
-        serializer.AddDigit(4,3,2,1);
-        serializer.AddDigit(8,7,6,5);
-        serializer.AddDigit(12,11,10,9);
+        serializer.AddDigit(3,3,3,3);
+        serializer.AddDigit(4,4,4,4);
+        serializer.AddDigit(5,5,5,5);
 
         Deserializer deserializer(serializer.GetMessage());
 
@@ -90,18 +84,17 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
 
     BOOST_AUTO_TEST_CASE(Rewind){
         Serializer serializer;
-        serializer.AddDigit(4,3,2,1);
-        serializer.AddDigit(8,7,6,5);
-        serializer.AddDigit(12,11,10,9);
+        serializer.AddDigit(3,3,3,3);
+        serializer.AddDigit(4,4,4,4);
+        serializer.AddDigit(5,5,5,5);
 
         Deserializer deserializer(serializer.GetMessage());
 
-        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(0) );
-        auto dummy = deserializer.NextUniqueID();
-        dummy = nullptr;
-        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(2) );
+        auto firstDigit = *(deserializer.NextUniqueID());
+        deserializer.NextUniqueID();
+        deserializer.NextUniqueID();
         BOOST_TEST( deserializer.Rewind() );
-        BOOST_TEST( *(deserializer.NextUniqueID()) == serializer.GetUID(0) );
+        BOOST_TEST( *(deserializer.NextUniqueID()) == firstDigit );
     }
 
 BOOST_AUTO_TEST_SUITE_END()

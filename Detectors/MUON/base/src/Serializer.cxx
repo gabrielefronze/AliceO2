@@ -20,8 +20,8 @@ using namespace AliceO2::MUON;
 
 //_________________________________________________________________________________________________
 Serializer::Serializer() {
-    for (int iHeader = 0; iHeader < kHeaderLength/4; ++iHeader) {
-        fHeader[iHeader] = (iHeader%2==0)?0xDEAD:0xBEEF;
+    for (uint32_t iHeader = 0; iHeader < kHeaderLength; ++iHeader) {
+        fHeader.push_back(iHeader);
     }
 }
 
@@ -31,14 +31,17 @@ uint32_t* Serializer::GetMessage() {
     std::vector<uint32_t> OutputData;
 
     // The first 100bytes are the header.
-    OutputData.assign(fHeader, fHeader + 25);
+    OutputData.assign(fHeader.begin(), fHeader.begin() + kHeaderLength);
+
+    for( const auto &itData : OutputData ){
+        std::cout<<itData<<std::endl;
+    }
 
     // Putting in the vector the number of digits before the payload
-    OutputData.emplace_back(fData.size());
+    OutputData.emplace_back(fData.size()/2);
 
     // Putting in OutputData the translated structs
     for( const auto &itData : fData ){
-        OutputData.emplace_back(GetUID(itData));
         OutputData.emplace_back(GetUID(itData));
     }
 
@@ -49,10 +52,10 @@ uint32_t* Serializer::GetMessage() {
 uint32_t Serializer::GetUID(deserializerDataStruct dataStruct) {
     uint32_t digitBuffer = 0;
 
-    digitBuffer |= dataStruct.fDetElemID;
-    digitBuffer |= dataStruct.fBoardID << 12; //shift of 12 bits
-    digitBuffer |= dataStruct.fChannel << 24; //shift of 24 bits
-    digitBuffer |= dataStruct.fCathode << 30; //shift of 30 bits
+    digitBuffer |= (dataStruct.fDetElemID & 0xFFF);
+    digitBuffer |= (dataStruct.fBoardID & 0xFFF) << 12; //shift of 12 bits
+    digitBuffer |= (dataStruct.fChannel & 0x3F) << 24; //shift of 24 bits
+    digitBuffer |= (dataStruct.fCathode & 0x4) << 30; //shift of 30 bits
 
     return digitBuffer;
 }
@@ -66,10 +69,10 @@ uint32_t Serializer::GetUID(size_t index) {
 
     uint32_t digitBuffer = 0;
 
-    digitBuffer |= fData[index2].fDetElemID;
-    digitBuffer |= fData[index2].fBoardID << 12; //shift of 12 bits
-    digitBuffer |= fData[index2].fChannel << 24; //shift of 24 bits
-    digitBuffer |= fData[index2].fCathode << 30; //shift of 30 bits
+    digitBuffer |= (fData[index2].fDetElemID & 0xFFF);
+    digitBuffer |= (fData[index2].fBoardID & 0xFFF) << 12; //shift of 12 bits
+    digitBuffer |= (fData[index2].fChannel & 0x3F) << 24; //shift of 24 bits
+    digitBuffer |= (fData[index2].fCathode & 0x4) << 30; //shift of 30 bits
 
     return digitBuffer;
 }
