@@ -33,8 +33,8 @@ namespace AliceO2 {
             Serializer();
             ~Serializer(){};
 
-            inline void AddDigit(uint32_t detElemID, uint32_t boardID, uint32_t channel, uint32_t cathode){ fData.emplace_back(detElemID,boardID,channel,cathode);fData.emplace_back(detElemID,boardID,channel,cathode); };
-            inline void AddDigit(deserializerDataStruct dataStruct){ fData.emplace_back(dataStruct);fData.emplace_back(dataStruct); };
+            inline void AddDigit(uint32_t detElemID, uint32_t boardID, uint32_t channel, uint32_t cathode){ fData.emplace_back(deserializerDataStruct(detElemID,boardID,channel,cathode));fData.emplace_back(deserializerDataStruct(0,0,0,0)); };
+            inline void AddDigit(deserializerDataStruct dataStruct){ fData.emplace_back(dataStruct);fData.emplace_back(deserializerDataStruct(0,0,0,0)); };
             uint32_t GetUID(deserializerDataStruct dataStruct);
             uint32_t GetUID(size_t index);
             uint32_t* GetMessage();
