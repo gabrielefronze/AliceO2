@@ -31,7 +31,7 @@ public:
     double AvgCallTime(){
         return std::accumulate(fDeltaTs.begin(),fDeltaTs.end(),0.)/fDeltaTs.size();
     };
-
+    inline size_t GetNCalls(){ return fDeltaTs.size(); };
     std::string PrintStatus(){
         std::ostringstream outputString;
         outputString << "NCalls=" << std::to_string(fDeltaTs.size()) << " AvgTime=";

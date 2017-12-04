@@ -17,6 +17,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
+#include <iostream>
 #include "MUONBase/Chrono.h"
 
 BOOST_AUTO_TEST_SUITE(testChrono)
@@ -36,6 +37,18 @@ BOOST_AUTO_TEST_SUITE(testChrono)
         BOOST_TEST( avg == chronometer.AvgCallTime() );
     }
 
+    BOOST_AUTO_TEST_CASE(NCalls){
+        Chrono chronometer;
+
+        int nCalls = 10;
+        int sum = 0;
+        for (int jCall = 0; jCall < nCalls; ++jCall) {
+            chronometer.AddCall((double)jCall);
+        }
+
+        BOOST_TEST( chronometer.GetNCalls() == nCalls );
+    }
+
     BOOST_AUTO_TEST_CASE(PrintStatus){
         Chrono chronometer;
 
@@ -51,7 +64,7 @@ BOOST_AUTO_TEST_SUITE(testChrono)
         auto str = chronometer.PrintStatus();
         int strNCalls = 0;
         double strAvg = 0.;
-        scanf(str.c_str(),"NCalls=%d AvgTime=%lf",&strNCalls,&strAvg);
+        sscanf(str.c_str(),"NCalls=%d AvgTime=%lf",&strNCalls,&strAvg);
 
         BOOST_TEST( avg == strAvg );
         BOOST_TEST( strNCalls == nCalls );
