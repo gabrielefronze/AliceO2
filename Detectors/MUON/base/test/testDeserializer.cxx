@@ -62,12 +62,14 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
     BOOST_AUTO_TEST_CASE(Header){
         Serializer serializer;
 
-        serializer.DumpHeader();
+//        serializer.DumpHeader();
 
         Deserializer deserializer(serializer.GetMessage());
 
+        auto header = deserializer.GetHeader();
+
         for (int iHeader = 0; iHeader < 25; ++iHeader) {
-            BOOST_TEST( deserializer.GetHeader()[iHeader] == iHeader );
+            BOOST_TEST( header[iHeader] == iHeader );
         }
     }
 
