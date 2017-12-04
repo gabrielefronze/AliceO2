@@ -20,6 +20,7 @@
 #define SERIALIZER_H
 
 #include <vector>
+#include <iostream>
 #include "DataStructs.h"
 
 namespace AliceO2 {
@@ -38,6 +39,7 @@ namespace AliceO2 {
             uint32_t GetUID(deserializerDataStruct dataStruct);
             uint32_t GetUID(size_t index);
             uint32_t* GetMessage();
+            inline void DumpHeader(){for(const auto &it : fHeader)std::cout<<it<<std::endl;};
 
 
         private:
