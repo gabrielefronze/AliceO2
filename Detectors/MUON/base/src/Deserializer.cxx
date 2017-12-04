@@ -33,8 +33,10 @@ Deserializer::Deserializer(void *payload):
 fDigitCounter(0),
 fOffset(1){
     // Internal pointers to data are kept locally
-    fDataPtr = reinterpret_cast<uint8_t*>(payload);
-    fDigitsDataPtr = reinterpret_cast<uint32_t*>(fDataPtr + kHeaderLength);
+    fDataPtr = reinterpret_cast<uint32_t*>(payload);
+
+
+    fDigitsDataPtr = fDataPtr + kHeaderLength;
     fNDigits = fDigitsDataPtr[0];
 }
 

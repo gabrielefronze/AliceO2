@@ -44,7 +44,7 @@ namespace AliceO2 {
         uint32_t* NextUniqueID(bool loadAllData = false);
         inline uint32_t* CurrentUniqueID(){ return &fUniqueID; }
         inline uint32_t* GetCurrentData(){ return fData; }
-        inline uint32_t* GetHeader(){ return reinterpret_cast<uint32_t(&)[25]>(reinterpret_cast<uint8_t(&)[100]>(fDataPtr)); }
+        inline uint32_t* GetHeader(){ return (uint32_t*)(fDataPtr); }
         inline uint32_t* GetDataPointer(){ return fDigitsDataPtr; }
         inline uint32_t GetNDigits(){ return fNDigits; }
         std::string PrintData(){
@@ -61,9 +61,9 @@ namespace AliceO2 {
         void Load();
 
         // Const values to exclude first 100 bytes of message and perform deserialization
-        const uint32_t kHeaderLength = 100;
+        const uint32_t kHeaderLength = 25;
 
-        uint8_t* fDataPtr;
+        uint32_t* fDataPtr;
         uint32_t* fDigitsDataPtr;
         uint32_t fNDigits;
         uint32_t fOffset;
