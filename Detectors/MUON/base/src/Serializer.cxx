@@ -27,25 +27,25 @@ Serializer::Serializer() {
 
 //_________________________________________________________________________________________________
 uint32_t* Serializer::GetMessage() {
-    // This vector will contain the full message
-    std::vector<uint32_t> OutputData;
+
+    std::vector<uint32_t>().swap(fOutputData);
 
     // The first 100bytes are the header.
-    OutputData.assign(fHeader.begin(), fHeader.begin() + kHeaderLength);
+    fOutputData.assign(fHeader.begin(), fHeader.begin() + kHeaderLength);
 
-    for( const auto &itData : OutputData ){
-        std::cout<<itData<<std::endl;
-    }
+//    for( const auto &itData : OutputData ){
+//        std::cout<<itData<<std::endl;
+//    }
 
     // Putting in the vector the number of digits before the payload
-    OutputData.emplace_back(fData.size()/2);
+    fOutputData.emplace_back(fData.size()/2);
 
     // Putting in OutputData the translated structs
     for( const auto &itData : fData ){
-        OutputData.emplace_back(GetUID(itData));
+        fOutputData.emplace_back(GetUID(itData));
     }
 
-    return &(OutputData[0]);
+    return &(fOutputData[0]);
 }
 
 //_________________________________________________________________________________________________
