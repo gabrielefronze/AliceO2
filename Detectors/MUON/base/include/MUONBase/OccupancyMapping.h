@@ -12,8 +12,8 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#ifndef O2_DEV_ALO_OCCUPANCYMAPPING_H
-#define O2_DEV_ALO_OCCUPANCYMAPPING_H
+#ifndef OCCUPANCYMAPPING_H
+#define OCCUPANCYMAPPING_H
 
 #include <array>
 #include <vector>
@@ -32,7 +32,7 @@ namespace AliceO2 {
             bool ReadMapping(const char*,std::vector<int> elementIDs);
             bool ReadMapping(const char*);
 
-            stripMapping* operator[](uint32_t ID){
+            stripMapping* operator[](uint32_t ID) const {
                 auto stripFinder = fIDMap.find(ID);
                 if (stripFinder == fIDMap.end()){
                     return nullptr;
@@ -40,7 +40,7 @@ namespace AliceO2 {
                 return &(fStripVector[stripFinder->second]);
             }
 
-            bool Consistent(bool deep = false){
+            bool Consistent(bool deep = false) const {
 
                 bool counterStatus = (fIDMap.size() == fStripVector.size());
 
@@ -63,4 +63,4 @@ namespace AliceO2 {
 }
 
 
-#endif //O2_DEV_ALO_OCCUPANCYMAPPING_H
+#endif //OCCUPANCYMAPPING_H
