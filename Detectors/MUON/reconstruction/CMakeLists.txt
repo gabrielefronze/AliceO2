@@ -15,6 +15,7 @@ set(SRCS
         src/MIDFilterDevice.cxx
         src/MIDMaskGeneratorDevice.cxx
         src/MIDRatesComputerDevice.cxx
+        src/MIDRatesComputerAlgorithm.cxx
         src/Broadcaster.cxx
         )
 
@@ -22,6 +23,7 @@ set(HEADERS
         include/${MODULE_NAME}/MIDFilterDevice.h
         include/${MODULE_NAME}/MIDMaskGeneratorDevice.h
         include/${MODULE_NAME}/MIDRatesComputerDevice.h
+        include/${MODULE_NAME}/MIDRatesComputerAlgorithm.h
         include/${MODULE_NAME}/Broadcaster.h
         )
 
