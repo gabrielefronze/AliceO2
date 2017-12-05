@@ -34,7 +34,7 @@ namespace o2 {
 
                 bool ReadMapping(const char *);
 
-                stripMapping *operator[](uint32_t ID) const {
+                stripMapping *operator[](uint32_t ID) {
                     auto stripFinder = fIDMap.find(ID);
                     if (stripFinder == fIDMap.end()) {
                         return nullptr;

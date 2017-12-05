@@ -21,6 +21,7 @@
 
 #include "MUONBase/Enums.h"
 #include <sys/dtrace.h>
+#include <math.h>
 
 namespace o2 {
     namespace muon {

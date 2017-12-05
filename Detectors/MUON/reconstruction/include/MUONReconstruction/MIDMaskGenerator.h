@@ -20,44 +20,51 @@
 #include "MUONBase/Enums.h"
 #include "MUONBase/OccupancyMapping.h"
 
-namespace AliceO2 {
+namespace o2 {
 
-    namespace MUON {
+    namespace muon {
 
-        class MIDMaskGenerator : public FairMQDevice{
+        namespace mid {
 
-        public:
-            MIDMaskGenerator();
-            virtual ~MIDMaskGenerator();
+            class MIDMaskGenerator : public FairMQDevice {
 
-        protected:
-            bool HandleData(FairMQMessagePtr&, int);
-            virtual void InitTask();
+            public:
+                MIDMaskGenerator();
 
-        private:
+                virtual ~MIDMaskGenerator();
 
-            OccupancyMapping fMapping;
+            protected:
+                bool HandleData(FairMQMessagePtr &, int);
 
-            using IDType = uint32_t ;
+                virtual void InitTask();
 
-            struct stripMask{
-                ushort_t nDead; // number of elements for deadStripsIDs
-                ushort_t nNoisy; // number of elements for noisyStripsIDs
-                std::unordered_set<IDType> deadStripsIDs; // container of UniqueIDs of dead strips
-                std::unordered_set<IDType> noisyStripsIDs; // container of UniqueIDs of noisy strips
+            private:
+
+                OccupancyMapping fMapping;
+
+                using IDType = uint32_t;
+
+                struct stripMask {
+                    ushort_t nDead; // number of elements for deadStripsIDs
+                    ushort_t nNoisy; // number of elements for noisyStripsIDs
+                    std::unordered_set<IDType> deadStripsIDs; // container of UniqueIDs of dead strips
+                    std::unordered_set<IDType> noisyStripsIDs; // container of UniqueIDs of noisy strips
+                };
+
+                stripMask fStructMask;
+                stripMask fStructMaskSim;
+
+                void FindNoisy(digitType type);
+
+                void FindDead(digitType type);
+
+                void ResetAll();
+
+                void FillMask();
+
+                errMsg SendMask();
             };
-
-            stripMask fStructMask;
-            stripMask fStructMaskSim;
-
-            void FindNoisy(digitType type);
-            void FindDead(digitType type);
-
-            void ResetAll();
-            void FillMask();
-
-            errMsg SendMask();
-        };
+        }
     }
 }
 

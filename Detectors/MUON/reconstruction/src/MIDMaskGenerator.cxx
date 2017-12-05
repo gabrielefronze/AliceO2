@@ -16,7 +16,7 @@
 #include "options/FairMQProgOptions.h"
 #include "TMath.h"
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 
 //_________________________________________________________________________________________________
 MIDMaskGenerator::MIDMaskGenerator():

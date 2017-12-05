@@ -28,5 +28,5 @@ void addCustomOptions(bpo::options_description& options)
 
 FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/)
 {
-  return new AliceO2::MUON::MIDMaskGenerator();
+  return new o2::muon::mid::MIDMaskGenerator();
 }

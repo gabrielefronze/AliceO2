@@ -26,28 +26,32 @@
 #include <string>
 #include <vector>
 
-namespace AliceO2 {
+namespace o2 {
 
-    namespace MUON {
+    namespace muon {
 
-        class Broadcaster : public FairMQDevice {
-        public:
-            Broadcaster( bool waiting = true );
-            ~Broadcaster(){
-                LOG(INFO) << "Average performance: " << fChronometer.PrintStatus();
+        namespace mid {
+
+            class Broadcaster : public FairMQDevice {
+            public:
+                Broadcaster(bool waiting = true);
+
+                ~Broadcaster() {
+                    LOG(INFO) << "Average performance: " << fChronometer.PrintStatus();
+                };
+
+                virtual void InitTask();
+
+            private:
+                bool Broadcast(FairMQMessagePtr &, int);
+
+                std::vector<std::string> fOutputChannelNames;
+                bool fWaiting;
+
+                Chrono fChronometer;
             };
-            virtual void InitTask();
-
-        private:
-            bool Broadcast(FairMQMessagePtr &, int);
-
-            std::vector<std::string> fOutputChannelNames;
-            bool fWaiting;
-
-            Chrono fChronometer;
-        };
+        }
     }
-
 }
 
 

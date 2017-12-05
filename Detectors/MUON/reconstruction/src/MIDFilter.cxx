@@ -19,7 +19,7 @@
 #include "MUONBase/Chrono.h"
 //#include "flatbuffers/flatbuffers.h"
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 
 //_________________________________________________________________________________________________
 MIDFilter::MIDFilter(){

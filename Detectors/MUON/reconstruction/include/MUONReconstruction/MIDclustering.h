@@ -14,79 +14,86 @@
 #include <vector>
 #include <unordered_map>
 
-namespace AliceO2 {
+namespace o2 {
+    namespace muon {
+        namespace mid {
 
-  namespace MUON {
-    class MIDclustering : public FairMQDevice
-    {
-    public:
-      MIDclustering();
-      virtual ~MIDclustering();
+            class MIDclustering : public FairMQDevice {
+            public:
+                MIDclustering();
 
-    protected:
-      bool HandleData(FairMQMessagePtr&, int);
-      virtual void InitTask();
+                virtual ~MIDclustering();
 
-    private:
+            protected:
+                bool HandleData(FairMQMessagePtr &, int);
 
-      struct digiPads {
-        Mapping::mpDE* mapping;
-        UShort_t nFiredPads[2]; // number of fired pads on each plane
-        std::vector<UShort_t> firedPads[2]; // indices of fired pads on each plane
-        // UShort_t nOrderedPads; // current number of fired pads in the following arrays
-        // std::vector<UShort_t> orderedPads; // indices of fired pads ordered after preclustering and merging
-      };
+                virtual void InitTask();
 
-      // precluster structure
-      struct preCluster {
-        UShort_t column; // mask of fired columns
-        // UShort_t firstPad; // index of first associated pad in the orderedPads array
-        // UShort_t lastPad; // index of last associated pad in the orderedPads array
-        Float_t area[7][2][2]; // 2D area containing the precluster per column
-        Bool_t useMe; // kFALSE if precluster already merged to another one
-      };
+            private:
 
-      // cluster structure
-      struct cluster {
-        Int_t id; // Index of the detection element
-        Float_t xCoor; // local x coordinate
-        Float_t yCoor; // local y coordinate
-        Float_t sigmaX; // dispersion along x
-        Float_t sigmaY; // dispersion along y
-      };
+                struct digiPads {
+                    Mapping::mpDE *mapping;
+                    UShort_t nFiredPads[2]; // number of fired pads on each plane
+                    std::vector<UShort_t> firedPads[2]; // indices of fired pads on each plane
+                    // UShort_t nOrderedPads; // current number of fired pads in the following arrays
+                    // std::vector<UShort_t> orderedPads; // indices of fired pads ordered after preclustering and merging
+                };
 
-      // Do not allow copying of this class.
-      /// Not implemented.
-      MIDclustering(const MIDclustering& /*obj*/);
-      /// Not implemented.
-      MIDclustering& operator = (const MIDclustering& /*obj*/);
+                // precluster structure
+                struct preCluster {
+                    UShort_t column; // mask of fired columns
+                    // UShort_t firstPad; // index of first associated pad in the orderedPads array
+                    // UShort_t lastPad; // index of last associated pad in the orderedPads array
+                    Float_t area[7][2][2]; // 2D area containing the precluster per column
+                    Bool_t useMe; // kFALSE if precluster already merged to another one
+                };
 
-      bool ReadMapping ( const char* );
+                // cluster structure
+                struct cluster {
+                    Int_t id; // Index of the detection element
+                    Float_t xCoor; // local x coordinate
+                    Float_t yCoor; // local y coordinate
+                    Float_t sigmaX; // dispersion along x
+                    Float_t sigmaY; // dispersion along y
+                };
 
-      bool LoadDigits ( FairMQMessagePtr& );
-      void ResetPadsAndClusters();
+                // Do not allow copying of this class.
+                /// Not implemented.
+                MIDclustering(const MIDclustering & /*obj*/);
 
-      void PreClusterizeRecursive(digiPads &de);
-      void AddPad(digiPads &de, UShort_t iPad, preCluster &cl);
+                /// Not implemented.
+                MIDclustering &operator=(const MIDclustering & /*obj*/);
 
-      void MakeClusters ( Int_t idDE );
-      void MakeCluster ( preCluster &clx, preCluster &cly, Int_t &idDE );
+                bool ReadMapping(const char *);
 
-      int StoreClusters ( FairMQMessagePtr &msgOut );
+                bool LoadDigits(FairMQMessagePtr &);
 
-      std::unordered_map<Int_t,digiPads> fMpDEs; ///< internal mapping
+                void ResetPadsAndClusters();
 
-      UShort_t fNPreClusters[2]; ///< number of preclusters in each cathods of each DE
-      std::vector<preCluster> fPreClusters[2]; ///< list of preclusters in each cathode of each DE
+                void PreClusterizeRecursive(digiPads &de);
 
-      std::unordered_map<Int_t,Bool_t> fActiveDEs; ///< List of active detection elements for event
-      std::vector<cluster> fClusters; ///< list of clusters
-      uint32_t fNClusters; ///< Number of clusters
+                void AddPad(digiPads &de, UShort_t iPad, preCluster &cl);
 
-      const Float_t fkSqrt12; ///< Useful constant
+                void MakeClusters(Int_t idDE);
 
-    };
-  }
+                void MakeCluster(preCluster &clx, preCluster &cly, Int_t &idDE);
+
+                int StoreClusters(FairMQMessagePtr &msgOut);
+
+                std::unordered_map<Int_t, digiPads> fMpDEs; ///< internal mapping
+
+                UShort_t fNPreClusters[2]; ///< number of preclusters in each cathods of each DE
+                std::vector<preCluster> fPreClusters[2]; ///< list of preclusters in each cathode of each DE
+
+                std::unordered_map<Int_t, Bool_t> fActiveDEs; ///< List of active detection elements for event
+                std::vector<cluster> fClusters; ///< list of clusters
+                uint32_t fNClusters; ///< Number of clusters
+
+                const Float_t fkSqrt12; ///< Useful constant
+
+            };
+        }
+    }
 }
 
 #endif /* MIDclustering_h */

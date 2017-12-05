@@ -21,7 +21,7 @@
 #include "options/FairMQProgOptions.h"
 #include "algorithm"
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 
 //_________________________________________________________________________________________________
 MIDRatesComputer::MIDRatesComputer():

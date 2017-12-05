@@ -27,7 +27,7 @@
 #include "FairMQLogger.h"
 #include "options/FairMQProgOptions.h"
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 using namespace std;
 
 //_________________________________________________________________________________________________
