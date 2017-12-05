@@ -19,25 +19,17 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
-namespace o2 {
-    namespace muon {
-        namespace mid {
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
+enum digitType { kPhysics, kFET, kTriggered, kSize };
 
-            enum digitType {
-                kPhysics,
-                kFET,
-                kTriggered,
-                kSize
-            };
+typedef enum { kShortMsg, kFailedSend, kOk } errMsg;
+} // namespace mid
+} // namespace muon
+} // namespace o2
 
-
-            typedef enum {
-                kShortMsg,
-                kFailedSend,
-                kOk
-            } errMsg;
-        }
-    }
-}
-
-#endif //ENUMS_H
+#endif // ENUMS_H

@@ -15,49 +15,55 @@
 #ifndef CHRONO_H
 #define CHRONO_H
 
-
-#include <cstdint>
-#include <ratio>
 #include <chrono>
-#include <vector>
+#include <cstdint>
 #include <numeric>
-#include <string>
+#include <ratio>
 #include <sstream>
+#include <string>
+#include <vector>
 
-namespace o2 {
-    namespace muon {
-        namespace mid {
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
+class Chrono
+{
+ public:
+  void AddCall(double deltaT) { fDeltaTs.emplace_back(deltaT); };
 
-            class Chrono {
-            public:
-                void AddCall(double deltaT){ fDeltaTs.emplace_back(deltaT); };
+  double AvgCallTime() { return std::accumulate(fDeltaTs.begin(), fDeltaTs.end(), 0.) / fDeltaTs.size(); };
+  inline size_t GetNCalls() { return fDeltaTs.size(); };
+  std::string PrintStatus()
+  {
+    std::ostringstream outputString;
+    outputString << "NCalls=" << std::to_string(fDeltaTs.size()) << " AvgTime=";
+    outputString << AvgCallTime();
+    return outputString.str();
+  };
 
-                double AvgCallTime(){
-                    return std::accumulate(fDeltaTs.begin(),fDeltaTs.end(),0.)/fDeltaTs.size();
-                };
-                inline size_t GetNCalls(){ return fDeltaTs.size(); };
-                std::string PrintStatus(){
-                    std::ostringstream outputString;
-                    outputString << "NCalls=" << std::to_string(fDeltaTs.size()) << " AvgTime=";
-                    outputString << AvgCallTime();
-                    return outputString.str();
-                };
+ private:
+  std::vector<double> fDeltaTs;
+};
 
-            private:
-                std::vector<double> fDeltaTs;
-            };
+class DeltaT
+{
+ public:
+  DeltaT(Chrono* chrono) : fStart(std::chrono::high_resolution_clock::now()), fChrono(chrono){};
+  ~DeltaT()
+  {
+    fChrono->AddCall(
+      std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - fStart).count());
+  };
 
-            class DeltaT {
-            public:
-                DeltaT(Chrono *chrono) : fStart(std::chrono::high_resolution_clock::now()),fChrono(chrono){};
-                ~DeltaT(){ fChrono->AddCall(std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - fStart).count()); };
+ private:
+  std::chrono::high_resolution_clock::time_point fStart;
+  Chrono* fChrono;
+};
+} // namespace mid
+} // namespace muon
+} // namespace o2
 
-            private:
-                std::chrono::high_resolution_clock::time_point fStart;
-                Chrono *fChrono;
-            };
-        }
-    }
-}
-
-#endif //CHRONO_H
+#endif // CHRONO_H

@@ -1,50 +1,50 @@
 #ifndef MAPPING_H
 #define MAPPING_H
 
-#include "Rtypes.h"
-#include <vector>
 #include <unordered_map>
+#include <vector>
+#include "Rtypes.h"
 
-namespace o2 {
-    namespace muon {
-        namespace mid {
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
+class Mapping
+{
+ public:
+  // pad structure in the internal mapping
+  struct mpPad {
+    UShort_t iDigit;         // index of the corresponding digit
+    UChar_t nNeighbours;     // number of neighbours
+    UShort_t neighbours[10]; // indices of neighbours in array stored in mpDE
+    Float_t area[2][2];      // 2D area
+    Bool_t useMe;            // kFALSE if no digit attached or already visited
+  };
 
-            class Mapping {
+  // DE structure in the internal mapping
+  struct mpDE {
+    Int_t id;                                             // unique ID
+    UChar_t iCath[2];                                     // cathod index corresponding to each plane
+    UShort_t nPads[2];                                    // number of pads on each plane
+    mpPad* pads;                                          // array of pads on both planes
+    std::unordered_map<Long64_t, Long64_t> padIndices[2]; // indices+1 of pads from their ID
+  };
 
-            public:
+  // static int NumberOfDetectionElements() { return fNDE; }
 
-                // pad structure in the internal mapping
-                struct mpPad {
-                    UShort_t iDigit; // index of the corresponding digit
-                    UChar_t nNeighbours; // number of neighbours
-                    UShort_t neighbours[10]; // indices of neighbours in array stored in mpDE
-                    Float_t area[2][2]; // 2D area
-                    Bool_t useMe; // kFALSE if no digit attached or already visited
-                };
+  // static std::vector<mpDE> ReadMapping(const char* mapfile);
+  static mpDE* ReadMapping(const char* mapfile, int& numberOfDetectionElements);
 
-                // DE structure in the internal mapping
-                struct mpDE {
-                    Int_t id; // unique ID
-                    UChar_t iCath[2]; // cathod index corresponding to each plane
-                    UShort_t nPads[2]; // number of pads on each plane
-                    mpPad *pads; // array of pads on both planes
-                    std::unordered_map<Long64_t, Long64_t> padIndices[2]; // indices+1 of pads from their ID
-                };
+  static Bool_t AreOverlapping(Float_t area1[2][2], Float_t area2[2][2], Float_t precision);
 
-                // static int NumberOfDetectionElements() { return fNDE; }
+  // static int fNDE;
+};
 
-                // static std::vector<mpDE> ReadMapping(const char* mapfile);
-                static mpDE *ReadMapping(const char *mapfile, int &numberOfDetectionElements);
+} // namespace mid
+} // namespace muon
 
-                static Bool_t AreOverlapping(Float_t area1[2][2], Float_t area2[2][2], Float_t precision);
-
-                // static int fNDE;
-
-            };
-
-        }
-    }
-
-}
+} // namespace o2
 
 #endif

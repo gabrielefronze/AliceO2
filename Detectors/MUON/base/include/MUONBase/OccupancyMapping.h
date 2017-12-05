@@ -16,54 +16,56 @@
 #define OCCUPANCYMAPPING_H
 
 #include <array>
-#include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 #include "DataStructs.h"
 
-namespace o2 {
-    namespace muon {
-        namespace mid {
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
+class OccupancyMapping
+{
+ public:
+  bool ReadMapping(const char*, int elementID);
 
-            class OccupancyMapping {
+  bool ReadMapping(const char*, std::vector<int> elementIDs);
 
-            public:
-                bool ReadMapping(const char *, int elementID);
+  bool ReadMapping(const char*);
 
-                bool ReadMapping(const char *, std::vector<int> elementIDs);
-
-                bool ReadMapping(const char *);
-
-                stripMapping *operator[](uint32_t ID) {
-                    auto stripFinder = fIDMap.find(ID);
-                    if (stripFinder == fIDMap.end()) {
-                        return nullptr;
-                    }
-                    return &(fStripVector[stripFinder->second]);
-                }
-
-                bool Consistent(bool deep = false) const {
-
-                    bool counterStatus = (fIDMap.size() == fStripVector.size());
-
-                    if (deep && counterStatus) {
-                        for (const auto &it : fStripVector) {
-                            for (const auto &iCounter : it.digitsCounter) {
-                                counterStatus = counterStatus && iCounter;
-                            }
-                        }
-                    }
-
-                    return counterStatus;
-                };
-
-                std::unordered_map<uint32_t, size_t> fIDMap;
-                std::vector<stripMapping> fStripVector;
-                std::vector<stripMapping *> fStructsBuffer;
-            };
-        }
+  stripMapping* operator[](uint32_t ID)
+  {
+    auto stripFinder = fIDMap.find(ID);
+    if (stripFinder == fIDMap.end()) {
+      return nullptr;
     }
-}
+    return &(fStripVector[stripFinder->second]);
+  }
 
+  bool Consistent(bool deep = false) const
+  {
+    bool counterStatus = (fIDMap.size() == fStripVector.size());
 
-#endif //OCCUPANCYMAPPING_H
+    if (deep && counterStatus) {
+      for (const auto& it : fStripVector) {
+        for (const auto& iCounter : it.digitsCounter) {
+          counterStatus = counterStatus && iCounter;
+        }
+      }
+    }
+
+    return counterStatus;
+  };
+
+  std::unordered_map<uint32_t, size_t> fIDMap;
+  std::vector<stripMapping> fStripVector;
+  std::vector<stripMapping*> fStructsBuffer;
+};
+} // namespace mid
+} // namespace muon
+} // namespace o2
+
+#endif // OCCUPANCYMAPPING_H

@@ -12,20 +12,15 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
+#include "MUONReconstruction/MIDRatesComputerDevice.h"
 #include "runFairMQDevice.h"
-#include "MUONReconstruction/MIDRatesComputer.h"
 
 namespace bpo = boost::program_options;
 using namespace std;
 
 void addCustomOptions(bpo::options_description& options)
 {
-  options.add_options()
-  ("binmapfile", bpo::value<std::string>(), "file with segmentation")
-  ;
+  options.add_options()("binmapfile", bpo::value<std::string>(), "file with segmentation");
 }
 
-FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/)
-{
-  return new o2::muon::mid::MIDRatesComputer();
-}
+FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/) { return new o2::muon::mid::MIDRatesComputerDevice(); }

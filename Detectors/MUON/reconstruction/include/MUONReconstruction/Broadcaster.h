@@ -20,39 +20,37 @@
 ///  @brief  Device to perform BCast of the
 ///
 
-#include "FairMQDevice.h"
-#include "FairMQChannel.h"
-#include "MUONBase/Chrono.h"
 #include <string>
 #include <vector>
+#include "FairMQChannel.h"
+#include "FairMQDevice.h"
+#include "MUONBase/Chrono.h"
 
-namespace o2 {
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
+class Broadcaster : public FairMQDevice
+{
+ public:
+  Broadcaster(bool waiting = true);
 
-    namespace muon {
+  ~Broadcaster() { LOG(INFO) << "Average performance: " << fChronometer.PrintStatus(); };
 
-        namespace mid {
+  virtual void InitTask();
 
-            class Broadcaster : public FairMQDevice {
-            public:
-                Broadcaster(bool waiting = true);
+ private:
+  bool Broadcast(FairMQMessagePtr&, int);
 
-                ~Broadcaster() {
-                    LOG(INFO) << "Average performance: " << fChronometer.PrintStatus();
-                };
+  std::vector<std::string> fOutputChannelNames;
+  bool fWaiting;
 
-                virtual void InitTask();
+  Chrono fChronometer;
+};
+} // namespace mid
+} // namespace muon
+} // namespace o2
 
-            private:
-                bool Broadcast(FairMQMessagePtr &, int);
-
-                std::vector<std::string> fOutputChannelNames;
-                bool fWaiting;
-
-                Chrono fChronometer;
-            };
-        }
-    }
-}
-
-
-#endif //O2_DEV_ALO_BROADCASTER_H
+#endif // O2_DEV_ALO_BROADCASTER_H

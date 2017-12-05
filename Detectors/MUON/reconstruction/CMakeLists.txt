@@ -16,9 +16,9 @@ link_directories(${LINK_DIRECTORIES})
 set(SRCS
         src/MIDclustering.cxx
 #        src/MIDoccupancy.cxx
-        src/MIDFilter.cxx
-        src/MIDMaskGenerator.cxx
-        src/MIDRatesComputer.cxx
+        src/MIDFilterDevice.cxx
+        src/MIDMaskGeneratorDevice.cxx
+        src/MIDRatesComputerDevice.cxx
         src/Broadcaster.cxx
         )
 
@@ -48,7 +48,7 @@ Set(Exe_Names
 set(Exe_Source
         src/runMIDclustering.cxx
 #        src/runMIDoccupancy.cxx
-        src/runMIDFilter.cxx
+        src/runMIDFilterDevice.cxx
         src/runMIDMaskGenerator.cxx
         src/runMIDRatesComputer.cxx
         src/runBroadcaster.cxx

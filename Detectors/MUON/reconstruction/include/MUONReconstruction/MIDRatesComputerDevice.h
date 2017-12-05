@@ -1,3 +1,6 @@
+#ifndef O2_DEV_ALO_MIDRATESCOMPUTER_H
+#define O2_DEV_ALO_MIDRATESCOMPUTER_H
+
 //
 // Copyright CERN and copyright holders of ALICE O2. This software is
 // distributed under the terms of the GNU General Public License v3 (GPL
@@ -11,20 +14,23 @@
 
 ///
 /// @author  Gabriele Gaetano Fronzé
-
-#ifndef MIDFILTER_H
-#define MIDFILTER_H
+///  @file   MIDRatesComputer
+///  @author Gabriele G. Fronzé <gfronze at cern.ch>
+///  @date   24 July 2017
+///  @brief  Device to compute rates based on occupancy information for MID
+///
 
 #include "FairMQDevice.h"
-#include "MUONBase/Mapping.h"
 #include "MUONBase/Enums.h"
+#include "MUONBase/OccupancyMapping.h"
+#include "MUONBase/Mapping.h"
 #include "MUONBase/Chrono.h"
 #include "string.h"
 #include <array>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include <dtrace.h>
+
 
 namespace o2 {
 
@@ -32,18 +38,20 @@ namespace o2 {
 
         namespace mid {
 
-            class MIDFilter : public FairMQDevice {
+            class MIDRatesComputerDevice : public FairMQDevice {
             public:
-                MIDFilter();
+                MIDRatesComputerDevice();
 
-                virtual ~MIDFilter();
+                virtual ~MIDRatesComputerDevice();
 
             protected:
                 bool HandleData(FairMQMessagePtr &, int);
 
-                bool HandleMask(FairMQMessagePtr &, int);
+                virtual void InitTask();
 
             private:
+
+                OccupancyMapping fMapping;
 
                 struct stripMask {
                     ushort_t nDead; // number of elements for deadStripsIDs
@@ -52,10 +60,20 @@ namespace o2 {
                     std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
                 };
 
-                stripMask fMask;
+                stripMask fStructMaskSim;
+
+                void ResetCounters(uint64_t newStartTS, digitType type);
+
+                bool ShouldComputeRates(digitType type);
+
+                void ComputeRate(stripMapping *strip);
+
+                void ComputeAllRates();
 
                 template<typename T>
-                errMsg SendMsg(uint64_t msgSize, T *data);
+                errMsg SendRates();
+
+                long fCounter;
 
                 //Chrono object to compute duration
                 Chrono fChronometer;
@@ -64,4 +82,5 @@ namespace o2 {
     }
 }
 
-#endif //MIDFILTER_H
+
+#endif //O2_DEV_ALO_MIDRATESCOMPUTER_H

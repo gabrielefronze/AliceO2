@@ -19,79 +19,79 @@
 ///  @brief  Little deserializer app to unpack MID messages
 ///
 
-#include "FairMQMessage.h"
 #include "DataStructs.h"
+#include "FairMQMessage.h"
 
-namespace o2 {
-    namespace muon {
-        namespace mid {
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
+class Deserializßer
+{
+ public:
+  Deserializer();
 
-            class Deserializer {
+  explicit Deserializer(FairMQMessagePtr& msg);
 
-            public:
+  explicit Deserializer(void* payload);
 
-                Deserializer();
+  ~Deserializer();
 
-                explicit Deserializer(FairMQMessagePtr &msg);
+  // Iterator like methods
+  bool Rewind();
 
-                explicit Deserializer(void *payload);
+  deserializerDataStruct* NextDigit();
 
-                ~Deserializer();
+  inline deserializerDataStruct* CurrentDigit() { return &fOutputDataStruct; }
 
-                // Iterator like methods
-                bool Rewind();
+  inline deserializerDataStruct* operator()() { return NextDigit(); }
 
-                deserializerDataStruct *NextDigit();
+  uint32_t* NextUniqueID(bool loadAllData = false);
 
-                inline deserializerDataStruct *CurrentDigit() { return &fOutputDataStruct; }
+  inline const uint32_t* CurrentUniqueID() const { return &fUniqueID; }
 
-                inline deserializerDataStruct *operator()() { return NextDigit(); }
+  inline const uint32_t* GetCurrentData() const { return fData; }
 
-                uint32_t *NextUniqueID(bool loadAllData = false);
+  inline const uint32_t* GetHeader() const { return (uint32_t*)(fDataPtr); }
 
-                inline const uint32_t *CurrentUniqueID() const { return &fUniqueID; }
+  inline const uint32_t* GetDataPointer() const { return fDigitsDataPtr; }
 
-                inline const uint32_t *GetCurrentData() const { return fData; }
+  inline const uint32_t GetNDigits() const { return fNDigits; }
 
-                inline const uint32_t *GetHeader() const { return (uint32_t *) (fDataPtr); }
+  std::string PrintData() const
+  {
+    std::string outputString =
+      "UID=" + std::to_string(fUniqueID) + " ElemID=" + std::to_string(fOutputDataStruct.fDetElemID) +
+      " Bd=" + std::to_string(fOutputDataStruct.fBoardID) + " Ch=" + std::to_string(fOutputDataStruct.fChannel) +
+      " Cat=" + std::to_string(fOutputDataStruct.fCathode);
+    return outputString;
+  };
 
-                inline const uint32_t *GetDataPointer() const { return fDigitsDataPtr; }
+ private:
+  bool Advance();
 
-                inline const uint32_t GetNDigits() const { return fNDigits; }
+  void Load();
 
-                std::string PrintData() const {
-                    std::string outputString = "UID=" + std::to_string(fUniqueID) +
-                                               " ElemID=" + std::to_string(fOutputDataStruct.fDetElemID) +
-                                               " Bd=" + std::to_string(fOutputDataStruct.fBoardID) +
-                                               " Ch=" + std::to_string(fOutputDataStruct.fChannel) +
-                                               " Cat=" + std::to_string(fOutputDataStruct.fCathode);
-                    return outputString;
-                };
+  // Const values to exclude first 100 bytes of message and perform deserialization
+  const uint32_t kHeaderLength = 25;
 
-            private:
-                bool Advance();
+  uint32_t* fDataPtr;
+  uint32_t* fDigitsDataPtr;
+  uint32_t fNDigits;
+  uint32_t fOffset;
+  uint32_t fDigitCounter;
+  uint32_t fUniqueID;
+  uint32_t fData[2];
 
-                void Load();
+  // Internal data container
+  deserializerDataStruct fOutputDataStruct;
+};
 
-                // Const values to exclude first 100 bytes of message and perform deserialization
-                const uint32_t kHeaderLength = 25;
+} // namespace mid
+} // namespace muon
 
-                uint32_t *fDataPtr;
-                uint32_t *fDigitsDataPtr;
-                uint32_t fNDigits;
-                uint32_t fOffset;
-                uint32_t fDigitCounter;
-                uint32_t fUniqueID;
-                uint32_t fData[2];
+} // namespace o2
 
-                // Internal data container
-                deserializerDataStruct fOutputDataStruct;
-
-            };
-
-        }
-    }
-
-}
-
-#endif //DESERIALIZER_H
+#endif // DESERIALIZER_H

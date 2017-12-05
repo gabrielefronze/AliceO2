@@ -12,18 +12,12 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "runFairMQDevice.h"
 #include "MUONReconstruction/Broadcaster.h"
+#include "runFairMQDevice.h"
 
 namespace bpo = boost::program_options;
 using namespace std;
 
-void addCustomOptions(bpo::options_description& options)
-{
-  options.add_options();
-}
+void addCustomOptions(bpo::options_description& options) { options.add_options(); }
 
-FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/)
-{
-  return new o2::muon::mid::Broadcaster();
-}
+FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/) { return new o2::muon::mid::Broadcaster(); }
