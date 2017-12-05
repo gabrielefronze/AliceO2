@@ -24,34 +24,40 @@
 #include <string>
 #include <sstream>
 
-class Chrono {
-public:
-    void AddCall(double deltaT){ fDeltaTs.emplace_back(deltaT); };
+namespace o2 {
+    namespace muon {
+        namespace mid {
 
-    double AvgCallTime(){
-        return std::accumulate(fDeltaTs.begin(),fDeltaTs.end(),0.)/fDeltaTs.size();
-    };
-    inline size_t GetNCalls(){ return fDeltaTs.size(); };
-    std::string PrintStatus(){
-        std::ostringstream outputString;
-        outputString << "NCalls=" << std::to_string(fDeltaTs.size()) << " AvgTime=";
-        outputString << AvgCallTime();
-        return outputString.str();
-    };
+            class Chrono {
+            public:
+                void AddCall(double deltaT){ fDeltaTs.emplace_back(deltaT); };
 
-private:
-    std::vector<double> fDeltaTs;
-};
+                double AvgCallTime(){
+                    return std::accumulate(fDeltaTs.begin(),fDeltaTs.end(),0.)/fDeltaTs.size();
+                };
+                inline size_t GetNCalls(){ return fDeltaTs.size(); };
+                std::string PrintStatus(){
+                    std::ostringstream outputString;
+                    outputString << "NCalls=" << std::to_string(fDeltaTs.size()) << " AvgTime=";
+                    outputString << AvgCallTime();
+                    return outputString.str();
+                };
 
-class DeltaT {
-public:
-    DeltaT(Chrono *chrono) : fStart(std::chrono::high_resolution_clock::now()),fChrono(chrono){};
-    ~DeltaT(){ fChrono->AddCall(std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - fStart).count()); };
+            private:
+                std::vector<double> fDeltaTs;
+            };
 
-private:
-    std::chrono::high_resolution_clock::time_point fStart;
-    Chrono *fChrono;
-};
+            class DeltaT {
+            public:
+                DeltaT(Chrono *chrono) : fStart(std::chrono::high_resolution_clock::now()),fChrono(chrono){};
+                ~DeltaT(){ fChrono->AddCall(std::chrono::duration<double, std::milli>(std::chrono::high_resolution_clock::now() - fStart).count()); };
 
+            private:
+                std::chrono::high_resolution_clock::time_point fStart;
+                Chrono *fChrono;
+            };
+        }
+    }
+}
 
 #endif //CHRONO_H

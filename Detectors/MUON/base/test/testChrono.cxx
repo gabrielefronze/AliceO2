@@ -20,6 +20,8 @@
 #include <iostream>
 #include "MUONBase/Chrono.h"
 
+using namespace o2::muon::mid;
+
 BOOST_AUTO_TEST_SUITE(testChrono)
 
     BOOST_AUTO_TEST_CASE(Average){

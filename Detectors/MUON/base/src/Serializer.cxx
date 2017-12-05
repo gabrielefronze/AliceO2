@@ -16,7 +16,7 @@
 #include <assert.h>
 #include <regex.h>
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 
 //_________________________________________________________________________________________________
 Serializer::Serializer() {

@@ -23,37 +23,49 @@
 #include <iostream>
 #include "DataStructs.h"
 
-namespace AliceO2 {
+namespace o2 {
+    namespace muon {
+        namespace mid {
 
-    namespace MUON {
+            class Serializer {
 
-        class Serializer {
+            public:
 
-        public:
+                Serializer();
 
-            Serializer();
-            ~Serializer(){};
+                ~Serializer() {};
 
-            inline void AddDigit(uint32_t detElemID, uint32_t boardID, uint32_t channel, uint32_t cathode){ fData.emplace_back(deserializerDataStruct(detElemID,boardID,channel,cathode));fData.emplace_back(deserializerDataStruct(0,0,0,0)); };
-            inline void AddDigit(deserializerDataStruct dataStruct){ fData.emplace_back(dataStruct);fData.emplace_back(deserializerDataStruct(0,0,0,0)); };
-            uint32_t GetUID(deserializerDataStruct dataStruct);
-            uint32_t GetUID(size_t index);
-            uint32_t* GetMessage();
-            inline void DumpHeader(){for(const auto &it : fHeader)std::cout<<it<<std::endl;};
+                inline void AddDigit(uint32_t detElemID, uint32_t boardID, uint32_t channel, uint32_t cathode) {
+                    fData.emplace_back(deserializerDataStruct(detElemID, boardID, channel, cathode));
+                    fData.emplace_back(deserializerDataStruct(0, 0, 0, 0));
+                };
+
+                inline void AddDigit(deserializerDataStruct dataStruct) {
+                    fData.emplace_back(dataStruct);
+                    fData.emplace_back(deserializerDataStruct(0, 0, 0, 0));
+                };
+
+                uint32_t GetUID(deserializerDataStruct dataStruct);
+
+                uint32_t GetUID(size_t index);
+
+                uint32_t *GetMessage();
+
+                inline void DumpHeader() { for (const auto &it : fHeader)std::cout << it << std::endl; };
 
 
-        private:
-            // Const values to exclude first 100 bytes of message and perform deserialization
-            const uint32_t kHeaderLength = 25;
-            std::vector<uint32_t> fHeader;
-            // This vector will contain the full output message
-            std::vector<uint32_t> fOutputData;
+            private:
+                // Const values to exclude first 100 bytes of message and perform deserialization
+                const uint32_t kHeaderLength = 25;
+                std::vector<uint32_t> fHeader;
+                // This vector will contain the full output message
+                std::vector<uint32_t> fOutputData;
 
-            // Internal data container
-            std::vector<deserializerDataStruct> fData;
+                // Internal data container
+                std::vector<deserializerDataStruct> fData;
 
-        };
-
+            };
+        }
     }
 
 }

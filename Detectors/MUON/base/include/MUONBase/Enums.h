@@ -19,24 +19,24 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
-namespace AliceO2 {
+namespace o2 {
+    namespace muon {
+        namespace mid {
 
-    namespace MUON {
-
-        enum digitType {
-            kPhysics,
-            kFET,
-            kTriggered,
-            kSize
-        };
+            enum digitType {
+                kPhysics,
+                kFET,
+                kTriggered,
+                kSize
+            };
 
 
-        typedef enum {
-            kShortMsg,
-            kFailedSend,
-            kOk
-        } errMsg;
-
+            typedef enum {
+                kShortMsg,
+                kFailedSend,
+                kOk
+            } errMsg;
+        }
     }
 }
 

@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 
 using namespace std;
 

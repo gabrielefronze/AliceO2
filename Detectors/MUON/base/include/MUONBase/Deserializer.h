@@ -22,61 +22,75 @@
 #include "FairMQMessage.h"
 #include "DataStructs.h"
 
-namespace AliceO2 {
+namespace o2 {
+    namespace muon {
+        namespace mid {
 
-  namespace MUON {
+            class Deserializer {
 
-    class Deserializer {
+            public:
 
-    public:
+                Deserializer();
 
-        Deserializer();
-        explicit Deserializer(FairMQMessagePtr& msg);
-        explicit Deserializer(void *payload);
-        ~Deserializer();
+                explicit Deserializer(FairMQMessagePtr &msg);
 
-        // Iterator like methods
-        bool Rewind();
-        deserializerDataStruct* NextDigit();
-        inline deserializerDataStruct* CurrentDigit(){ return &fOutputDataStruct; }
-        inline deserializerDataStruct* operator() (){ return NextDigit(); }
+                explicit Deserializer(void *payload);
 
-        uint32_t* NextUniqueID(bool loadAllData = false);
-        inline const uint32_t* CurrentUniqueID() const { return &fUniqueID; }
-        inline const uint32_t* GetCurrentData() const { return fData; }
-        inline const uint32_t* GetHeader() const { return (uint32_t*)(fDataPtr); }
-        inline const uint32_t* GetDataPointer() const { return fDigitsDataPtr; }
-        inline const uint32_t GetNDigits() const { return fNDigits; }
-        std::string PrintData() const{
-            std::string outputString =  "UID="+std::to_string(fUniqueID)+
-                                       " ElemID="+std::to_string(fOutputDataStruct.fDetElemID)+
-                                       " Bd="+std::to_string(fOutputDataStruct.fBoardID)+
-                                       " Ch="+std::to_string(fOutputDataStruct.fChannel)+
-                                       " Cat="+std::to_string(fOutputDataStruct.fCathode);
-            return outputString;
-        };
+                ~Deserializer();
 
-    private:
-        bool Advance();
-        void Load();
+                // Iterator like methods
+                bool Rewind();
 
-        // Const values to exclude first 100 bytes of message and perform deserialization
-        const uint32_t kHeaderLength = 25;
+                deserializerDataStruct *NextDigit();
 
-        uint32_t* fDataPtr;
-        uint32_t* fDigitsDataPtr;
-        uint32_t fNDigits;
-        uint32_t fOffset;
-        uint32_t fDigitCounter;
-        uint32_t fUniqueID;
-        uint32_t fData[2];
+                inline deserializerDataStruct *CurrentDigit() { return &fOutputDataStruct; }
 
-        // Internal data container
-        deserializerDataStruct fOutputDataStruct;
+                inline deserializerDataStruct *operator()() { return NextDigit(); }
 
-    };
+                uint32_t *NextUniqueID(bool loadAllData = false);
 
-  }
+                inline const uint32_t *CurrentUniqueID() const { return &fUniqueID; }
+
+                inline const uint32_t *GetCurrentData() const { return fData; }
+
+                inline const uint32_t *GetHeader() const { return (uint32_t *) (fDataPtr); }
+
+                inline const uint32_t *GetDataPointer() const { return fDigitsDataPtr; }
+
+                inline const uint32_t GetNDigits() const { return fNDigits; }
+
+                std::string PrintData() const {
+                    std::string outputString = "UID=" + std::to_string(fUniqueID) +
+                                               " ElemID=" + std::to_string(fOutputDataStruct.fDetElemID) +
+                                               " Bd=" + std::to_string(fOutputDataStruct.fBoardID) +
+                                               " Ch=" + std::to_string(fOutputDataStruct.fChannel) +
+                                               " Cat=" + std::to_string(fOutputDataStruct.fCathode);
+                    return outputString;
+                };
+
+            private:
+                bool Advance();
+
+                void Load();
+
+                // Const values to exclude first 100 bytes of message and perform deserialization
+                const uint32_t kHeaderLength = 25;
+
+                uint32_t *fDataPtr;
+                uint32_t *fDigitsDataPtr;
+                uint32_t fNDigits;
+                uint32_t fOffset;
+                uint32_t fDigitCounter;
+                uint32_t fUniqueID;
+                uint32_t fData[2];
+
+                // Internal data container
+                deserializerDataStruct fOutputDataStruct;
+
+            };
+
+        }
+    }
 
 }
 

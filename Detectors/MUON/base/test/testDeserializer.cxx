@@ -20,7 +20,7 @@
 #include "MUONBase/Serializer.h"
 #include "MUONBase/Deserializer.h"
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 
 BOOST_AUTO_TEST_SUITE(testDeserializer)
 

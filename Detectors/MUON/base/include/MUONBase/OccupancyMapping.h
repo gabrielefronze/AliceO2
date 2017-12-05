@@ -21,44 +21,47 @@
 #include <unordered_set>
 #include "DataStructs.h"
 
-namespace AliceO2 {
+namespace o2 {
+    namespace muon {
+        namespace mid {
 
-    namespace MUON {
+            class OccupancyMapping {
 
-        class OccupancyMapping {
+            public:
+                bool ReadMapping(const char *, int elementID);
 
-        public:
-            bool ReadMapping(const char*,int elementID);
-            bool ReadMapping(const char*,std::vector<int> elementIDs);
-            bool ReadMapping(const char*);
+                bool ReadMapping(const char *, std::vector<int> elementIDs);
 
-            stripMapping* operator[](uint32_t ID) const {
-                auto stripFinder = fIDMap.find(ID);
-                if (stripFinder == fIDMap.end()){
-                    return nullptr;
+                bool ReadMapping(const char *);
+
+                stripMapping *operator[](uint32_t ID) const {
+                    auto stripFinder = fIDMap.find(ID);
+                    if (stripFinder == fIDMap.end()) {
+                        return nullptr;
+                    }
+                    return &(fStripVector[stripFinder->second]);
                 }
-                return &(fStripVector[stripFinder->second]);
-            }
 
-            bool Consistent(bool deep = false) const {
+                bool Consistent(bool deep = false) const {
 
-                bool counterStatus = (fIDMap.size() == fStripVector.size());
+                    bool counterStatus = (fIDMap.size() == fStripVector.size());
 
-                if(deep && counterStatus){
-                    for(const auto &it : fStripVector){
-                        for (const auto &iCounter : it.digitsCounter) {
-                            counterStatus = counterStatus && iCounter;
+                    if (deep && counterStatus) {
+                        for (const auto &it : fStripVector) {
+                            for (const auto &iCounter : it.digitsCounter) {
+                                counterStatus = counterStatus && iCounter;
+                            }
                         }
                     }
-                }
 
-                return counterStatus;
+                    return counterStatus;
+                };
+
+                std::unordered_map<uint32_t, size_t> fIDMap;
+                std::vector<stripMapping> fStripVector;
+                std::vector<stripMapping *> fStructsBuffer;
             };
-
-            std::unordered_map<uint32_t, size_t> fIDMap;
-            std::vector<stripMapping> fStripVector;
-            std::vector<stripMapping *> fStructsBuffer;
-        };
+        }
     }
 }
 

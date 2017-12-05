@@ -14,7 +14,7 @@
 
 #include "MUONBase/Deserializer.h"
 
-using namespace AliceO2::MUON;
+using namespace o2::muon::mid;
 
 Deserializer::Deserializer():
 fDigitCounter(0),
