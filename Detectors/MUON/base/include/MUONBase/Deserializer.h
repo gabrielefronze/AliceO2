@@ -28,7 +28,7 @@ namespace muon
 {
 namespace mid
 {
-class Deserializßer
+class Deserializer
 {
  public:
   Deserializer();
