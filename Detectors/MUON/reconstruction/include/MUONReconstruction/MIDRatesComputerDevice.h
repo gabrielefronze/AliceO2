@@ -20,67 +20,65 @@
 ///  @brief  Device to compute rates based on occupancy information for MID
 ///
 
-#include "FairMQDevice.h"
-#include "MUONBase/Enums.h"
-#include "MUONBase/OccupancyMapping.h"
-#include "MUONBase/Mapping.h"
-#include "MUONBase/Chrono.h"
-#include "string.h"
 #include <array>
-#include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
+#include "FairMQDevice.h"
+#include "MUONBase/Chrono.h"
+#include "MUONBase/Enums.h"
+#include "MUONBase/Mapping.h"
+#include "MUONBase/OccupancyMapping.h"
+#include "string.h"
 
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
+class MIDRatesComputerDevice : public FairMQDevice
+{
+ public:
+  MIDRatesComputerDevice();
 
-namespace o2 {
+  virtual ~MIDRatesComputerDevice();
 
-    namespace muon {
+ protected:
+  bool HandleData(FairMQMessagePtr&, int);
 
-        namespace mid {
+  virtual void InitTask();
 
-            class MIDRatesComputerDevice : public FairMQDevice {
-            public:
-                MIDRatesComputerDevice();
+ private:
+  OccupancyMapping fMapping;
 
-                virtual ~MIDRatesComputerDevice();
+  struct stripMask {
+    ushort_t nDead;                              // number of elements for deadStripsIDs
+    ushort_t nNoisy;                             // number of elements for noisyStripsIDs
+    std::unordered_set<uint32_t> deadStripsIDs;  // container of UniqueIDs of dead strips
+    std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
+  };
 
-            protected:
-                bool HandleData(FairMQMessagePtr &, int);
+  stripMask fStructMaskSim;
 
-                virtual void InitTask();
+  void ResetCounters(uint64_t newStartTS, digitType type);
 
-            private:
+  bool ShouldComputeRates(digitType type);
 
-                OccupancyMapping fMapping;
+  void ComputeRate(stripMapping* strip);
 
-                struct stripMask {
-                    ushort_t nDead; // number of elements for deadStripsIDs
-                    ushort_t nNoisy; // number of elements for noisyStripsIDs
-                    std::unordered_set<uint32_t> deadStripsIDs; // container of UniqueIDs of dead strips
-                    std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
-                };
+  void ComputeAllRates();
 
-                stripMask fStructMaskSim;
+  template <typename T>
+  errMsg SendRates();
 
-                void ResetCounters(uint64_t newStartTS, digitType type);
+  long fCounter;
 
-                bool ShouldComputeRates(digitType type);
+  // Chrono object to compute duration
+  Chrono fChronometer;
+};
+} // namespace mid
+} // namespace muon
+} // namespace o2
 
-                void ComputeRate(stripMapping *strip);
-
-                void ComputeAllRates();
-
-                template<typename T>
-                errMsg SendRates();
-
-                long fCounter;
-
-                //Chrono object to compute duration
-                Chrono fChronometer;
-            };
-        }
-    }
-}
-
-
-#endif //O2_DEV_ALO_MIDRATESCOMPUTER_H
+#endif // O2_DEV_ALO_MIDRATESCOMPUTER_H
