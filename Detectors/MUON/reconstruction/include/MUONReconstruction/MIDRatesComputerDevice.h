@@ -41,8 +41,8 @@ class MIDRatesComputerDevice : public FairMQDevice
 
  private:
   MIDRatesComputerAlgorithm fAlgorithm;
-
-  errMsg SendRates(std::shared_ptr<std::vector<uint64_t>> digitsOut);
+  template <typename T>
+  errMsg SendRates(std::shared_ptr<std::vector<T>> digitsOut);
 
   // Chrono object to compute duration
   Chrono fChronometerHandleData;

@@ -13,28 +13,25 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #include "MUONReconstruction/MIDRatesComputerDevice.h"
-#include "options/FairMQProgOptions.h"
+#include "FairMQDevice.h"
 #include "MUONBase/Deserializer.h"
+#include "options/FairMQProgOptions.h"
+#include "FairMQLogger.h"
 
 using namespace o2::muon::mid;
 
 //_________________________________________________________________________________________________
-MIDRatesComputerDevice::MIDRatesComputerDevice() : FairMQDevice::FairMQDevice()
+MIDRatesComputerDevice::MIDRatesComputerDevice() : FairMQDevice()
 {
   // The input of this device is the digits stream
-  FairMQDevice::OnData("data-in", &MIDRatesComputerDevice::HandleData);
+  OnData("data-in", &MIDRatesComputerDevice::HandleData);
 }
 
 //_________________________________________________________________________________________________
 void MIDRatesComputerDevice::InitTask()
 {
-  //  LOG(INFO) << "Initializing device";
+  LOG(INFO) << "Initializing device";
   fAlgorithm.Init(fConfig->GetValue<std::string>("binmapfile"));
-}
-
-errMsg MIDRatesComputerDevice::SendRates(shared_ptr digitsOut)
-{
-  return kShortMsg;
 }
 
 //_________________________________________________________________________________________________
@@ -61,45 +58,56 @@ bool MIDRatesComputerDevice::HandleData(FairMQMessagePtr& msg, int /*index*/)
 
   auto returnValue = fAlgorithm.Exec(data);
 
-  return true;
+  switch (SendRates(fAlgorithm.Output())) {
+    case kShortMsg:
+      LOG(ERROR) << "Message shorter than expected. Skipping.";
+      return true;
+
+    case kFailedSend:
+      LOG(ERROR) << "Problems sending masked digits. Aborting.";
+      return false;
+
+    case kOk:
+      return returnValue;
+
+    default:
+      return returnValue;
+  }
 }
 
 //_________________________________________________________________________________________________
+template <typename T>
+errMsg MIDRatesComputerDevice::SendRates(std::shared_ptr<std::vector<T>> digitsOut)
+{
+  DeltaT deltaT(&fChronometerSendData);
 
+  // Message size is kSize T elements for each strip
+  uint64_t msgSize = digitsOut.get()->size();
 
-//template <typename T>
-//errMsg MIDRatesComputerDevice::SendRates()
-//{
-//  DeltaT deltaT(&fChronometerSendData);
-//
-//  //  // Message size is kSize T elements for each strip
-//  //  uint64_t msgSize = fMapping.fStripVector.size() * digitType::kSize;
-//  //
-//  //  //    LOG(DEBUG) << "Msgsize is " << msgSize;
-//  //
-//  //  // Instance message as unique pointer
-//  //  FairMQMessagePtr msgOut(NewMessage((int)(msgSize * sizeof(T))));
-//  //
-//  //  // Pointer to message payload
-//  //  T* dataPointer = reinterpret_cast<T*>(msgOut->GetData());
-//  //
-//  //  // Copy OutputData in the payload of the message
-//  //  for (int iData = 0; iData < fMapping.fStripVector.size(); iData++) {
-//  //    for (int iType = 0; iType < digitType::kSize; iType++) {
-//  //      dataPointer[iData * 3 + iType] = fMapping.fStripVector[iData].digitsCounter[iType];
-//  //    }
-//  //  }
-//  //
-//  //  // Try to send the message. If unable trigger a error and abort killing the device
-//  //  auto status = Send(msgOut, "rates-out");
-//  //
-//  //  //    LOG(DEBUG) << "Send sent " << status << " bits";
-//  //
-//  //  if (status < 0) {
-//  //    return kFailedSend;
-//  //  }
-//  //
-//  //  //    LOG(DEBUG) << "Rates sent in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
-//
-//  return kOk;
-//}
+  //    LOG(DEBUG) << "Msgsize is " << msgSize;
+
+  // Instance message as unique pointer
+  FairMQMessagePtr msgOut(NewMessage((int)(msgSize * sizeof(T))));
+
+  // Pointer to message payload
+  T* dataPointer = reinterpret_cast<T*>(msgOut->GetData());
+  size_t iDigit = 0;
+
+  // Copy OutputData in the payload of the message
+  for (auto const& itDigits : *(digitsOut.get())) {
+    dataPointer[iDigit] = std::move(itDigits);
+  }
+
+  // Try to send the message. If unable trigger a error and abort killing the device
+  auto status = Send(msgOut, "rates-out");
+
+  //    LOG(DEBUG) << "Send sent " << status << " bits";
+
+  if (status < 0) {
+    return kFailedSend;
+  }
+
+  //    LOG(DEBUG) << "Rates sent in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
+
+  return kOk;
+}
