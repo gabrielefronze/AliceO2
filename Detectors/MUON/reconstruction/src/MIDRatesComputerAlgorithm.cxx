@@ -46,11 +46,10 @@ bool MIDRatesComputerAlgorithm::Exec(std::vector<uint32_t> data)
   // Counter of received digits
   int counter = 0;
 
-      LOG(INFO) << "Received valid message with " << MessageDeserializer.GetNDigits() <<" digits";
+      LOG(INFO) << "Received valid message with " << data.size() <<" digits";
 
   // Loop over the digits of the message.
   for (const auto& uniqueIDBuffer : data) {
-            LOG(INFO) << "UniqueID "<<  ((*uniqueIDBuffer) & 0xFFF);
 
     // We want to discard MCH digits (if any)
     if ((uniqueIDBuffer & 0xFFF) < 1100)
