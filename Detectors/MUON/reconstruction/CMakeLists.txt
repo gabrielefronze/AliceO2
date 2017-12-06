@@ -18,6 +18,7 @@ set(SRCS
 #        src/MIDoccupancy.cxx
         src/MIDFilter.cxx
         src/MIDMaskGenerator.cxx
+        src/MIDRatesComputerAlgo.cxx
         src/MIDRatesComputer.cxx
         src/Broadcaster.cxx
         )
@@ -27,6 +28,7 @@ set(HEADERS
 #        include/${MODULE_NAME}/MIDoccupancy.h
         include/${MODULE_NAME}/MIDFilter.h
         include/${MODULE_NAME}/MIDMaskGenerator.h
+        include/${MODULE_NAME}/MIDRatesComputerAlgo.h
         include/${MODULE_NAME}/MIDRatesComputer.h
         include/${MODULE_NAME}/Broadcaster.h
         )
