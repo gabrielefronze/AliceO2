@@ -19,6 +19,8 @@ using namespace o2::muon::mid;
 #include <numeric>
 #include "MUONBase/Enums.h"
 
+using namespace o2::muon::mid;
+
 bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
 {
   if (!(fMapping.ReadMapping(mappingFileName.c_str()))) {
@@ -47,13 +49,58 @@ bool MIDMaskGeneratorAlgorithm::Exec(std::vector<uint64_t> data)
 
   LOG(DEBUG) << "Message parsing done!";
 
-  MIDMaskGeneratorAlgorithm::FindNoisy(digitType::kFET);
-  MIDMaskGeneratorAlgorithm::FindDead(digitType::kTriggered);
+  FindNoisy(digitType::kFET);
+  FindDead(digitType::kTriggered);
 
-  MIDMaskGeneratorAlgorithm::FillMask();
+  FillMask();
 }
 
 void MIDMaskGeneratorAlgorithm::FindNoisy(digitType type)
 {
-  std::for_each(fMapping.fStripVector.begin(),fMapping.fStripVector.end(),[type](auto strip){strip.});
+  std::for_each(fMapping.fStripVector.begin(), fMapping.fStripVector.end(), [type](stripMapping strip) {
+    if (strip.digitsCounter[type] != 0)
+      strip.isNoisy = true;
+  });
+}
+
+void MIDMaskGeneratorAlgorithm::FindDead(digitType type)
+{
+  std::for_each(fMapping.fStripVector.begin(), fMapping.fStripVector.end(), [type](stripMapping strip) {
+    if (strip.digitsCounter[type] == 0)
+      strip.isDead = true;
+  });
+}
+
+void MIDMaskGeneratorAlgorithm::FillMask()
+{
+  for (const auto& mapIterator : fMapping.fIDMap) {
+    auto uniqueID = mapIterator.first;
+    auto index = mapIterator.second;
+    auto strip = &(fMapping.fStripVector[index]);
+
+    if (strip->isDead) {
+      auto alreadyThere = fStructMask.deadStripsIDs.insert(uniqueID).second;
+
+      if (alreadyThere) {
+        LOG(ERROR) << uniqueID << " is dead.";
+      } else {
+        //                LOG(INFO)<<uniqueID<<" already set.";
+      }
+
+    } else if (strip->isNoisy) {
+      auto alreadyThere = fStructMask.noisyStripsIDs.insert(uniqueID).second;
+
+      if (alreadyThere) {
+        LOG(ERROR) << uniqueID << " is noisy.";
+      } else {
+        //                LOG(INFO)<<uniqueID<<" already set.";
+      }
+    }
+    //        else LOG(INFO)<<uniqueID<<" is working as expected.";
+  }
+
+  fStructMask.nDead = (ushort_t)fStructMask.deadStripsIDs.size();
+  fStructMask.nNoisy = (ushort_t)fStructMask.noisyStripsIDs.size();
+
+  return;
 }
