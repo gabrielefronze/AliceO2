@@ -25,7 +25,7 @@ namespace muon
 {
 namespace mid
 {
-enum digitType { kPhysics, kFET, kTriggered, kSize };
+typedef enum { kPhysics, kFET, kTriggered, kSize } digitType;
 
 typedef enum { kShortMsg, kFailedSend, kOk } errMsg;
 } // namespace mid
