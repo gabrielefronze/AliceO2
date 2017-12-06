@@ -41,7 +41,7 @@ bool MIDMaskGeneratorAlgorithm::Exec(std::vector<uint64_t> data)
   // Copy the payload of the message in the internal data container
   size_t iData = 0;
   for (const auto& itData : data) {
-    fMapping.fStripVector[iData].digitsCounter[iData % digitsType::kSize] = itData;
+    fMapping.fStripVector[iData].digitsCounter[iData % digitType::kSize] = itData;
     iData++;
   }
 
