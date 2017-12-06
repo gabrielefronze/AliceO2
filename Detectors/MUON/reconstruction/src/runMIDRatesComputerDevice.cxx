@@ -14,6 +14,7 @@
 
 #include "MUONReconstruction/MIDRatesComputerDevice.h"
 #include "runFairMQDevice.h"
+#include "options/FairMQProgOptions.h"
 
 namespace bpo = boost::program_options;
 using namespace std;
