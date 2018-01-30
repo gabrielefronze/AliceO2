@@ -15,16 +15,11 @@
 #ifndef MIDFILTERDEVICE_H
 #define MIDFILTERDEVICE_H
 
-#include <dtrace.h>
-#include <array>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 #include "FairMQDevice.h"
 #include "MUONBase/Chrono.h"
+#include "MUONBase/DataStructs.h"
 #include "MUONBase/Enums.h"
 #include "MUONBase/Mapping.h"
-#include "string.h"
 
 namespace o2
 {
@@ -41,17 +36,9 @@ class MIDFilterDevice : public FairMQDevice
 
  protected:
   bool HandleData(FairMQMessagePtr&, int);
-
   bool HandleMask(FairMQMessagePtr&, int);
 
  private:
-  struct stripMask {
-    ushort_t nDead;                              // number of elements for deadStripsIDs
-    ushort_t nNoisy;                             // number of elements for noisyStripsIDs
-    std::unordered_set<uint32_t> deadStripsIDs;  // container of UniqueIDs of dead strips
-    std::unordered_set<uint32_t> noisyStripsIDs; // container of UniqueIDs of noisy strips
-  };
-
   stripMask fMask;
 
   template <typename T>
