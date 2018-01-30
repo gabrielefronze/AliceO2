@@ -31,7 +31,7 @@ namespace muon
 {
 namespace mid
 {
-class MIDRatesComputerDevice //: public FairMQDevice
+class MIDRatesComputerDevice : public FairMQDevice
 {
  public:
   MIDRatesComputerDevice();
