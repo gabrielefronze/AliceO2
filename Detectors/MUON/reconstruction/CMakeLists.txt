@@ -17,6 +17,8 @@ set(SRCS
         src/MIDMaskGeneratorAlgorithm.cxx
         src/MIDRatesComputerDevice.cxx
         src/MIDRatesComputerAlgorithm.cxx
+        src/MIDFilterDevice.cxx
+        src/MIDFilterAlgorithm.cxx
         src/Broadcaster.cxx
         )
 
