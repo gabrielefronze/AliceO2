@@ -15,11 +15,9 @@
 #ifndef MIDFILTERDEVICE_H
 #define MIDFILTERDEVICE_H
 
-#include "FairMQDevice.h"
+//#include "FairMQDevice.h"
 #include "MUONBase/Chrono.h"
-#include "MUONBase/DataStructs.h"
-#include "MUONBase/Enums.h"
-#include "MUONBase/Mapping.h"
+#include "MUONReconstruction/MIDFilterAlgorithm.h"
 
 namespace o2
 {
@@ -32,15 +30,12 @@ class MIDFilterDevice : public FairMQDevice
  public:
   MIDFilterDevice();
 
-  virtual ~MIDFilterDevice();
-
  protected:
   bool HandleData(FairMQMessagePtr&, int);
   bool HandleMask(FairMQMessagePtr&, int);
 
  private:
-  stripMask fMask;
-
+  MIDFilterAlgorithm fAlgorithm;
   template <typename T>
   errMsg SendMsg(uint64_t msgSize, T* data);
 
