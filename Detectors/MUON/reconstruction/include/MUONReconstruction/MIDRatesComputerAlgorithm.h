@@ -21,8 +21,8 @@
 #define MIDRATESCOMPUTERALGORITHM_H
 
 #include <MUONBase/OccupancyMapping.h>
-#include <string>
 #include "MUONBase/DataStructs.h"
+#include <string>
 
 namespace o2
 {
