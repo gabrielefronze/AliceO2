@@ -17,12 +17,33 @@
 ///  @brief  Algorithm to compute rates based on occupancy information for MID
 ///
 
-#ifndef ALICEO2_MIDFILTERALGORITHM_H
-#define ALICEO2_MIDFILTERALGORITHM_H
+#ifndef MIDFILTERALGORITHM_H
+#define MIDFILTERALGORITHM_H
 
+#include "MUONBase/DataStructs.h"
+#include <vector>
+
+namespace o2
+{
+namespace muon
+{
+namespace mid
+{
 class MIDFilterAlgorithm
 {
+  public:
+    MIDFilterAlgorithm();
+    virtual ~MIDFilterAlgorithm();
 
+    bool Init();
+    bool ExecFilter(std::vector<uint32_t> data);
+    bool ExecMaskLoading(unsigned short counters[2], std::vector<uint32_t> maskData);
+
+ private:
+  stripMask fMask;
 };
+} // namespace mid
+} // namespace muon
+} // namespace o2
 
-#endif //ALICEO2_MIDFILTERALGORITHM_H
+#endif // MIDFILTERALGORITHM_H
