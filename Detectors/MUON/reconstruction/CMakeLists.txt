@@ -22,6 +22,7 @@ set(SRCS
 
 set(HEADERS
         include/${MODULE_NAME}/MIDFilterDevice.h
+        include/${MODULE_NAME}/MIDFilterAlgorithm.h
         include/${MODULE_NAME}/MIDMaskGeneratorDevice.h
         include/${MODULE_NAME}/MIDMaskGeneratorAlgorithm.h
         include/${MODULE_NAME}/MIDRatesComputerDevice.h
