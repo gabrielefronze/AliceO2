@@ -38,7 +38,7 @@ bool MIDFilterAlgorithm::ExecFilter(std::vector<uint32_t> data)
   }
 
   for ( auto &itData : data ){
-    // Masking the noisy strips in the OpenCL way!
+    // Masking the noisy strips in the OpenCL way! We are ready for further optimization...
     auto IsStripOk = fMask.noisyStripsIDs.find(itData) == fMask.noisyStripsIDs.end();
     itData *= IsStripOk;
   }
@@ -48,7 +48,6 @@ bool MIDFilterAlgorithm::ExecFilter(std::vector<uint32_t> data)
 
 bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short counters[2], std::vector<uint32_t> maskData)
 {
-
   // Clearing the mask data. The new mask is a complete information (not a diff).
   Init();
 
