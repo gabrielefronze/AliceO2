@@ -20,8 +20,7 @@
 #ifndef MIDRATESCOMPUTER_H
 #define MIDRATESCOMPUTER_H
 
-//#include <fairmq/FairMQDevice.h>
-//#include "FairMQDevice.h"
+#include "FairMQDevice.h"
 #include "MUONBase/Chrono.h"
 #include "MUONReconstruction/MIDRatesComputerAlgorithm.h"
 
