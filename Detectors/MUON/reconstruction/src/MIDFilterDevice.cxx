@@ -17,7 +17,6 @@
 #include "MUONBase/Chrono.h"
 #include "MUONBase/Deserializer.h"
 #include "options/FairMQProgOptions.h"
-//#include "flatbuffers/flatbuffers.h"
 
 using namespace o2::muon::mid;
 
