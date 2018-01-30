@@ -20,7 +20,8 @@
 #ifndef MIDRATESCOMPUTER_H
 #define MIDRATESCOMPUTER_H
 
-#include "FairMQDevice.h"
+//#include <fairmq/FairMQDevice.h>
+//#include "FairMQDevice.h"
 #include "MUONBase/Chrono.h"
 #include "MUONReconstruction/MIDRatesComputerAlgorithm.h"
 
@@ -30,7 +31,7 @@ namespace muon
 {
 namespace mid
 {
-class MIDRatesComputerDevice : public FairMQDevice
+class MIDRatesComputerDevice //: public FairMQDevice
 {
  public:
   MIDRatesComputerDevice();

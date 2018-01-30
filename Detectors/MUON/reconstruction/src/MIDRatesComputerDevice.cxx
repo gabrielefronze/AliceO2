@@ -13,10 +13,10 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #include "MUONReconstruction/MIDRatesComputerDevice.h"
+#include "FairMQLogger.h"
 #include "FairMQDevice.h"
 #include "MUONBase/Deserializer.h"
 #include "options/FairMQProgOptions.h"
-#include "FairMQLogger.h"
 
 using namespace o2::muon::mid;
 
@@ -41,13 +41,13 @@ bool MIDRatesComputerDevice::HandleData(FairMQMessagePtr& msg, int /*index*/)
 
   // If the message is empty something is going wrong. The process should be aborted.
   if (!msg) {
-    //    LOG(ERROR) << "Message pointer not valid, aborting";
+        LOG(ERROR) << "Message pointer not valid, aborting";
     return false;
   }
 
   // If the input is smaller than the header size the message is empty and we should skip.
   if (msg->GetSize() < 100) {
-    //    LOG(ERROR) << "Message empty, skipping";
+    //    LOG(INFO) << "Message empty, skipping";
     return true;
   }
 

@@ -46,7 +46,7 @@ bool MIDRatesComputerAlgorithm::Exec(std::vector<uint32_t> data)
   // Counter of received digits
   int counter = 0;
 
-      LOG(INFO) << "Received valid message with " << data.size() <<" digits";
+  LOG(INFO) << "Received valid message with " << data.size() <<" digits";
 
   // Loop over the digits of the message.
   for (const auto& uniqueIDBuffer : data) {
@@ -102,8 +102,6 @@ bool MIDRatesComputerAlgorithm::Exec(std::vector<uint32_t> data)
 
 void MIDRatesComputerAlgorithm::ResetCounters(uint64_t newStartTS, digitType type)
 {
-  auto tStart = std::chrono::high_resolution_clock::now();
-
   //  Reset all counters and timestamps
   std::for_each(fMapping.fStripVector.begin(), fMapping.fStripVector.end(),
                 [](stripMapping& i) { i = stripMapping(); });
@@ -113,18 +111,14 @@ void MIDRatesComputerAlgorithm::ResetCounters(uint64_t newStartTS, digitType typ
   fStructMaskSim.deadStripsIDs.clear();
   fStructMaskSim.noisyStripsIDs.clear();
 
-  auto tEnd = std::chrono::high_resolution_clock::now();
-
   //    LOG(DEBUG) << "Reset counters in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
 
 bool MIDRatesComputerAlgorithm::ShouldComputeRates(digitType type)
 {
-  // Return if enough statistics has been collected. Customizable.
-  //    long nOfActiveStrips =
-  //    std::count_if(fMapping.fStripVector.begin(),fMapping.fStripVector.end(),[type](stripMapping strip)->bool{ return
-  //    strip.digitsCounter[type] > 10; }); return nOfActiveStrips > (0.001 * fMapping.fStripVector.size());
-
+  // Return if enough statistics has been collected.
+  // For the moment we simply check the number of received digits.
+  // Customizable.
   return fCounter % 100 != 0;
 }
 
@@ -145,14 +139,10 @@ void MIDRatesComputerAlgorithm::ComputeRate(stripMapping* strip)
 
 void MIDRatesComputerAlgorithm::ComputeAllRates()
 {
-  auto tStart = std::chrono::high_resolution_clock::now();
-
   // Compute all rates
   for (auto& stripIt : fMapping.fStripVector) {
     ComputeRate(&stripIt);
   }
-
-  auto tEnd = std::chrono::high_resolution_clock::now();
 
   //    LOG(DEBUG) << "Rates computed in " << std::chrono::duration<double, std::milli>(tEnd - tStart).count() << " ms";
 }
