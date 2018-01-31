@@ -46,7 +46,6 @@ class MIDMaskGeneratorAlgorithm
   OccupancyMapping fMapping;
   stripMask fMask;
 
-  using IDType = uint32_t;
   void FindNoisy(digitType type=kTriggered);
   void FindDead(digitType type=kFET);
   void ResetAll();
