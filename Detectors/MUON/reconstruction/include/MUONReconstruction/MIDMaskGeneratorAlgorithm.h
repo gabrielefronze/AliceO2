@@ -51,9 +51,6 @@ class MIDMaskGeneratorAlgorithm
   void FindDead(digitType type=kFET);
   void ResetAll();
   void FillMask();
-
-  // TODO: implement SendMask
-  errMsg SendMask(){};
 };
 } // namespace mid
 } // namespace muon
