@@ -22,6 +22,7 @@
 
 #include "MUONBase/DataStructs.h"
 #include <vector>
+#include <dtrace.h>
 
 namespace o2
 {
@@ -36,7 +37,7 @@ class MIDFilterAlgorithm
 
     bool Init();
     bool ExecFilter(std::vector<uint32_t> data);
-    bool ExecMaskLoading(unsigned short *maskHeader, uint32_t *maskData);
+    bool ExecMaskLoading(ushort_t*maskHeader, uint32_t *maskData);
 
  private:
   stripMask fMask;

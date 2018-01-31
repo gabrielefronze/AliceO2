@@ -28,7 +28,8 @@ MIDFilterDevice::MIDFilterDevice()
 }
 
 //_________________________________________________________________________________________________
-MIDFilterDevice::~MIDFilterDevice() {
+MIDFilterDevice::~MIDFilterDevice()
+{
   LOG(INFO) << "Average filtering performance: " << fChronometerMasking.PrintStatus();
   LOG(INFO) << "Average mask loading performance: " << fChronometerLoading.PrintStatus();
 }
@@ -87,10 +88,10 @@ bool MIDFilterDevice::HandleMask(FairMQMessagePtr& msg, int /*index*/)
 
   // The header is made of two ushort which are counters of the
   // number of dead and noisy strips, respectively
-  unsigned short* maskHeader = reinterpret_cast<unsigned short*>(msg->GetData());
+  auto maskHeader = reinterpret_cast<ushort_t*>(msg->GetData());
 
   // Load unique IDs in maskData
-  uint32_t* maskData = reinterpret_cast<uint32_t*>(&(maskHeader[2]));
+  auto maskData = reinterpret_cast<uint32_t*>(&(maskHeader[2]));
 
   return fAlgorithm.ExecMaskLoading(maskHeader, maskData);
 }
