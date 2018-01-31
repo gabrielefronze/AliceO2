@@ -73,7 +73,5 @@ bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short *maskHeader, uint32_t *m
     fMask.noisyStripsIDs =
       std::unordered_set<uint32_t>(&(maskData[fMask.nDead]), &(maskData[fMask.nDead + fMask.nNoisy - 1]));
 
-  //    LOG(DEBUG) << "Mask correctly loaded with " << fMask.nDead + fMask.nNoisy << " problematic strips";
-
   return true;
 }
