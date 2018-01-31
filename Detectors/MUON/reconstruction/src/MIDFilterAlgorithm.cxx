@@ -45,19 +45,19 @@ bool MIDFilterAlgorithm::ExecFilter(std::vector<uint32_t> data)
   return true;
 }
 
-bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short counters[2], std::vector<uint32_t> maskData)
+bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short *maskHeader, uint32_t *maskData)
 {
   // Clearing the mask data. The new mask is a complete information (not a diff).
   Init();
 
   // If the received message has no problematic strip just leave the mask empty
-  if (counters[0] == 0 && counters[1] == 0) {
+  if (maskHeader[0] == 0 && maskHeader[1] == 0) {
     return true;
   }
 
   // Load the number of dead and noisy strips in the mask
-  fMask.nDead = counters[0];
-  fMask.nNoisy = counters[1];
+  fMask.nDead = maskHeader[0];
+  fMask.nNoisy = maskHeader[1];
 
   // Load the unique IDs in the mask object
   if (fMask.nDead > 0)

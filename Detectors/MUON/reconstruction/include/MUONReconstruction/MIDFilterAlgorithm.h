@@ -37,7 +37,7 @@ class MIDFilterAlgorithm
 
     bool Init();
     bool ExecFilter(std::vector<uint32_t> data);
-    bool ExecMaskLoading(unsigned short counters[2], std::vector<uint32_t> maskData);
+    bool ExecMaskLoading(unsigned short *maskHeader, uint32_t *maskData);
 
  private:
   stripMask fMask;
