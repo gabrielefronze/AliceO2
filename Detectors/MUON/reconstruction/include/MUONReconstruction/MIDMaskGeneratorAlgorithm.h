@@ -39,7 +39,7 @@ class MIDMaskGeneratorAlgorithm
   virtual ~MIDMaskGeneratorAlgorithm();
 
   bool Init(std::string mappingFileName);
-  bool Exec(std::vector<uint64_t> data);
+  bool Exec(uint64_t* data);
   inline stripMask* GetMask(){ return &fMask; };
 
  private:

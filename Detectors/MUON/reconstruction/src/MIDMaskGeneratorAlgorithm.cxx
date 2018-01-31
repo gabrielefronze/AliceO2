@@ -40,13 +40,13 @@ MIDMaskGeneratorAlgorithm::~MIDMaskGeneratorAlgorithm()
 }
 
 //_________________________________________________________________________________________________
-bool MIDMaskGeneratorAlgorithm::Exec(std::vector<uint64_t> data)
+bool MIDMaskGeneratorAlgorithm::Exec(uint64_t* data)
 {
   // Copy the payload of the message in the internal data container
-  size_t iData = 0;
-  for (const auto& itData : data) {
-    fMapping.fStripVector[iData].digitsCounter[iData % digitType::kSize] = itData;
-    iData++;
+  for (int iData = 0; iData < fMapping.fStripVector.size(); iData++) {
+    for (int iType = 0; iType < digitType::kSize; iType++) {
+      fMapping.fStripVector[iData].digitsCounter[iType] = data[iData * 3 + iType];
+    }
   }
 
   // Calling the FindNoisy and FindDead method to set the flags of the fMapping elements
