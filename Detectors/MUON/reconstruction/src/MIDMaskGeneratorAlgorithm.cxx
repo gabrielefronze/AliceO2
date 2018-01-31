@@ -46,11 +46,11 @@ bool MIDMaskGeneratorAlgorithm::Exec(std::vector<uint64_t> data)
     iData++;
   }
 
-  LOG(DEBUG) << "Message parsing done!";
-
+  // Calling the FindNoisy and FindDead method to set the flags of the fMapping elements
   FindNoisy(digitType::kFET);
   FindDead(digitType::kTriggered);
 
+  // Filling the mask
   FillMask();
 }
 
@@ -77,13 +77,15 @@ void MIDMaskGeneratorAlgorithm::FillMask()
     auto index = mapIterator.second;
     auto strip = &(fMapping.fStripVector[index]);
 
+    bool alreadyThere = false;
     if (strip->isDead) {
-      auto alreadyThere = fMask.deadStripsIDs.insert(uniqueID).second;
+      alreadyThere = fMask.deadStripsIDs.insert(uniqueID).second;
     } else if (strip->isNoisy) {
-      auto alreadyThere = fMask.noisyStripsIDs.insert(uniqueID).second;
+      alreadyThere = fMask.noisyStripsIDs.insert(uniqueID).second;
     }
   }
 
+  // Populating fMask header
   fMask.nDead = (ushort_t)fMask.deadStripsIDs.size();
   fMask.nNoisy = (ushort_t)fMask.noisyStripsIDs.size();
 
