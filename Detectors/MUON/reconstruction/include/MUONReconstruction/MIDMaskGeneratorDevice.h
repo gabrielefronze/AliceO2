@@ -26,7 +26,7 @@ namespace muon
 {
 namespace mid
 {
-class MIDMaskGeneratorDevice //: public FairMQDevice
+class MIDMaskGeneratorDevice : public FairMQDevice
 {
  public:
   MIDMaskGeneratorDevice();
