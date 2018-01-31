@@ -27,7 +27,7 @@ bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
     std::cout << "Error reading the mapping from " << mappingFileName;
   }
 
-  return fMapping.Consistent(true);
+  return fMapping.Consistent();
 }
 
 //_________________________________________________________________________________________________
