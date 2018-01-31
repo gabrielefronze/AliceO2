@@ -40,7 +40,8 @@ class MIDFilterDevice : public FairMQDevice
   errMsg SendMsg(uint64_t msgSize, T* data);
 
   // Chrono object to compute duration
-  Chrono fChronometer;
+  Chrono fChronometerMasking;
+  Chrono fChronometerLoading;
 };
 } // namespace mid
 } // namespace muon
