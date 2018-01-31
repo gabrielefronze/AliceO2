@@ -47,9 +47,8 @@ class MIDMaskGeneratorAlgorithm
   stripMask fMask;
 
   using IDType = uint32_t;
-
-  void FindNoisy(digitType type);
-  void FindDead(digitType type);
+  void FindNoisy(digitType type=kTriggered);
+  void FindDead(digitType type=kFET);
   void ResetAll();
   void FillMask();
 
