@@ -40,7 +40,7 @@ class MIDMaskGeneratorAlgorithm
 
   bool Init(std::string mappingFileName);
   bool Exec(std::vector<uint64_t> data);
-  std::shared_ptr<std::vector<uint32_t>> Output();
+  inline stripMask* GetMask(){ return &fMask; };
 
  private:
   OccupancyMapping fMapping;

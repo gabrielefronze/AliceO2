@@ -97,30 +97,3 @@ void MIDMaskGeneratorAlgorithm::FillMask()
 
   return;
 }
-
-//_________________________________________________________________________________________________
-std::shared_ptr<std::vector<uint32_t>> MIDMaskGeneratorAlgorithm::Output()
-{
-  // Computing how many UID have to be sent
-  auto sum = fMask.nDead + fMask.nNoisy;
-
-  // Allocating container
-  std::vector<uint32_t> outputVect(sum + 1);
-
-  // Loading the header info
-  auto header = reinterpret_cast<ushort_t*>(&outputVect[0]);
-  header[0] = fMask.nDead;
-  header[1] = fMask.nNoisy;
-
-  // Loading the UIDs in the output vector
-  int position = 1;
-  for (auto const& itDead : fMask.deadStripsIDs) {
-    outputVect[position++] = itDead;
-  }
-  for (auto const& itNoisy : fMask.noisyStripsIDs) {
-    outputVect[position++] = itNoisy;
-  }
-
-  // returning a shared pointer to the vector
-  return std::make_shared(outputVect);
-}
