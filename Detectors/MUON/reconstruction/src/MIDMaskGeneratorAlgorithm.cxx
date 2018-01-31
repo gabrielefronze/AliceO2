@@ -13,6 +13,7 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #include "MUONReconstruction/MIDMaskGeneratorAlgorithm.h"
+#include <iostream>
 #include <numeric>
 #include "FairMQLogger.h"
 #include "MUONBase/Enums.h"
@@ -22,7 +23,7 @@ using namespace o2::muon::mid;
 bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
 {
   if (!(fMapping.ReadMapping(mappingFileName.c_str()))) {
-    LOG(ERROR) << "Error reading the mapping from " << mappingFileName;
+    std::cout << "Error reading the mapping from " << mappingFileName;
   }
 
   return fMapping.Consistent(true);
@@ -30,9 +31,9 @@ bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
 
 MIDMaskGeneratorAlgorithm::~MIDMaskGeneratorAlgorithm()
 {
-  LOG(DEBUG) << "Detected noisy strips:";
-  for (const auto& itMask : fStructMask.noisyStripsIDs) {
-    LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
+  std::cout << "Detected noisy strips:";
+  for (const auto& itMask : fMask.noisyStripsIDs) {
+    std::cout << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
   }
 }
 
@@ -78,23 +79,9 @@ void MIDMaskGeneratorAlgorithm::FillMask()
 
     if (strip->isDead) {
       auto alreadyThere = fMask.deadStripsIDs.insert(uniqueID).second;
-
-      if (alreadyThere) {
-        LOG(ERROR) << uniqueID << " is dead.";
-      } else {
-        //                LOG(INFO)<<uniqueID<<" already set.";
-      }
-
     } else if (strip->isNoisy) {
       auto alreadyThere = fMask.noisyStripsIDs.insert(uniqueID).second;
-
-      if (alreadyThere) {
-        LOG(ERROR) << uniqueID << " is noisy.";
-      } else {
-        //                LOG(INFO)<<uniqueID<<" already set.";
-      }
     }
-    //        else LOG(INFO)<<uniqueID<<" is working as expected.";
   }
 
   fMask.nDead = (ushort_t)fMask.deadStripsIDs.size();
