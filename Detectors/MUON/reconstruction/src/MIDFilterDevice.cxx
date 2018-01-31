@@ -28,7 +28,10 @@ MIDFilterDevice::MIDFilterDevice()
 }
 
 //_________________________________________________________________________________________________
-MIDFilterDevice::~MIDFilterDevice() { LOG(INFO) << "Average performance: " << fChronometer.PrintStatus(); }
+MIDFilterDevice::~MIDFilterDevice() {
+  LOG(INFO) << "Average filtering performance: " << fChronometerMasking.PrintStatus();
+  LOG(INFO) << "Average mask loading performance: " << fChronometerLoading.PrintStatus();
+}
 
 //_________________________________________________________________________________________________
 bool MIDFilterDevice::HandleData(FairMQMessagePtr& msg, int /*index*/)
@@ -50,16 +53,17 @@ bool MIDFilterDevice::HandleData(FairMQMessagePtr& msg, int /*index*/)
 
   // This vector will contain the data and will be passed to the filtering algorithm
   std::vector<uint32_t> data;
-  data.assign(MessageDeserializer.GetDataPointer(), MessageDeserializer.GetDataPointer() + MessageDeserializer.GetNDigits());
+  data.assign(MessageDeserializer.GetDataPointer(),
+              MessageDeserializer.GetDataPointer() + MessageDeserializer.GetNDigits());
 
   // returnValue is false if no masking has been done
   auto returnValue = fAlgorithm.ExecFilter(data);
 
   if (returnValue) {
-    data.erase(std::remove_if(data.begin(),data.end(),[](uint32_t UID){ return UID==0; }),data.end());
+    data.erase(std::remove_if(data.begin(), data.end(), [](uint32_t UID) { return UID == 0; }), data.end());
   }
 
-  switch (SendRates(data.size(),&data[0])) {
+  switch (SendRates(data.size(), &data[0])) {
     case kShortMsg:
       LOG(ERROR) << "Message shorter than expected. Skipping.";
       return true;
@@ -88,7 +92,7 @@ bool MIDFilterDevice::HandleMask(FairMQMessagePtr& msg, int /*index*/)
   // Load unique IDs in maskData
   uint32_t* maskData = reinterpret_cast<uint32_t*>(&(maskHeader[2]));
 
-  return fAlgorithm.ExecMaskLoading(maskHeader,maskData);
+  return fAlgorithm.ExecMaskLoading(maskHeader, maskData);
 }
 
 //_________________________________________________________________________________________________
