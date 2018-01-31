@@ -31,18 +31,25 @@ bool MIDFilterAlgorithm::Init()
 
 bool MIDFilterAlgorithm::ExecFilter(std::vector<uint32_t> data)
 {
+  auto returnValue = false;
+
   // Check if no noisy strip is found. If none simply forward the message
   if (fMask.nNoisy == 0) {
-    return false;
+    return returnValue;
+  } else {
+    for ( auto &itData : data ){
+      // If the strip is not found in the mask IsStripOk is true
+      auto IsStripOk = (fMask.noisyStripsIDs.find(itData) == fMask.noisyStripsIDs.end());
+
+      // If no digit is edited returnValue must be false: in that case the forward is easier
+      returnValue|=IsStripOk;
+
+      // Masking the noisy strips in the OpenCL way! We are ready for further optimization...
+      itData *= IsStripOk;
+    }
   }
 
-  for ( auto &itData : data ){
-    // Masking the noisy strips in the OpenCL way! We are ready for further optimization...
-    auto IsStripOk = fMask.noisyStripsIDs.find(itData) == fMask.noisyStripsIDs.end();
-    itData *= IsStripOk;
-  }
-
-  return true;
+  return returnValue;
 }
 
 bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short *maskHeader, uint32_t *maskData)
