@@ -33,7 +33,6 @@ class MIDFilterAlgorithm
 {
   public:
     MIDFilterAlgorithm();
-    virtual ~MIDFilterAlgorithm();
 
     bool Init();
     bool ExecFilter(std::vector<uint32_t> data);
