@@ -15,7 +15,7 @@
 #ifndef MIDFILTERDEVICE_H
 #define MIDFILTERDEVICE_H
 
-//#include "FairMQDevice.h"
+#include "FairMQDevice.h"
 #include "MUONBase/Chrono.h"
 #include "MUONReconstruction/MIDFilterAlgorithm.h"
 
