@@ -20,6 +20,7 @@
 
 using namespace o2::muon::mid;
 
+//_________________________________________________________________________________________________
 bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
 {
   if (!(fMapping.ReadMapping(mappingFileName.c_str()))) {
@@ -29,6 +30,7 @@ bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
   return fMapping.Consistent(true);
 }
 
+//_________________________________________________________________________________________________
 MIDMaskGeneratorAlgorithm::~MIDMaskGeneratorAlgorithm()
 {
   std::cout << "Detected noisy strips:";
@@ -37,6 +39,7 @@ MIDMaskGeneratorAlgorithm::~MIDMaskGeneratorAlgorithm()
   }
 }
 
+//_________________________________________________________________________________________________
 bool MIDMaskGeneratorAlgorithm::Exec(std::vector<uint64_t> data)
 {
   // Copy the payload of the message in the internal data container
@@ -54,6 +57,7 @@ bool MIDMaskGeneratorAlgorithm::Exec(std::vector<uint64_t> data)
   FillMask();
 }
 
+//_________________________________________________________________________________________________
 void MIDMaskGeneratorAlgorithm::FindNoisy(digitType type)
 {
   std::for_each(fMapping.fStripVector.begin(), fMapping.fStripVector.end(), [type](stripMapping strip) {
@@ -62,6 +66,7 @@ void MIDMaskGeneratorAlgorithm::FindNoisy(digitType type)
   });
 }
 
+//_________________________________________________________________________________________________
 void MIDMaskGeneratorAlgorithm::FindDead(digitType type)
 {
   std::for_each(fMapping.fStripVector.begin(), fMapping.fStripVector.end(), [type](stripMapping strip) {
@@ -70,6 +75,7 @@ void MIDMaskGeneratorAlgorithm::FindDead(digitType type)
   });
 }
 
+//_________________________________________________________________________________________________
 void MIDMaskGeneratorAlgorithm::FillMask()
 {
   for (const auto& mapIterator : fMapping.fIDMap) {
@@ -92,6 +98,7 @@ void MIDMaskGeneratorAlgorithm::FillMask()
   return;
 }
 
+//_________________________________________________________________________________________________
 std::shared_ptr<std::vector<uint32_t>> MIDMaskGeneratorAlgorithm::Output()
 {
   // Computing how many UID have to be sent
