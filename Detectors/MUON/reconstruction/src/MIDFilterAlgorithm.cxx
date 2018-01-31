@@ -12,7 +12,6 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include <FairLogger.h>
 #include "MUONReconstruction/MIDFilterAlgorithm.h"
 
 using namespace o2::muon::mid;
@@ -53,7 +52,6 @@ bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short counters[2], std::vector
 
   // If the received message has no problematic strip just leave the mask empty
   if (counters[0] == 0 && counters[1] == 0) {
-    LOG(DEBUG) << "Received empty mask.";
     return true;
   }
 
