@@ -29,7 +29,7 @@ class MIDFilterDevice : public FairMQDevice
 {
  public:
   MIDFilterDevice();
-  ~MIDFilterDevice();
+  virtual ~MIDFilterDevice();
 
  protected:
   bool HandleData(FairMQMessagePtr&, int);
