@@ -63,7 +63,7 @@ bool MIDFilterDevice::HandleData(FairMQMessagePtr& msg, int /*index*/)
     data.erase(std::remove_if(data.begin(), data.end(), [](uint32_t UID) { return UID == 0; }), data.end());
   }
 
-  switch (SendRates(data.size(), &data[0])) {
+  switch (SendMsg(data.size(), &data[0])) {
     case kShortMsg:
       LOG(ERROR) << "Message shorter than expected. Skipping.";
       return true;
