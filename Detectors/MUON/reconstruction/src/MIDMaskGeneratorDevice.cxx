@@ -78,25 +78,25 @@ errMsg MIDMaskGeneratorDevice::SendMask()
 {
   auto mask = fAlgorithm.GetMask();
 
-  auto sum = mask.nDead + mask.nNoisy;
+  auto sum = mask->nDead + mask->nNoisy;
 
   if (sum == 0)
     return kOk;
 
-  int msgSize = sizeof(mask.nDead) + sizeof(mask.nNoisy) + sum * sizeof(IDType);
+  int msgSize = sizeof(mask->nDead) + sizeof(mask->nNoisy) + sum * sizeof(IDType);
   FairMQMessagePtr msgOut(NewMessage(msgSize));
 
   auto header = reinterpret_cast<ushort_t*>(msgOut->GetData());
-  header[0] = mask.nDead;
-  header[1] = mask.nNoisy;
+  header[0] = mask->nDead;
+  header[1] = mask->nNoisy;
   auto payload = reinterpret_cast<uint32_t*>(&(header[2]));
 
   int position = 0;
 
-  for (auto const& itDead : mask.deadStripsIDs) {
+  for (auto const& itDead : mask->deadStripsIDs) {
     payload[position++] = itDead;
   }
-  for (auto const& itNoisy : mask.noisyStripsIDs) {
+  for (auto const& itNoisy : mask->noisyStripsIDs) {
     payload[position++] = itNoisy;
   }
 
