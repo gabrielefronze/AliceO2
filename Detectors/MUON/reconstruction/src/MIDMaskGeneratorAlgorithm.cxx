@@ -77,7 +77,7 @@ void MIDMaskGeneratorAlgorithm::FillMask()
     auto strip = &(fMapping.fStripVector[index]);
 
     if (strip->isDead) {
-      auto alreadyThere = fStructMask.deadStripsIDs.insert(uniqueID).second;
+      auto alreadyThere = fMask.deadStripsIDs.insert(uniqueID).second;
 
       if (alreadyThere) {
         LOG(ERROR) << uniqueID << " is dead.";
@@ -86,7 +86,7 @@ void MIDMaskGeneratorAlgorithm::FillMask()
       }
 
     } else if (strip->isNoisy) {
-      auto alreadyThere = fStructMask.noisyStripsIDs.insert(uniqueID).second;
+      auto alreadyThere = fMask.noisyStripsIDs.insert(uniqueID).second;
 
       if (alreadyThere) {
         LOG(ERROR) << uniqueID << " is noisy.";
@@ -97,8 +97,8 @@ void MIDMaskGeneratorAlgorithm::FillMask()
     //        else LOG(INFO)<<uniqueID<<" is working as expected.";
   }
 
-  fStructMask.nDead = (ushort_t)fStructMask.deadStripsIDs.size();
-  fStructMask.nNoisy = (ushort_t)fStructMask.noisyStripsIDs.size();
+  fMask.nDead = (ushort_t)fMask.deadStripsIDs.size();
+  fMask.nNoisy = (ushort_t)fMask.noisyStripsIDs.size();
 
   return;
 }

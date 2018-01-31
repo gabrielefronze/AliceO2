@@ -44,7 +44,7 @@ class MIDMaskGeneratorAlgorithm
 
  private:
   OccupancyMapping fMapping;
-  stripMask fStructMask;
+  stripMask fMask;
 
   using IDType = uint32_t;
 
