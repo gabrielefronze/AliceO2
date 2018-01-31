@@ -83,7 +83,7 @@ errMsg MIDMaskGeneratorDevice::SendMask()
   if (sum == 0)
     return kOk;
 
-  int msgSize = sizeof(mask->nDead) + sizeof(mask->nNoisy) + sum * sizeof(IDType);
+  int msgSize = sizeof(mask->nDead) + sizeof(mask->nNoisy) + sum * sizeof(uint32_t);
   FairMQMessagePtr msgOut(NewMessage(msgSize));
 
   auto header = reinterpret_cast<ushort_t*>(msgOut->GetData());
