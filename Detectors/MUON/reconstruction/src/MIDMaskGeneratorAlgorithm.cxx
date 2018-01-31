@@ -13,8 +13,8 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #include "MUONReconstruction/MIDMaskGeneratorAlgorithm.h"
-#include <fairmq/logger/logger.h>
 #include <numeric>
+#include "FairMQLogger.h"
 #include "MUONBase/Enums.h"
 
 using namespace o2::muon::mid;
