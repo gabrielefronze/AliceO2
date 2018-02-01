@@ -18,7 +18,7 @@ ALICE_WORK_DIR=${ALISOFT}"/sw"
 RUNDIR="$ALISOFT/test_device_data"
 JSONDIR="$O2_ROOT/bin/config"
 
-EXECUTABLES=("runMIDFilter" "runMIDMaskGenerator" "runMIDRatesComputer" "runBroadcaster")
+EXECUTABLES=("runMIDFilterDevice" "runMIDMaskGeneratorDevice" "runMIDRatesComputerDevice" "runBroadcaster")
 
 originalindices=${!EXECUTABLES[*]}
 
