@@ -2,7 +2,7 @@
   "fairMQOptions": {
     "devices": [
       {
-        "key": "MIDMaskGenerator",
+        "key": "MIDMaskGeneratorDevice",
         "channels": [
           {
             "name": "rates-in",

@@ -2,7 +2,7 @@
   "fairMQOptions": {
     "devices": [
       {
-        "key": "MIDRatesComputer",
+        "key": "MIDRatesComputerDevice",
         "channels": [
           {
             "name": "data-in",
