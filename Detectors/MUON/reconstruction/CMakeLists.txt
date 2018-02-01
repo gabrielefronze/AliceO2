@@ -2,9 +2,9 @@ set(MODULE_NAME "MUONReconstruction")
 
 O2_SETUP(NAME ${MODULE_NAME})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDFilter.json ${CMAKE_BINARY_DIR}/bin/config/runMIDFilter.json)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDMaskGenerator.json ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGenerator.json)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDRatesComputer.json ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputer.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDFilterDevice.json ${CMAKE_BINARY_DIR}/bin/config/runMIDFilterDevice.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDMaskGeneratorDevice.json ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGeneratorDevice.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDRatesComputerDevice.json ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputerDevice.json)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runBroadcaster.json ${CMAKE_BINARY_DIR}/bin/config/runBroadcaster.json)
 
 
@@ -69,11 +69,11 @@ ForEach (_file RANGE 0 ${_length}) # loop over a range because we traverse 2 lis
     )
 EndForEach (_file RANGE 0 ${_length})
 
-install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDFilter.json
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDFilterDevice.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
-install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGenerator.json
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDMaskGeneratorDevice.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
-install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputer.json
+install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputerDevice.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
 install(FILES ${CMAKE_BINARY_DIR}/bin/config/runBroadcaster.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
