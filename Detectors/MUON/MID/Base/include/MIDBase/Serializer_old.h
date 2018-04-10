@@ -16,16 +16,14 @@
 ///  @brief  Little deserializer app to pack MID messages
 ///
 
-#ifndef SERIALIZER_H
-#define SERIALIZER_H
+#ifndef O2_MID_SERIALIZER_H
+#define O2_MID_SERIALIZER_H
 
 #include <iostream>
 #include <vector>
 #include "DataStructs.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -76,6 +74,4 @@ class Serializer
 } // namespace mid
 } // namespace muon
 
-} // namespace o2
-
-#endif // SERIALIZER_H
+#endif // O2_MID_SERIALIZER_H
