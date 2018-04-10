@@ -53,6 +53,9 @@ class Serializer
   uint32_t GetUID(size_t index);
 
   uint32_t* GetMessage();
+  inline size_t GetMessageSize() {
+    return sizeof(uint32_t)*(fHeader.size()+1+fOutputData.size()); //The +1 is the value representing the number of digits
+  }
 
   inline void DumpHeader()
   {
