@@ -12,8 +12,8 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#ifndef OCCUPANCYMAPPING_H
-#define OCCUPANCYMAPPING_H
+#ifndef O2_MID_OCCUPANCYMAPPING_H
+#define O2_MID_OCCUPANCYMAPPING_H
 
 #include <array>
 #include <unordered_map>
@@ -22,8 +22,6 @@
 #include "DataStructs.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -66,6 +64,5 @@ class OccupancyMapping
 };
 } // namespace mid
 } // namespace muon
-} // namespace o2
 
-#endif // OCCUPANCYMAPPING_H
+#endif // O2_MID_OCCUPANCYMAPPING_H
