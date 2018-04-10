@@ -1,0 +1,50 @@
+{
+  "fairMQOptions": {
+    "devices": [
+      {
+        "key": "MIDFilterDevice",
+        "channels": [
+          {
+            "name": "mask-in",
+            "sockets": [
+              {
+                "type": "pull",
+                "method": "connect",
+                "address": "tcp://localhost:25000",
+                "sndBufSize": 1500,
+                "rcvBufSize": 1500,
+                "rateLogging": 0
+              }
+            ]
+          },
+          {
+            "name": "digits-in",
+            "sockets": [
+              {
+                "type": "pull",
+                "method": "connect",
+                "address": "tcp://localhost:23500",
+                "sndBufSize": 1500,
+                "rcvBufSize": 1500,
+                "rateLogging": 0
+              }
+            ]
+          },
+          {
+            "name": "digits-out",
+            "sockets": [
+              {
+                "type": "pub",
+                "method": "bind",
+                "address": "tcp://*:24000",
+                "sndBufSize": 1500,
+                "rcvBufSize": 1500,
+                "rateLogging": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
