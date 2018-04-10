@@ -1,13 +1,11 @@
-#ifndef MAPPING_H
-#define MAPPING_H
+#ifndef O2_MID_MAPPING_H
+#define O2_MID_MAPPING_H
 
 #include <unordered_map>
 #include <vector>
 #include "Rtypes.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -43,8 +41,6 @@ class Mapping
 };
 
 } // namespace mid
-} // namespace muon
-
 } // namespace o2
 
 #endif
