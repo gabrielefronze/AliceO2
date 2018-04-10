@@ -14,7 +14,7 @@
 
 #include "MUONBase/Deserializer.h"
 
-using namespace o2::muon::mid;
+using namespace o2::mid;
 
 Deserializer::Deserializer() : fDigitCounter(0), fOffset(1)
 {
