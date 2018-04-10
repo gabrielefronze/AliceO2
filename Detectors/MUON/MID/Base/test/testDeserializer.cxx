@@ -17,8 +17,8 @@
 
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
-#include "MUONBase/Serializer.h"
-#include "MUONBase/Deserializer.h"
+#include "MIDBase/Serializer.h"
+#include "MIDBase/Deserializer.h"
 
 using namespace o2::muon::mid;
 
