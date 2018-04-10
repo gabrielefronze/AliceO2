@@ -1610,6 +1610,22 @@ o2_define_bucket(
 )
 
 o2_define_bucket(
+        NAME
+        mid_filtering_bucket
+
+        DEPENDENCIES
+        common_boost_bucket
+        ${Boost_SYSTEM_LIBRARY}
+        ${Boost_PROGRAM_OPTIONS_LIBRARY}
+        fairroot_base_bucket
+        O2FrameworkCore_bucket
+        MIDBase
+
+        INCLUDE_DIRECTORIES
+        ${CMAKE_SOURCE_DIR}/Detectors/MUON/MID/Base/include
+)
+
+o2_define_bucket(
     NAME
     mid_clustering_test_bucket
 
