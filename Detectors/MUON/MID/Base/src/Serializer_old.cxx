@@ -12,7 +12,7 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONBase/Serializer_old.h"
+#include "MIDBase/Serializer_old.h"
 #include <assert.h>
 #include <regex.h>
 

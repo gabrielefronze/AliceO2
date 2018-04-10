@@ -18,7 +18,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
 #include <iostream>
-#include "MUONBase/Chrono.h"
+#include "MIDBase/Chrono.h"
 
 using namespace o2::muon::mid;
 

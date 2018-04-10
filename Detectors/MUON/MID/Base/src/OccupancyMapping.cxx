@@ -12,10 +12,10 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONBase/OccupancyMapping.h"
+#include "MIDBase/OccupancyMapping.h"
 #include <chrono>
 #include "FairMQLogger.h"
-#include "MUONBase/Mapping.h"
+#include "MIDBase/Mapping.h"
 #include "options/FairMQProgOptions.h"
 
 using namespace o2::mid;

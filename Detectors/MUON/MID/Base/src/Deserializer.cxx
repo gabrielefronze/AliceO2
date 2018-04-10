@@ -12,7 +12,7 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONBase/Deserializer.h"
+#include "MIDBase/Deserializer.h"
 
 using namespace o2::mid;
 
