@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-using namespace o2::muon::mid;
+using namespace o2::mid;
 
 using namespace std;
 

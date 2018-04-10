@@ -18,7 +18,7 @@
 #include "MUONBase/Mapping.h"
 #include "options/FairMQProgOptions.h"
 
-using namespace o2::muon::mid;
+using namespace o2::mid;
 
 //_________________________________________________________________________________________________
 bool OccupancyMapping::ReadMapping(const char* filename, int elementID)
