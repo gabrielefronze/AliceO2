@@ -16,8 +16,8 @@
 ///  @brief  Container for usefull data structs
 ///
 
-#ifndef DATASTRUCTS_H
-#define DATASTRUCTS_H
+#ifndef O2_MID_DATASTRUCTS_H
+#define O2_MID_DATASTRUCTS_H
 
 #include <math.h>
 #include <sys/dtrace.h>
@@ -25,8 +25,6 @@
 #include "MUONBase/Enums.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -68,7 +66,6 @@ struct stripMask {
 };
 
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
-#endif // DATASTRUCTS_H
+#endif // O2_MID_DATASTRUCTS_H
