@@ -1230,6 +1230,7 @@ o2_define_bucket(
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     fairroot_base_bucket
+    O2FrameworkCore_bucket
     MUONBase
 
     INCLUDE_DIRECTORIES

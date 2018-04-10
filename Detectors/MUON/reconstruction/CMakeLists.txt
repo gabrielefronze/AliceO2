@@ -7,8 +7,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDMaskGeneratorDevice.json ${
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runMIDRatesComputerDevice.json ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputerDevice.json)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/runBroadcaster.json ${CMAKE_BINARY_DIR}/bin/config/runBroadcaster.json)
 
-
-
 link_directories(${LINK_DIRECTORIES})
 
 set(SRCS
@@ -77,3 +75,5 @@ install(FILES ${CMAKE_BINARY_DIR}/bin/config/runMIDRatesComputerDevice.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
 install(FILES ${CMAKE_BINARY_DIR}/bin/config/runBroadcaster.json
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/config)
+
+add_subdirectory(Workflow)
