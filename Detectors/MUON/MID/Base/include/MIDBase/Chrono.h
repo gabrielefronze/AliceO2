@@ -12,8 +12,8 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#ifndef CHRONO_H
-#define CHRONO_H
+#ifndef O2_MID_CHRONO_H
+#define O2_MID_CHRONO_H
 
 #include <chrono>
 #include <cstdint>
@@ -24,8 +24,6 @@
 #include <vector>
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -63,7 +61,6 @@ class DeltaT
   Chrono* fChrono;
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
 #endif // CHRONO_H
