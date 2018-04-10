@@ -1,5 +1,5 @@
-#ifndef DESERIALIZER_H
-#define DESERIALIZER_H
+#ifndef O2_MID_DESERIALIZER_H
+#define O2_MID_DESERIALIZER_H
 
 //
 // Copyright CERN and copyright holders of ALICE O2. This software is
@@ -23,8 +23,6 @@
 #include "FairMQMessage.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -90,8 +88,6 @@ class Deserializer
 };
 
 } // namespace mid
-} // namespace muon
-
 } // namespace o2
 
-#endif // DESERIALIZER_H
+#endif // O2_MID_DESERIALIZER_H
