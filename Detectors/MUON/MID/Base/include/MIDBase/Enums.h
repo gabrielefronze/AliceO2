@@ -16,12 +16,10 @@
 ///  @brief  Container for usefull enumerators
 ///
 
-#ifndef ENUMS_H
-#define ENUMS_H
+#ifndef O2_MID_ENUMS_H
+#define O2_MID_ENUMS_H
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -29,7 +27,6 @@ typedef enum { kPhysics, kFET, kTriggered, kSize } digitType;
 
 typedef enum { kShortMsg, kFailedSend, kOk } errMsg;
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
-#endif // ENUMS_H
+#endif // O2_MID_ENUMS_H
