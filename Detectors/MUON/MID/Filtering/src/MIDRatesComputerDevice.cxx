@@ -12,13 +12,16 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/MIDRatesComputerDevice.h"
+#include "MIDRatesComputerDevice.h"
 #include "FairMQLogger.h"
 #include "FairMQDevice.h"
-#include "MUONBase/Deserializer.h"
+#include "MIDBase/Deserializer.h"
 #include "options/FairMQProgOptions.h"
 
-using namespace o2::muon::mid;
+namespace o2
+{
+namespace mid
+{
 
 //_________________________________________________________________________________________________
 MIDRatesComputerDevice::MIDRatesComputerDevice() : FairMQDevice()
@@ -41,7 +44,7 @@ bool MIDRatesComputerDevice::HandleData(FairMQMessagePtr& msg, int /*index*/)
 
   // If the message is empty something is going wrong. The process should be aborted.
   if (!msg) {
-        LOG(ERROR) << "Message pointer not valid, aborting";
+    LOG(ERROR) << "Message pointer not valid, aborting";
     return false;
   }
 
@@ -111,3 +114,6 @@ errMsg MIDRatesComputerDevice::SendRates(std::shared_ptr<std::vector<T>> digitsO
 
   return kOk;
 }
+
+} // namespace mid
+} // namespace o2
