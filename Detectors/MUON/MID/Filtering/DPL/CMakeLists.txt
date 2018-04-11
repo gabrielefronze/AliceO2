@@ -1,3 +1,0 @@
-add_executable(FilteringChainDPL FilteringChainDPL.cxx)
-target_link_libraries(FilteringChainDPL Framework MUONReconstruction)
-install(TARGETS FilteringChainDPL RUNTIME DESTINATION bin)
