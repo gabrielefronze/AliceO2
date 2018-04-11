@@ -20,30 +20,27 @@
 #ifndef MIDFILTERALGORITHM_H
 #define MIDFILTERALGORITHM_H
 
-#include "MUONBase/DataStructs.h"
+#include "MIDBase/DataStructs.h"
 #include <vector>
 #include <dtrace.h>
 
 namespace o2
 {
-namespace muon
-{
 namespace mid
 {
 class MIDFilterAlgorithm
 {
-  public:
-    MIDFilterAlgorithm();
+ public:
+  MIDFilterAlgorithm();
 
-    bool Init();
-    bool ExecFilter(std::vector<uint32_t> data);
-    bool ExecMaskLoading(ushort_t*maskHeader, uint32_t *maskData);
+  bool Init();
+  bool ExecFilter(std::vector<uint32_t> data);
+  bool ExecMaskLoading(ushort_t* maskHeader, uint32_t* maskData);
 
  private:
   stripMask fMask;
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
 #endif // MIDFILTERALGORITHM_H
