@@ -17,13 +17,11 @@
 
 #include <dtrace.h>
 #include "FairMQDevice.h"
-#include "MUONBase/Enums.h"
-#include "MUONBase/OccupancyMapping.h"
-#include "MUONReconstruction/MIDMaskGeneratorAlgorithm.h"
+#include "MIDBase/Enums.h"
+#include "MIDBase/OccupancyMapping.h"
+#include "MIDMaskGeneratorAlgorithm.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -42,7 +40,6 @@ class MIDMaskGeneratorDevice : public FairMQDevice
   errMsg SendMask();
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
 #endif // O2_DEV_ALO_MIDMASKGENERATOR_H
