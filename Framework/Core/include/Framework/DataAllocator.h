@@ -55,6 +55,9 @@ public:
   DataChunk newChunk(const OutputSpec &, size_t);
   DataChunk adoptChunk(const OutputSpec &, char *, size_t, fairmq_free_fn*, void *);
 
+  // We want to access to mAllowedOutputs to iterate over the list of available outputs
+  inline const AllowedOutputsMap* allowedChannels() const { return &mAllowedOutputs; }
+
   // In case no extra argument is provided and the passed type is trivially
   // copyable and non polymorphic, the most likely wanted behavior is to create
   // a message with that type, and so we do.
