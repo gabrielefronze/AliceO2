@@ -25,7 +25,7 @@ originalindices=${!EXECUTABLES[*]}
 for index in ${originalindices};
 do
     IDS[$index]=`echo ${EXECUTABLES[$index]} | sed 's/run//g'`
-    JSONS[$index]=`echo "$O2_ROOT/bin/config/"${EXECUTABLES[$index]}".json"`
+    JSONS[$index]=`echo "$O2_ROOT/etc/config/"${EXECUTABLES[$index]}".json"`
     echo ${JSONS[$index]}
 done
 
