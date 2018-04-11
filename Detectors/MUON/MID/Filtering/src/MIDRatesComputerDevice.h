@@ -21,12 +21,10 @@
 #define MIDRATESCOMPUTER_H
 
 #include "FairMQDevice.h"
-#include "MUONBase/Chrono.h"
-#include "MUONReconstruction/MIDRatesComputerAlgorithm.h"
+#include "MIDBase/Chrono.h"
+#include "MIDRatesComputerAlgorithm.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -49,7 +47,6 @@ class MIDRatesComputerDevice : public FairMQDevice
   Chrono fChronometerSendData;
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
 #endif // MIDRATESCOMPUTER_H
