@@ -12,13 +12,16 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/MIDFilterDevice.h"
+#include "MIDFilterDevice.h"
 #include "FairMQLogger.h"
-#include "MUONBase/Chrono.h"
-#include "MUONBase/Deserializer.h"
+#include "MIDBase/Chrono.h"
+#include "MIDBase/Deserializer.h"
 #include "options/FairMQProgOptions.h"
 
-using namespace o2::muon::mid;
+namespace o2
+{
+namespace mid
+{
 
 //_________________________________________________________________________________________________
 MIDFilterDevice::MIDFilterDevice()
@@ -131,3 +134,6 @@ errMsg MIDFilterDevice::SendMsg(uint64_t msgSize, T* data)
 
   return kOk;
 }
+
+} // namespace mid
+} // namespace o2

@@ -16,12 +16,10 @@
 #define MIDFILTERDEVICE_H
 
 #include "FairMQDevice.h"
-#include "MUONBase/Chrono.h"
-#include "MUONReconstruction/MIDFilterAlgorithm.h"
+#include "MIDBase/Chrono.h"
+#include "MIDFilterAlgorithm.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -45,7 +43,6 @@ class MIDFilterDevice : public FairMQDevice
   Chrono fChronometerLoading;
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
 #endif // MIDFILTERDEVICE_H
