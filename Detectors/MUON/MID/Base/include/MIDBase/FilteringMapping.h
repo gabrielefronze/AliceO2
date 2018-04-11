@@ -9,7 +9,7 @@ namespace o2
 {
 namespace mid
 {
-class Mapping
+class FilteringMapping
 {
  public:
   // pad structure in the internal mapping
