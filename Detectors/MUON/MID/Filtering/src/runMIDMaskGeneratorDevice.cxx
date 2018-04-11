@@ -12,7 +12,7 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/MIDMaskGeneratorDevice.h"
+#include "MIDMaskGeneratorDevice.h"
 #include "runFairMQDevice.h"
 
 namespace bpo = boost::program_options;
@@ -25,4 +25,4 @@ void addCustomOptions(bpo::options_description& options)
     ("binmapfile", bpo::value<std::string>(), "file with segmentation");
 }
 
-FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/) { return new o2::muon::mid::MIDMaskGeneratorDevice(); }
+FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/) { return new o2::mid::MIDMaskGeneratorDevice(); }
