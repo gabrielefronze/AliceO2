@@ -12,7 +12,7 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/MIDRatesComputerDevice.h"
+#include "MIDRatesComputerDevice.h"
 #include "runFairMQDevice.h"
 #include "options/FairMQProgOptions.h"
 
@@ -24,4 +24,4 @@ void addCustomOptions(bpo::options_description& options)
   options.add_options()("binmapfile", bpo::value<std::string>(), "file with segmentation");
 }
 
-FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/) { return new o2::muon::mid::MIDRatesComputerDevice(); }
+FairMQDevicePtr getDevice(const FairMQProgOptions& /*config*/) { return new o2::mid::MIDRatesComputerDevice(); }
