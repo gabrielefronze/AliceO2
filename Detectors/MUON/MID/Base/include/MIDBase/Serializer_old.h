@@ -27,12 +27,12 @@ namespace o2
 {
 namespace mid
 {
-class Serializer
+class FilteringSerializer
 {
  public:
-  Serializer();
+  FilteringSerializer();
 
-  ~Serializer(){};
+  ~FilteringSerializer(){};
 
   inline void AddDigit(uint32_t detElemID, uint32_t boardID, uint32_t channel, uint32_t cathode)
   {

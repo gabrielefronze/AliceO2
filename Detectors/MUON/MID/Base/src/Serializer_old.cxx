@@ -19,7 +19,7 @@
 using namespace o2::mid;
 
 //_________________________________________________________________________________________________
-Serializer::Serializer()
+FilteringSerializer::FilteringSerializer()
 {
   for (uint32_t iHeader = 0; iHeader < kHeaderLength; ++iHeader) {
     fHeader.push_back(iHeader);
@@ -27,7 +27,7 @@ Serializer::Serializer()
 }
 
 //_________________________________________________________________________________________________
-uint32_t* Serializer::GetMessage()
+uint32_t* FilteringSerializer::GetMessage()
 {
   std::vector<uint32_t>().swap(fOutputData);
 
@@ -50,7 +50,7 @@ uint32_t* Serializer::GetMessage()
 }
 
 //_________________________________________________________________________________________________
-uint32_t Serializer::GetUID(deserializerDataStruct dataStruct)
+uint32_t FilteringSerializer::GetUID(deserializerDataStruct dataStruct)
 {
   uint32_t digitBuffer = 0;
 
@@ -63,7 +63,7 @@ uint32_t Serializer::GetUID(deserializerDataStruct dataStruct)
 }
 
 //_________________________________________________________________________________________________
-uint32_t Serializer::GetUID(size_t index)
+uint32_t FilteringSerializer::GetUID(size_t index)
 {
   auto index2 = index * 2;
 
