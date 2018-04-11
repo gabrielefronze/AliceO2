@@ -15,7 +15,7 @@
 #include "MIDBase/OccupancyMapping.h"
 #include <chrono>
 #include "FairMQLogger.h"
-#include "MIDBase/Mapping.h"
+#include "MIDBase/FilteringMapping.h"
 #include "options/FairMQProgOptions.h"
 
 using namespace o2::mid;
@@ -26,7 +26,7 @@ bool OccupancyMapping::ReadMapping(const char* filename, int elementID)
   //    LOG(INFO) << "Starting reading of mapping for element "<<elementID;
 
   int numberOfDetectionElements = 0;
-  Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename, numberOfDetectionElements);
+  FilteringMapping::mpDE* detectionElements = FilteringMapping::ReadMapping(filename, numberOfDetectionElements);
 
   // Check if the required element ID is
   if (elementID < 0 || elementID > numberOfDetectionElements)
@@ -37,7 +37,7 @@ bool OccupancyMapping::ReadMapping(const char* filename, int elementID)
   Int_t nStrips = 0;
   Int_t nStrips2 = 0;
 
-  Mapping::mpDE& de(detectionElements[elementID]);
+  FilteringMapping::mpDE& de(detectionElements[elementID]);
   int numberOfPads = de.nPads[0] + de.nPads[1];
 
   //        LOG(DEBUG) << "Starting map inversion";
@@ -79,7 +79,7 @@ bool OccupancyMapping::ReadMapping(const char* filename, int elementID)
     //            LOG(DEBUG) << "Processing pad "<<iPad;
 
     // read the iPad-th pad and the number of pads
-    Mapping::mpPad& pad(de.pads[iPad]);
+    FilteringMapping::mpPad& pad(de.pads[iPad]);
 
     bufferStripMapping.coord[0][0] = (float_t)pad.area[0][0];
     bufferStripMapping.coord[0][1] = (float_t)pad.area[0][1];
@@ -142,7 +142,7 @@ bool OccupancyMapping::ReadMapping(const char* filename)
   auto tStart = std::chrono::high_resolution_clock::now();
 
   int numberOfDetectionElements = 0;
-  Mapping::mpDE* detectionElements = Mapping::ReadMapping(filename, numberOfDetectionElements);
+  FilteringMapping::mpDE* detectionElements = FilteringMapping::ReadMapping(filename, numberOfDetectionElements);
 
   int counter = 0;
   for (int iDE = 0; iDE < numberOfDetectionElements; iDE++) {
@@ -158,7 +158,7 @@ bool OccupancyMapping::ReadMapping(const char* filename)
   return counter == numberOfDetectionElements;
 }
 
-stripMapping::stripMapping()
+stripFilteringMapping::stripMapping()
 {
   for (int iDigitType = 0; iDigitType < digitType::kSize; iDigitType++) {
     startTS[iDigitType] = 0;
