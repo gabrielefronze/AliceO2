@@ -17,7 +17,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include <boost/test/data/test_case.hpp>
-#include "MIDBase/Serializer.h"
+#include "MIDBase/FilteringSerializer.h"
 #include "MIDBase/Deserializer.h"
 
 using namespace o2::muon::mid;
@@ -25,7 +25,7 @@ using namespace o2::muon::mid;
 BOOST_AUTO_TEST_SUITE(testDeserializer)
 
     BOOST_AUTO_TEST_CASE(UniqueID){
-        Serializer serializer;
+        FilteringSerializer serializer;
         serializer.AddDigit(0,0,0,0);
 
         Deserializer deserializer(serializer.GetMessage());
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
     }
 
     BOOST_AUTO_TEST_CASE(NextUniqueID){
-        Serializer serializer;
+        FilteringSerializer serializer;
 
         auto nDigits = 10;
 
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
     }
 
     BOOST_AUTO_TEST_CASE(CurrentUniqueID){
-        Serializer serializer;
+        FilteringSerializer serializer;
         serializer.AddDigit(3,3,3,3);
 
         Deserializer deserializer(serializer.GetMessage());
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
     }
 
     BOOST_AUTO_TEST_CASE(Header){
-        Serializer serializer;
+        FilteringSerializer serializer;
 
 //        serializer.DumpHeader();
 
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
     }
 
     BOOST_AUTO_TEST_CASE(NDigits){
-        Serializer serializer;
+        FilteringSerializer serializer;
         serializer.AddDigit(3,3,3,3);
         serializer.AddDigit(4,4,4,4);
         serializer.AddDigit(5,5,5,5);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_SUITE(testDeserializer)
     }
 
     BOOST_AUTO_TEST_CASE(Rewind){
-        Serializer serializer;
+        FilteringSerializer serializer;
         serializer.AddDigit(3,3,3,3);
         serializer.AddDigit(4,4,4,4);
         serializer.AddDigit(5,5,5,5);
