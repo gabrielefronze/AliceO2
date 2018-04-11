@@ -10,6 +10,7 @@ set(SRCS
    src/MIDMaskGeneratorDevice.cxx
    src/MIDRatesComputerAlgorithm.cxx
    src/MIDRatesComputerDevice.cxx
+#        src/FilteringChainDPL.cxx
 #   src/runBroadcaster.cxx
 #   src/runMIDFilterDevice.cxx
 #   src/runMIDMaskGeneratorDevice.cxx
@@ -49,9 +50,13 @@ O2_GENERATE_EXECUTABLE(
   BUCKET_NAME ${BUCKET_NAME}
 )
 
+O2_FRAMEWORK_WORKFLOW(
+        WORKFLOW_NAME "FilteringChainDPL"
+        DETECTOR_BUCKETS mid_filtering_bucket
+        SOURCES src/test_FilteringChainDPL.cxx src/FilteringChainDPL.cxx
+)
+
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/runBroadcaster.json DESTINATION etc/config)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/runMIDFilterDevice.json DESTINATION etc/config)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/runMIDMaskGeneratorDevice.json DESTINATION etc/config)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/runMIDRatesComputerDevice.json DESTINATION etc/config)
-
-#add_subdirectory(test)
