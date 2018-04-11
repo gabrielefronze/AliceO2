@@ -158,7 +158,7 @@ bool OccupancyMapping::ReadMapping(const char* filename)
   return counter == numberOfDetectionElements;
 }
 
-stripFilteringMapping::stripMapping()
+stripMapping::stripMapping()
 {
   for (int iDigitType = 0; iDigitType < digitType::kSize; iDigitType++) {
     startTS[iDigitType] = 0;
