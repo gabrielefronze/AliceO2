@@ -12,9 +12,13 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/Broadcaster.h"
+#include "Broadcaster.h"
+#include "FairMQChannel.h"
 
-using namespace o2::muon::mid;
+namespace o2
+{
+namespace mid
+{
 
 //_________________________________________________________________________________________________
 Broadcaster::Broadcaster(bool waiting)
@@ -62,3 +66,6 @@ bool Broadcaster::Broadcast(FairMQMessagePtr& msg, int /*index*/)
 
   return (returnValue || fWaiting);
 }
+
+} // namespace mid
+} // namespace o2

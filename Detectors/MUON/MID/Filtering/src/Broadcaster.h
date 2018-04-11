@@ -22,13 +22,10 @@
 
 #include <string>
 #include <vector>
-#include "FairMQChannel.h"
 #include "FairMQDevice.h"
-#include "MUONBase/Chrono.h"
+#include "MIDBase/Chrono.h"
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -47,10 +44,9 @@ class Broadcaster : public FairMQDevice
   std::vector<std::string> fOutputChannelNames;
   bool fWaiting;
 
-  Chrono fChronometer;
+  o2::mid::Chrono fChronometer;
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
 #endif // O2_DEV_ALO_BROADCASTER_H
