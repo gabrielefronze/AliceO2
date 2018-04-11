@@ -8,10 +8,10 @@ set(SRCS
   src/GeometryTransformer.cxx
   src/LegacyUtility.cxx
   src/Mapping.cxx
-        src/FilteringMapping.cxx
+  src/FilteringMapping.cxx
   src/MpArea.cxx
   src/OccupancyMapping.cxx
-  src/Serializer_old.cxx
+  src/FilteringSerializer.cxx
 )
 
 set(NO_DICT_HEADERS
@@ -27,7 +27,7 @@ set(NO_DICT_HEADERS
   include/${MODULE_NAME}/MpArea.h
   include/${MODULE_NAME}/OccupancyMapping.h
   include/${MODULE_NAME}/Serializer.h
-  include/${MODULE_NAME}/Serializer_old.h
+  include/${MODULE_NAME}/FilteringSerializer.h
 
 )
 
