@@ -12,14 +12,14 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/MIDFilterAlgorithm.h"
+#include "MIDFilterAlgorithm.h"
 
-using namespace o2::muon::mid;
-
-MIDFilterAlgorithm::MIDFilterAlgorithm()
+namespace o2
 {
-  MIDFilterAlgorithm::Init();
-}
+namespace mid
+{
+
+MIDFilterAlgorithm::MIDFilterAlgorithm() { MIDFilterAlgorithm::Init(); }
 
 bool MIDFilterAlgorithm::Init()
 {
@@ -37,12 +37,12 @@ bool MIDFilterAlgorithm::ExecFilter(std::vector<uint32_t> data)
   if (fMask.nNoisy == 0) {
     return returnValue;
   } else {
-    for ( auto &itData : data ){
+    for (auto& itData : data) {
       // If the strip is not found in the mask IsStripOk is true
       auto IsStripOk = (fMask.noisyStripsIDs.find(itData) == fMask.noisyStripsIDs.end());
 
       // If no digit is edited returnValue must be false: in that case the forward is easier
-      returnValue|=IsStripOk;
+      returnValue |= IsStripOk;
 
       // Masking the noisy strips in the OpenCL way! We are ready for further optimization...
       itData *= IsStripOk;
@@ -52,7 +52,7 @@ bool MIDFilterAlgorithm::ExecFilter(std::vector<uint32_t> data)
   return returnValue;
 }
 
-bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short *maskHeader, uint32_t *maskData)
+bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short* maskHeader, uint32_t* maskData)
 {
   // Clearing the mask data. The new mask is a complete information (not a diff).
   Init();
@@ -75,3 +75,6 @@ bool MIDFilterAlgorithm::ExecMaskLoading(unsigned short *maskHeader, uint32_t *m
 
   return true;
 }
+
+} // namespace mid
+} // namespace o2
