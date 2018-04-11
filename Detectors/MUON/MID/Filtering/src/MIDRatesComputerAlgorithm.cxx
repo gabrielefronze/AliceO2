@@ -17,16 +17,17 @@
 #include "MIDBase/Deserializer.h"
 #include <TRandom.h>
 
-namespace o2 {
-namespace mid {
+namespace o2
+{
+namespace mid
+{
 
-}
 bool MIDRatesComputerAlgorithm::Init(std::string mappingFileName)
 {
   fCounter = 0;
 
   if (!(fMapping.ReadMapping(mappingFileName.c_str()))) {
-        LOG(ERROR) << "Error reading the mapping from " << mappingFileName;
+    LOG(ERROR) << "Error reading the mapping from " << mappingFileName;
   }
 
   return fMapping.Consistent(true);
@@ -35,9 +36,9 @@ bool MIDRatesComputerAlgorithm::Init(std::string mappingFileName)
 MIDRatesComputerAlgorithm::~MIDRatesComputerAlgorithm()
 {
   // Output of simulated noisy strips
-    LOG(DEBUG) << "Simulated noisy strips:";
+  LOG(DEBUG) << "Simulated noisy strips:";
   for (const auto& itMask : fStructMaskSim.noisyStripsIDs) {
-        LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
+    LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
   }
 }
 
@@ -48,7 +49,7 @@ bool MIDRatesComputerAlgorithm::Exec(std::vector<uint32_t> data)
   // Counter of received digits
   int counter = 0;
 
-  LOG(INFO) << "Received valid message with " << data.size() <<" digits";
+  LOG(INFO) << "Received valid message with " << data.size() << " digits";
 
   // Loop over the digits of the message.
   for (const auto& uniqueIDBuffer : data) {
@@ -64,7 +65,7 @@ bool MIDRatesComputerAlgorithm::Exec(std::vector<uint32_t> data)
     // Try to retrieve a pointer to the data member to modify
     stripMapping* strip = fMapping[uniqueIDBuffer];
     if (!strip) {
-//            LOG(ERROR) << "Mapping not found for that uniqueID: " << uniqueIDBuffer;
+      //            LOG(ERROR) << "Mapping not found for that uniqueID: " << uniqueIDBuffer;
       continue;
     }
 
@@ -78,7 +79,7 @@ bool MIDRatesComputerAlgorithm::Exec(std::vector<uint32_t> data)
     } else
       continue;
 
-//            LOG(INFO) << "StripMapping struct found for element: " << MessageDeserializer.PrintData() << " " <<
+    //            LOG(INFO) << "StripMapping struct found for element: " << MessageDeserializer.PrintData() << " " <<
     //        strip->digitsCounter[0];
 
     // Increase the counter of digits for the strip
@@ -163,5 +164,5 @@ std::shared_ptr<std::vector<uint64_t>> MIDRatesComputerAlgorithm::Output()
   return std::make_shared<std::vector<uint64_t>>(digitsOut);
 }
 
-}
-}
+} // namespace mid
+} // namespace o2
