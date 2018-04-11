@@ -12,7 +12,7 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MIDBase/Serializer_old.h"
+#include "MIDBase/FilteringSerializer.h"
 #include <assert.h>
 #include <regex.h>
 
