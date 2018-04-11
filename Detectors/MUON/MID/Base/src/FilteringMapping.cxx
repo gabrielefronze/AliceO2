@@ -1,4 +1,4 @@
-#include "MIDBase/Mapping_old.h"
+#include "MIDBase/FilteringMapping.h"
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -7,15 +7,15 @@ using namespace o2::mid;
 
 using namespace std;
 
-// int Mapping::fNDE = 0;
+// int FilteringMapping::fNDE = 0;
 
-// std::vector<Mapping::mpDE> Mapping::ReadMapping(const char* mapfile)
-Mapping::mpDE* Mapping::ReadMapping(const char* mapfile, int& numberOfDetectionElements)
+// std::vector<FilteringMapping::mpDE> FilteringMapping::ReadMapping(const char* mapfile)
+FilteringMapping::mpDE* FilteringMapping::ReadMapping(const char* mapfile, int& numberOfDetectionElements)
 {
   ifstream in(mapfile, ios::binary);
 
   if (!in.is_open()) {
-    // return std::vector<Mapping::mpDE>(0);
+    // return std::vector<FilteringMapping::mpDE>(0);
     numberOfDetectionElements = 0;
     return 0x0;
   }
@@ -29,12 +29,12 @@ Mapping::mpDE* Mapping::ReadMapping(const char* mapfile, int& numberOfDetectionE
   // fNDE = numberOfDetectionElements;
 
   // std::cout << "numberOfDetectionElements=" << numberOfDetectionElements << std::endl;
-  // std::vector<Mapping::mpDE> detectionElements(numberOfDetectionElements);
+  // std::vector<FilteringMapping::mpDE> detectionElements(numberOfDetectionElements);
 
-  Mapping::mpDE* detectionElements = new Mapping::mpDE[numberOfDetectionElements];
+  FilteringMapping::mpDE* detectionElements = new FilteringMapping::mpDE[numberOfDetectionElements];
 
   for (int i = 0; i < numberOfDetectionElements; ++i) {
-    Mapping::mpDE& de(detectionElements[i]);
+    FilteringMapping::mpDE& de(detectionElements[i]);
 
     in.read((char*)&de.id, sizeof(Int_t));
 
@@ -70,14 +70,14 @@ Mapping::mpDE* Mapping::ReadMapping(const char* mapfile, int& numberOfDetectionE
   }
 
   //  if ( totalNumberOfPads != 1064008 ) {
-  //    return std::vector<Mapping::mpDE>(0);
+  //    return std::vector<FilteringMapping::mpDE>(0);
   //  }
 
   return detectionElements;
 }
 
 //_________________________________________________________________________________________________
-Bool_t Mapping::AreOverlapping(Float_t area1[2][2], Float_t area2[2][2], Float_t precision)
+Bool_t FilteringMapping::AreOverlapping(Float_t area1[2][2], Float_t area2[2][2], Float_t precision)
 {
   /// check if the two areas overlap
   /// precision in cm: positive = increase pad size / negative = decrease pad size
