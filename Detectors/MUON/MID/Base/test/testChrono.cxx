@@ -20,7 +20,7 @@
 #include <iostream>
 #include "MIDBase/Chrono.h"
 
-using namespace o2::muon::mid;
+using namespace o2::mid;
 
 BOOST_AUTO_TEST_SUITE(testChrono)
 
