@@ -12,10 +12,13 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/MIDMaskGeneratorDevice.h"
+#include "MIDMaskGeneratorDevice.h"
 #include "options/FairMQProgOptions.h"
 
-using namespace o2::muon::mid;
+namespace o2
+{
+namespace mid
+{
 
 //_________________________________________________________________________________________________
 MIDMaskGeneratorDevice::MIDMaskGeneratorDevice() : FairMQDevice()
@@ -26,11 +29,11 @@ MIDMaskGeneratorDevice::MIDMaskGeneratorDevice() : FairMQDevice()
 //_________________________________________________________________________________________________
 MIDMaskGeneratorDevice::~MIDMaskGeneratorDevice()
 {
-  //TODO: the destructor should use the Output method
-//  LOG(DEBUG) << "Detected noisy strips:";
-//  for (const auto& itMask : fStructMask.noisyStripsIDs) {
-//    LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
-//  }
+  // TODO: the destructor should use the Output method
+  //  LOG(DEBUG) << "Detected noisy strips:";
+  //  for (const auto& itMask : fStructMask.noisyStripsIDs) {
+  //    LOG(DEBUG) << "\t" << itMask << "\t\t" << fMapping[itMask]->digitsCounter[digitType::kPhysics];
+  //  }
 }
 
 //_________________________________________________________________________________________________
@@ -107,3 +110,6 @@ errMsg MIDMaskGeneratorDevice::SendMask()
 
   return kOk;
 }
+
+} // namespace mid
+} // namespace o2
