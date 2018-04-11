@@ -12,7 +12,7 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include <fairmq/logger/logger.h>
+#include <FairMQLogger.h>
 #include "MIDRatesComputerAlgorithm.h"
 #include "MIDBase/Deserializer.h"
 #include <TRandom.h>
