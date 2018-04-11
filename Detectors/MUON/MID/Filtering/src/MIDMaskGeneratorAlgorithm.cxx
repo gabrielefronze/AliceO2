@@ -12,13 +12,16 @@
 ///
 /// @author  Gabriele Gaetano Fronzé
 
-#include "MUONReconstruction/MIDMaskGeneratorAlgorithm.h"
+#include "MIDMaskGeneratorAlgorithm.h"
 #include <iostream>
 #include <numeric>
 #include "FairMQLogger.h"
-#include "MUONBase/Enums.h"
+#include "MIDBase/Enums.h"
 
-using namespace o2::muon::mid;
+namespace o2
+{
+namespace mid
+{
 
 //_________________________________________________________________________________________________
 bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
@@ -97,3 +100,6 @@ void MIDMaskGeneratorAlgorithm::FillMask()
 
   return;
 }
+
+} // namespace mid
+} // namespace o2

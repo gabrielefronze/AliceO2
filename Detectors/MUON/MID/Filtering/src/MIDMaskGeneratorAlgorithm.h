@@ -20,14 +20,12 @@
 #ifndef MIDMASKGENERATORALGORITHM_H
 #define MIDMASKGENERATORALGORITHM_H
 
-#include <MUONBase/DataStructs.h>
-#include <MUONBase/OccupancyMapping.h>
+#include <MIDBase/DataStructs.h>
+#include <MIDBase/OccupancyMapping.h>
 #include <string>
 #include <vector>
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -52,7 +50,6 @@ class MIDMaskGeneratorAlgorithm
   void FillMask();
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 
 #endif // MIDMASKGENERATORALGORITHM_H
