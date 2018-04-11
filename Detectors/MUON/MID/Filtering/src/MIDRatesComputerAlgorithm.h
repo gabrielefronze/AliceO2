@@ -20,13 +20,11 @@
 #ifndef MIDRATESCOMPUTERALGORITHM_H
 #define MIDRATESCOMPUTERALGORITHM_H
 
-#include <MUONBase/OccupancyMapping.h>
-#include "MUONBase/DataStructs.h"
+#include <MIDBase/OccupancyMapping.h>
+#include "MIDBase/DataStructs.h"
 #include <string>
 
 namespace o2
-{
-namespace muon
 {
 namespace mid
 {
@@ -51,6 +49,5 @@ class MIDRatesComputerAlgorithm
   void ComputeAllRates();
 };
 } // namespace mid
-} // namespace muon
 } // namespace o2
 #endif // MIDRATESCOMPUTERALGORITHM_H

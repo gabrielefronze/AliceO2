@@ -13,12 +13,14 @@
 /// @author  Gabriele Gaetano Fronzé
 
 #include <fairmq/logger/logger.h>
-#include "MUONReconstruction/MIDRatesComputerAlgorithm.h"
-#include "MUONBase/Deserializer.h"
+#include "MIDRatesComputerAlgorithm.h"
+#include "MIDBase/Deserializer.h"
 #include <TRandom.h>
 
-using namespace o2::muon::mid;
+namespace o2 {
+namespace mid {
 
+}
 bool MIDRatesComputerAlgorithm::Init(std::string mappingFileName)
 {
   fCounter = 0;
@@ -159,4 +161,7 @@ std::shared_ptr<std::vector<uint64_t>> MIDRatesComputerAlgorithm::Output()
   }
 
   return std::make_shared<std::vector<uint64_t>>(digitsOut);
+}
+
+}
 }
