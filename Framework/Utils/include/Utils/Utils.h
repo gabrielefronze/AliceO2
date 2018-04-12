@@ -27,7 +27,7 @@ namespace o2f = o2::framework;
 namespace o2 {
 namespace workflows {
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
-                                         std::function<size_t(o2f::DataRef)> const func);
+                                         std::function<size_t(o2f::DataRef)> const& func);
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          size_t fixMsgSize);
 }

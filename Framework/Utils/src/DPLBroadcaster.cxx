@@ -25,7 +25,7 @@ namespace workflows
 
 // This is a possible implementation of a DPL compliant and generic broadcaster
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
-                                         std::function<size_t(o2f::DataRef)> const func)
+                                         std::function<size_t(o2f::DataRef)> const& func)
 {
   return { devName,      // Device name from user
            { usrInput }, // User defined input as a vector of one InputSpec
@@ -55,8 +55,8 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          size_t fixMsgSize)
 {
-  return defineBroadcaster(devName, usrInput, usrOutputs,
-                           [fixMsgSize](o2f::DataRef d) -> size_t { return fixMsgSize; });
+  auto func = [fixMsgSize](o2f::DataRef d) -> size_t { return fixMsgSize; };
+  return defineBroadcaster(devName, usrInput, usrOutputs,func);
 }
 } // namespace workflows
 } // namespace o2
