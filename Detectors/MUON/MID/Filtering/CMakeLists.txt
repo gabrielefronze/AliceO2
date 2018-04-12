@@ -53,7 +53,11 @@ O2_GENERATE_EXECUTABLE(
 O2_FRAMEWORK_WORKFLOW(
         WORKFLOW_NAME "FilteringChainDPL"
         DETECTOR_BUCKETS mid_filtering_bucket
-        SOURCES src/test_FilteringChainDPL.cxx src/FilteringChainDPL.cxx
+        SOURCES src/test_FilteringChainDPL.cxx
+                src/FilteringChainDPL.cxx
+                src/MIDFilterAlgorithm.cxx
+                src/MIDRatesComputerAlgorithm.cxx
+                src/MIDMaskGeneratorAlgorithm.cxx
 )
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/config/runBroadcaster.json DESTINATION etc/config)
