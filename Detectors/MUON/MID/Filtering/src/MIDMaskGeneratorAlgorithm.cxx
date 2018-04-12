@@ -28,6 +28,8 @@ bool MIDMaskGeneratorAlgorithm::Init(std::string mappingFileName)
 {
   if (!(fMapping.ReadMapping(mappingFileName.c_str()))) {
     std::cout << "Error reading the mapping from " << mappingFileName;
+  } else {
+    LOG(DEBUG) << "Mapping read correctly from " << mappingFileName;
   }
 
   return fMapping.Consistent();
