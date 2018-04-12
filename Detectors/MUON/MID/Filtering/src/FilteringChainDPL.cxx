@@ -24,9 +24,9 @@ o2f::DataProcessorSpec defineFilteringBroadcaster()
 {
   return { "Broadcaster", // Device name
            noInputs,      // No inputs, for the moment
-           o2f::Outputs{ { "MID", "DIGITS", 0, o2f::OutputSpec::Lifetime::Timeframe },
-                         { "MID", "DIGITS", 0,
-                           o2f::OutputSpec::Lifetime::Timeframe } }, // Outputs are digits (aka DetElemIDs)
+           o2f::Outputs{
+             { "MID", "DGTtoFilter", 0, o2f::OutputSpec::Lifetime::Timeframe },
+             { "MID", "DGTtoRtsComp", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // Outputs are digits (aka DetElemIDs)
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              // A common RNG provides randomly-distributed sleeping times
@@ -40,8 +40,7 @@ o2f::DataProcessorSpec defineFilteringBroadcaster()
 
              // Processing context in captured from return on InitCallback
              return [rng = rng, distSleep = distSleep, distRPC = distRPC, distColumn = distColumn,
-                     distCath = distCath](o2f::ProcessingContext& ctx)
-             {
+                     distCath = distCath](o2f::ProcessingContext& ctx) {
                // Randomly sleeping
                std::this_thread::sleep_for(std::chrono::milliseconds((*distSleep)(*rng)));
 
@@ -71,8 +70,10 @@ o2f::DataProcessorSpec defineFilteringBroadcaster()
 
 o2::framework::DataProcessorSpec defineRatesComputer()
 {
-  return { "MIDRatesComputer", o2f::Inputs{ { "digits", "MID", "DIGITS", o2f::OutputSpec::Lifetime::Timeframe } },
-           o2f::Outputs{ { "MID", "RATES", 0, o2f::OutputSpec::Lifetime::Timeframe } },
+  o2f::InputSpec digits = { "digits", "MID", "DGTtoRtsComp", 0, o2f::InputSpec::Lifetime::Timeframe };
+
+  return { "MIDRatesComputer", o2f::Inputs{ digits },
+           o2f::Outputs{ { "MID", "RTStoMaskGen", 0, o2f::OutputSpec::Lifetime::Timeframe } },
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              auto ratesComputerAlgorithm = std::make_shared<o2::mid::MIDRatesComputerAlgorithm>();
@@ -105,8 +106,10 @@ o2::framework::DataProcessorSpec defineRatesComputer()
 
 o2::framework::DataProcessorSpec defineMaskGenerator()
 {
-  return { "MIDMaskGenerator", o2f::Inputs{ { "rates", "MID", "RATES", o2f::OutputSpec::Lifetime::Timeframe } },
-           o2f::Outputs{ { "MID", "MASK", 0, o2f::OutputSpec::Lifetime::QA } },
+  o2f::InputSpec rates = { "rates", "MID", "RTStoMaskGen", 0, o2f::InputSpec::Lifetime::Timeframe };
+
+  return { "MIDMaskGenerator", o2f::Inputs{ rates },
+           o2f::Outputs{ { "MID", "MSKtoFilter", 0, o2f::OutputSpec::Lifetime::QA } },
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              auto maskGeneratorAlgorithm = std::make_shared<o2::mid::MIDMaskGeneratorAlgorithm>();
@@ -148,10 +151,10 @@ o2::framework::DataProcessorSpec defineMaskGenerator()
 
 o2::framework::DataProcessorSpec defineFilter()
 {
-  return { "MIDFilter",
-           o2f::Inputs{ { "digits", "MID", "DIGITS", o2f::OutputSpec::Lifetime::Timeframe },
-                        { "mask", "MID", "MASK", o2f::OutputSpec::Lifetime::QA } },
-           noOutputs, o2f::AlgorithmSpec{ [](o2f::InitContext&) {
+  o2f::InputSpec digits = { "digits", "MID", "DGTtoFilter", 0, o2f::InputSpec::Lifetime::Timeframe };
+  o2f::InputSpec mask = { "mask", "MID", "MSKtoFilter", 0, o2f::InputSpec::Lifetime::QA };
+
+  return { "MIDFilter", o2f::Inputs{ digits, mask }, noOutputs, o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              auto filterAlgorithm = std::make_shared<o2::mid::MIDFilterAlgorithm>();
              (*filterAlgorithm).Init();
 
