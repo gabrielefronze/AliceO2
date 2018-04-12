@@ -24,9 +24,9 @@ o2f::DataProcessorSpec defineFilteringBroadcaster()
 {
   return { "Broadcaster", // Device name
            noInputs,      // No inputs, for the moment
-           o2f::Outputs{
-             { "MID", "DGTtoFilter", 0, o2f::OutputSpec::Lifetime::Timeframe },
-             { "MID", "DGTtoRtsComp", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // Outputs are digits (aka DetElemIDs)
+           o2f::Outputs{ { "MID", "DGTtoFilter", 0, o2f::OutputSpec::Lifetime::Timeframe },
+                         { "MID", "DGTtoRtsComp", 0,
+                           o2f::OutputSpec::Lifetime::Timeframe } }, // Outputs are digits (aka DetElemIDs)
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              // A common RNG provides randomly-distributed sleeping times
@@ -80,7 +80,7 @@ o2::framework::DataProcessorSpec defineRatesComputer()
              (*ratesComputerAlgorithm).Init("~/alice_sw/test_device_data/binmapfile_MID.dat");
 
              return [algo = ratesComputerAlgorithm](o2f::ProcessingContext& ctx) {
-               auto digits = ctx.inputs().getByPos(1);
+               auto digits = ctx.inputs().get("digits");
                std::vector<uint32_t> data;
 
                for (size_t iData = 1; iData < (digits.payload)[0]; iData++) {
@@ -88,17 +88,14 @@ o2::framework::DataProcessorSpec defineRatesComputer()
                }
                (*algo).Exec(data);
 
-               // Allocating a message in the right channel
-               for (auto const& itChannel : *(ctx.allocator().allowedChannels())) {
-                 // Copying the message in the new pointer (DataChunk)
-                 auto msg = (*(*algo).Output());
+               auto msg = (*(*algo).Output());
 
-                 auto out = ctx.allocator().newChunk(itChannel.matcher, msg.size());
-                 auto outI = reinterpret_cast<uint64_t*>(out.data);
+               auto out = ctx.allocator().newChunk({ "MID", "RTStoMaskGen", 0, o2f::OutputSpec::Lifetime::Timeframe },
+                                                   msg.size());
+               auto outI = reinterpret_cast<uint64_t*>(out.data);
 
-                 for (size_t msgI = 0; msgI < msg.size(); msgI++) {
-                   outI[msgI] = std::move(msg[msgI]);
-                 }
+               for (size_t msgI = 0; msgI < msg.size(); msgI++) {
+                 outI[msgI] = std::move(msg[msgI]);
                }
              };
            } } };
@@ -117,33 +114,30 @@ o2::framework::DataProcessorSpec defineMaskGenerator()
              (*maskGeneratorAlgorithm).Init("~/alice_sw/test_device_data/binmapfile_MID.dat");
 
              return [algo = maskGeneratorAlgorithm](o2f::ProcessingContext& ctx) {
-               (*algo).Exec((uint64_t*)(ctx.inputs().getByPos(0).payload));
+               (*algo).Exec((uint64_t*)(ctx.inputs().get("rates").payload));
 
-               // Allocating a message in the right channel
-               for (auto const& itChannel : *(ctx.allocator().allowedChannels())) {
-                 // Copying the message in the new pointer (DataChunk)
-                 auto mask = (*(*algo).GetMask());
+               // Copying the message in the new pointer (DataChunk)
+               auto mask = (*(*algo).GetMask());
 
-                 auto sum = mask.nDead + mask.nNoisy;
-                 if (sum == 0)
-                   return;
-                 int msgSize = sizeof(mask.nDead) + sizeof(mask.nNoisy) + sum * sizeof(uint32_t);
+               auto sum = mask.nDead + mask.nNoisy;
+               if (sum == 0)
+                 return;
+               int msgSize = sizeof(mask.nDead) + sizeof(mask.nNoisy) + sum * sizeof(uint32_t);
 
-                 auto out = ctx.allocator().newChunk(itChannel.matcher, msgSize);
-                 auto header = reinterpret_cast<ushort_t*>(out.data);
-                 header[0] = mask.nDead;
-                 header[1] = mask.nNoisy;
+               auto out = ctx.allocator().newChunk({ "MID", "MSKtoFilter", 0, o2f::OutputSpec::Lifetime::QA }, msgSize);
+               auto header = reinterpret_cast<ushort_t*>(out.data);
+               header[0] = mask.nDead;
+               header[1] = mask.nNoisy;
 
-                 auto payload = reinterpret_cast<uint32_t*>(&(header[2]));
+               auto payload = reinterpret_cast<uint32_t*>(&(header[2]));
 
-                 int position = 0;
+               int position = 0;
 
-                 for (auto const& itDead : mask.deadStripsIDs) {
-                   payload[position++] = itDead;
-                 }
-                 for (auto const& itNoisy : mask.noisyStripsIDs) {
-                   payload[position++] = itNoisy;
-                 }
+               for (auto const& itDead : mask.deadStripsIDs) {
+                 payload[position++] = itDead;
+               }
+               for (auto const& itNoisy : mask.noisyStripsIDs) {
+                 payload[position++] = itNoisy;
                }
              };
            } } };
@@ -159,10 +153,10 @@ o2::framework::DataProcessorSpec defineFilter()
              (*filterAlgorithm).Init();
 
              return [algo = filterAlgorithm](o2f::ProcessingContext& ctx) {
-               auto mask = ctx.inputs().getByPos(1);
-               (*algo).ExecMaskLoading((ushort*)mask.header, (uint32_t*)mask.payload);
+               auto mask = ctx.inputs().get("mask");
+               (*algo).ExecMaskLoading((ushort*)mask.payload, ((uint32_t*)(mask.payload))+25);
 
-               auto digits = ctx.inputs().getByPos(0);
+               auto digits = ctx.inputs().get("digits");
                std::vector<uint32_t> data;
 
                for (size_t iData = 1; iData < (digits.payload)[0]; iData++) {
