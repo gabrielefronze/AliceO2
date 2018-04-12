@@ -24,24 +24,22 @@ namespace workflows
 
 // This is a possible implementation of a DPL compliant and generic broadcaster
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
-                                         std::function<size_t(o2f::DataRef)>const f)
+                                         std::function<size_t(o2f::DataRef)> const func)
 {
   return { devName,      // Device name from user
            { usrInput }, // User defined input as a vector of one InputSpec
            usrOutputs,   // user defined outputs as a vector of OutputSpecs
 
-           o2f::AlgorithmSpec{ [usrOutputs,f](o2f::InitContext&) {
-
+           o2f::AlgorithmSpec{ [usrOutputs, func](o2f::InitContext&) {
              // Creating shared ptrs to useful parameters
-             auto outputs_sharedptr = std::make_shared(std::move(usrOutputs));
-             auto f_sharedptr = std::make_shared(std::move(f));
+             auto outputs_sharedptr = std::make_shared<o2f::Outputs>(std::move(usrOutputs));
+             auto func_sharedptr = std::make_shared<std::function<size_t(o2f::DataRef)> const>(std::move(func));
 
              // Defining the ProcessCallback as returned object of InitCallback
-             return [outputs_sharedptr, f_sharedptr](o2f::ProcessingContext& ctx) {
-
+             return [outputs_sharedptr, func_sharedptr](o2f::ProcessingContext& ctx) {
                // Getting original input message and getting his size using the provided function
                auto inputMsg = ctx.inputs().getByPos(0);
-               auto msgSize = (*f_sharedptr)(inputMsg);
+               auto msgSize = (*func_sharedptr)(inputMsg);
 
                // Iterating over the OutputSpecs to push the input message to all the output destinations
                for (const auto& itOutputs : (*outputs_sharedptr)) {
@@ -56,7 +54,8 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          size_t fixMsgSize)
 {
-  return defineBroadcaster(devName,usrInput,usrOutputs,[](o2f::DataRef d)->size_t{ return fixMsgSize; });
+  return defineBroadcaster(devName, usrInput, usrOutputs,
+                           [fixMsgSize](o2f::DataRef d) -> size_t { return fixMsgSize; });
 }
 } // namespace workflows
 } // namespace o2
