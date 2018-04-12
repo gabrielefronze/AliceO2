@@ -58,6 +58,8 @@ bool MIDMaskGeneratorAlgorithm::Exec(uint64_t* data)
 
   // Filling the mask
   FillMask();
+
+  return true;
 }
 
 //_________________________________________________________________________________________________
