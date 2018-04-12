@@ -1636,6 +1636,7 @@ o2_define_bucket(
 
         DEPENDENCIES
         O2FrameworkCore_bucket
+        DPLUtils
         MIDBase
 
         INCLUDE_DIRECTORIES
