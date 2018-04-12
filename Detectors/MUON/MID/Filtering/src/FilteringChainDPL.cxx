@@ -77,7 +77,7 @@ o2::framework::DataProcessorSpec defineRatesComputer()
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              auto ratesComputerAlgorithm = std::make_shared<o2::mid::MIDRatesComputerAlgorithm>();
-             (*ratesComputerAlgorithm).Init("binmap.dat");
+             (*ratesComputerAlgorithm).Init("~/alice_sw/test_device_data/binmapfile_MID.dat");
 
              return [algo = ratesComputerAlgorithm](o2f::ProcessingContext& ctx) {
                auto digits = ctx.inputs().getByPos(1);
@@ -114,7 +114,7 @@ o2::framework::DataProcessorSpec defineMaskGenerator()
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              auto maskGeneratorAlgorithm = std::make_shared<o2::mid::MIDMaskGeneratorAlgorithm>();
 
-             (*maskGeneratorAlgorithm).Init("binmap.dat");
+             (*maskGeneratorAlgorithm).Init("~/alice_sw/test_device_data/binmapfile_MID.dat");
 
              return [algo = maskGeneratorAlgorithm](o2f::ProcessingContext& ctx) {
                (*algo).Exec((uint64_t*)(ctx.inputs().getByPos(0).payload));
