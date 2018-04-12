@@ -13,6 +13,7 @@
 ///
 /// \author Gabriele Gaetano Fronzé, gfronze@cern.ch
 
+#include "Utils/Utils.h"
 #include "Framework/DataProcessorSpec.h"
 
 namespace o2f = o2::framework;
