@@ -4,11 +4,13 @@
 
 #include "FilteringChainDPL.h"
 #include "Framework/DataProcessorSpec.h"
+#include "Utils/Utils.h"
 #include "MIDBase/FilteringSerializer.h"
 #include "random"
 #include "MIDRatesComputerAlgorithm.h"
 #include "MIDMaskGeneratorAlgorithm.h"
 #include "MIDFilterAlgorithm.h"
+#include "FairMQLogger.h"
 
 namespace o2f = o2::framework;
 
@@ -24,8 +26,7 @@ o2f::DataProcessorSpec defineFilteringBroadcaster()
 {
   return { "Broadcaster", // Device name
            noInputs,      // No inputs, for the moment
-           o2f::Outputs{ { "MID", "DGTtoFilter", 0, o2f::OutputSpec::Lifetime::Timeframe },
-                         { "MID", "DGTtoRtsComp", 0,
+           o2f::Outputs{ { "MID", "A", 0,
                            o2f::OutputSpec::Lifetime::Timeframe } }, // Outputs are digits (aka DetElemIDs)
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
@@ -55,6 +56,8 @@ o2f::DataProcessorSpec defineFilteringBroadcaster()
                // Allocating a message in the right channel
                for (auto const& itChannel : *(ctx.allocator().allowedChannels())) {
 
+                 //                 ctx.allocator().adopt()
+                 //                 ctx.allocator().make
                  auto out = ctx.allocator().newChunk(itChannel.matcher, serializer.GetMessageSize());
                  auto outI = reinterpret_cast<uint32_t*>(out.data);
 
@@ -154,7 +157,7 @@ o2::framework::DataProcessorSpec defineFilter()
 
              return [algo = filterAlgorithm](o2f::ProcessingContext& ctx) {
                auto mask = ctx.inputs().get("mask");
-               (*algo).ExecMaskLoading((ushort*)mask.payload, ((uint32_t*)(mask.payload))+25);
+               (*algo).ExecMaskLoading((ushort*)mask.payload, ((uint32_t*)(mask.payload)) + 25);
 
                auto digits = ctx.inputs().get("digits");
                std::vector<uint32_t> data;
@@ -170,10 +173,22 @@ o2::framework::DataProcessorSpec defineFilter()
 o2f::WorkflowSpec MIDFilteringWorkflow()
 {
   auto lspec = o2f::WorkflowSpec();
+
+  fair::Logger::SetConsoleSeverity(fair::Severity::debug);
+
+  std::function<size_t(o2f::DataRef)> f = [](o2f::DataRef data) -> size_t {
+    return (size_t)(((uint32_t*)data.payload)[0]);
+  };
+
+  lspec.emplace_back(defineFilteringBroadcaster());
+  lspec.emplace_back(
+    defineBroadcaster("Broadcaster2", o2f::InputSpec{ "test", "MID", "A", 0, o2f::InputSpec::Lifetime::Timeframe },
+                      o2f::Outputs{ { "MID", "DGTtoFilter", 0, o2f::OutputSpec::Lifetime::Timeframe },
+                                    { "MID", "DGTtoRtsComp", 0, o2f::OutputSpec::Lifetime::Timeframe } },
+                      f));
   lspec.emplace_back(defineFilter());
   lspec.emplace_back(defineRatesComputer());
   lspec.emplace_back(defineMaskGenerator());
-  lspec.emplace_back(defineFilteringBroadcaster());
   return std::move(lspec);
 }
 
