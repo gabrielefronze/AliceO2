@@ -27,6 +27,8 @@ bool MIDFilterAlgorithm::Init()
   fMask.nNoisy = 0;
   fMask.deadStripsIDs.clear();
   fMask.noisyStripsIDs.clear();
+
+  return true;
 }
 
 bool MIDFilterAlgorithm::ExecFilter(std::vector<uint32_t> data)
