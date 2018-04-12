@@ -12,7 +12,6 @@ namespace o2
 {
 namespace workflows
 {
-o2::framework::DataProcessorSpec defineFilteringBroadcaster();
 o2::framework::WorkflowSpec MIDFilteringWorkflow();
 }
 } // namespace o2
