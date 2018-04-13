@@ -15,6 +15,8 @@
 
 #include "Utils/Utils.h"
 #include "Framework/DataProcessorSpec.h"
+#include "Framework/DataProcessingHeader.h"
+#include "Headers/DataHeader.h"
 
 namespace o2f = o2::framework;
 
@@ -40,6 +42,7 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
              return [outputs_sharedptr, func_sharedptr](o2f::ProcessingContext& ctx) {
                // Getting original input message and getting his size using the provided function
                auto inputMsg = ctx.inputs().getByPos(0);
+
                auto msgSize = (*func_sharedptr)(inputMsg);
 
                // Iterating over the OutputSpecs to push the input message to all the output destinations
@@ -60,3 +63,28 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
 }
 } // namespace workflows
 } // namespace o2
+
+// This is an implementation which retrieves the message size using the API
+o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs)
+{
+  return { devName,      // Device name from user
+           { usrInput }, // User defined input as a vector of one InputSpec
+           usrOutputs,   // user defined outputs as a vector of OutputSpecs
+
+           o2f::AlgorithmSpec{ [usrOutputs](o2f::InitContext&) {
+             // Creating shared ptrs to useful parameters
+             auto outputs_sharedptr = std::make_shared<o2f::Outputs>(std::move(usrOutputs));
+
+             // Defining the ProcessCallback as returned object of InitCallback
+             return [outputs_sharedptr](o2f::ProcessingContext& ctx) {
+               auto inputMsg = ctx.inputs().getByPos(0);
+               auto msgSize = (o2::header::get<o2::header::DataHeader*>(inputMsg.header))->payloadSize;
+
+               // Iterating over the OutputSpecs to push the input message to all the output destinations
+               for (const auto& itOutputs : (*outputs_sharedptr)) {
+                 auto fwdMsg = ctx.allocator().newChunk(itOutputs, msgSize);
+                 std::memcpy(fwdMsg.data, inputMsg.payload, msgSize);
+               }
+             };
+           } } };
+}

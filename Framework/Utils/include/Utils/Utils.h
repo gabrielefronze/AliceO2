@@ -30,6 +30,7 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
                                          std::function<size_t(o2f::DataRef)> const& func);
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          size_t fixMsgSize);
+o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs);
 }
 }
 
