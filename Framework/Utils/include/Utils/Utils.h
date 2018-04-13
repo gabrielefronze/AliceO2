@@ -26,11 +26,19 @@ namespace o2f = o2::framework;
 
 namespace o2 {
 namespace workflows {
+// Broadcaster implementations
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          std::function<size_t(o2f::DataRef)> const& func);
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          size_t fixMsgSize);
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs);
+
+using OutputBuffer = std::vector<char>;
+// Gatherer implementations
+o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs, o2f::OutputSpec usrOutput,
+                                      std::function<void(OutputBuffer,const o2f::DataRef)> const& mergerFunc);
+o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs, o2f::OutputSpec usrOutput);
+
 }
 }
 

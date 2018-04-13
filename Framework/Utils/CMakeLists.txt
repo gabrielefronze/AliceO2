@@ -14,6 +14,7 @@ set(MODULE_BUCKET_NAME DPLUtils_bucket)
 O2_SETUP(NAME ${MODULE_NAME})
 set(SRCS
         src/DPLBroadcaster.cxx
+        src/DPLGatherer.cxx
         )
 
 set(HEADERS
