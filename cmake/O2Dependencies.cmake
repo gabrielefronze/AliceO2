@@ -216,6 +216,8 @@ o2_define_bucket(
 
         DEPENDENCIES
         O2FrameworkCore_bucket
+        Core
+        Headers
         Framework
 )
 
