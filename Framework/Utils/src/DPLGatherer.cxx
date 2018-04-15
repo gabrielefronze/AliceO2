@@ -34,10 +34,11 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
 
            o2f::AlgorithmSpec{ [usrOutput, mergerFunc](o2f::InitContext&) {
              // Creating shared ptrs to useful parameters
+             auto output_sharedptr = std::make_shared<o2f::OutputSpec>(std::move(usrOutput));
              auto mergerFunc_sharedptr = std::make_shared<std::function<void(OutputBuffer,o2f::DataRef)> const>(mergerFunc);
 
              // Defining the ProcessCallback as returned object of InitCallback
-             return [usrOutput, mergerFunc_sharedptr](o2f::ProcessingContext& ctx) {
+             return [output_sharedptr, mergerFunc_sharedptr](o2f::ProcessingContext& ctx) {
 
                OutputBuffer outputBuffer;
 
@@ -46,7 +47,7 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
                  (*mergerFunc_sharedptr)(outputBuffer,itInputs);
                }
 
-               ctx.allocator().adoptChunk(usrOutput,&outputBuffer[0],outputBuffer.size(),&header::Stack::freefn,nullptr);
+               ctx.allocator().adoptChunk((*output_sharedptr),&outputBuffer[0],outputBuffer.size(),&header::Stack::freefn,nullptr);
              };
            } } };
 }
@@ -59,8 +60,9 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
            { usrOutput }, // user defined outputs as a vector of OutputSpecs
 
            o2f::AlgorithmSpec{ [usrOutput](o2f::InitContext&) {
+             auto output_sharedptr = std::make_shared<o2f::OutputSpec>(std::move(usrOutput));
              // Defining the ProcessCallback as returned object of InitCallback
-             return [usrOutput](o2f::ProcessingContext& ctx) {
+             return [output_sharedptr](o2f::ProcessingContext& ctx) {
 
                OutputBuffer outputBuffer;
 
@@ -73,10 +75,10 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
                  outputBuffer.resize(outputBuffer.size()+msgSize);
 
                  // Appending received message to outputBuffer
-                 std::copy(itInput.payload[0],itInput.payload[msgSize-1],std::back_inserter(outputBuffer));
+                 std::copy(&(itInput.payload[0]),&(itInput.payload[msgSize-1]),std::back_inserter(outputBuffer));
                }
 
-               ctx.allocator().adoptChunk(usrOutput,&outputBuffer[0],outputBuffer.size(),&header::Stack::freefn,nullptr);
+               ctx.allocator().adoptChunk((*output_sharedptr),&outputBuffer[0],outputBuffer.size(),&header::Stack::freefn,nullptr);
              };
            } } };
 }
