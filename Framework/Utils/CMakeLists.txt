@@ -15,6 +15,7 @@ O2_SETUP(NAME ${MODULE_NAME})
 set(SRCS
         src/DPLBroadcaster.cxx
         src/DPLGatherer.cxx
+        src/DPLSplitter.cxx
         )
 
 set(HEADERS

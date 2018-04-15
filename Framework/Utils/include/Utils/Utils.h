@@ -39,6 +39,9 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
                                       std::function<void(OutputBuffer,const o2f::DataRef)> const& mergerFunc);
 o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs, o2f::OutputSpec usrOutput);
 
+
+o2f::DataProcessorSpec defineSplitter(std::string devName, o2f::Inputs usrInput, o2f::Outputs usrOutputs,
+                                      std::function<size_t(const o2f::DataRef)> const& mappingFunc);
 }
 }
 
