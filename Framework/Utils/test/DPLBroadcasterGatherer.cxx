@@ -23,7 +23,7 @@ o2f::DataProcessorSpec defineGenerator()
 {
   return { "Generator",                                                           // Device name
            noInputs,                                                              // No inputs for a generator
-           o2f::Outputs{ { "A", "B", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // One simple output
+           o2f::Outputs{ { "TST", "B", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // One simple output
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              int msgCounter = 0;
@@ -40,7 +40,7 @@ o2f::DataProcessorSpec defineGenerator()
                LOG(INFO) << ">>> Preparing MSG:" << msgIndex << "\n";
 
                auto outputMsg =
-                 ctx.allocator().newChunk({ "A", "GEN", 0, o2f::OutputSpec::Lifetime::Timeframe }, msgIndex + 1);
+                 ctx.allocator().newChunk({ "TST", "GEN", 0, o2f::OutputSpec::Lifetime::Timeframe }, msgIndex + 1);
 
                LOG(INFO) << ">>> Preparing1 MSG:" << msgIndex << "\n";
 
@@ -106,23 +106,23 @@ o2::framework::WorkflowSpec DPLBroadcasterGathererWorkflow()
 
   // A two-way broadcaster
   lspec.emplace_back(defineBroadcaster("Broadcaster",
-                                       o2f::InputSpec{ "c", "A", "B", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                       o2f::Outputs{ { "A", "BCAST0", 0, o2f::OutputSpec::Lifetime::Timeframe },
-                                                     { "A", "BCAST1", 0, o2f::OutputSpec::Lifetime::Timeframe } },
+                                       o2f::InputSpec{ "c", "TST", "B", 0, o2f::InputSpec::Lifetime::Timeframe },
+                                       o2f::Outputs{ { "TST", "BCAST0", 0, o2f::OutputSpec::Lifetime::Timeframe },
+                                                     { "TST", "BCAST1", 0, o2f::OutputSpec::Lifetime::Timeframe } },
                                        [](o2f::DataRef data) { return (size_t)data.payload[0]; }));
 
   // Two pipeline devices
   lspec.emplace_back(definePipeline("pip0",
-                                    o2f::InputSpec{ "bc", "A", "BCAST0", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                    o2f::OutputSpec{ "A", "PIP0", 0, o2f::OutputSpec::Lifetime::Timeframe }));
+                                    o2f::InputSpec{ "bc", "TST", "BCAST0", 0, o2f::InputSpec::Lifetime::Timeframe },
+                                    o2f::OutputSpec{ "TST", "PIP0", 0, o2f::OutputSpec::Lifetime::Timeframe }));
   lspec.emplace_back(definePipeline("pip1",
-                                    o2f::InputSpec{ "bc", "A", "BCAST1", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                    o2f::OutputSpec{ "A", "PIP1", 0, o2f::OutputSpec::Lifetime::Timeframe }));
+                                    o2f::InputSpec{ "bc", "TST", "BCAST1", 0, o2f::InputSpec::Lifetime::Timeframe },
+                                    o2f::OutputSpec{ "TST", "PIP1", 0, o2f::OutputSpec::Lifetime::Timeframe }));
 
   // A gatherer
   lspec.emplace_back(defineGatherer("Gatherer",
-                                    o2f::Inputs{ { "input1", "A", "PIP0", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                                 { "input2", "A", "PIP1", 0, o2f::InputSpec::Lifetime::Timeframe } },
+                                    o2f::Inputs{ { "input1", "TST", "PIP0", 0, o2f::InputSpec::Lifetime::Timeframe },
+                                                 { "input2", "TST", "PIP1", 0, o2f::InputSpec::Lifetime::Timeframe } },
                                     o2f::OutputSpec{ "D", "E", 0, o2f::OutputSpec::Lifetime::Timeframe },
                                     [](OutputBuffer outputBuffer, const o2f::DataRef data) {
                                       auto payload = reinterpret_cast<const uint32_t*>(data.payload);
