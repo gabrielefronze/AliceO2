@@ -30,7 +30,7 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
 {
   return { devName,       // Device name from user
            usrInputs,     // User defined input as a vector of one InputSpec
-           { usrOutput }, // user defined outputs as a vector of OutputSpecs
+           o2f::Outputs{ usrOutput }, // user defined outputs as a vector of OutputSpecs
 
            o2f::AlgorithmSpec{ [usrOutput, mergerFunc](o2f::InitContext&) {
              // Creating shared ptrs to useful parameters
@@ -57,7 +57,7 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
 {
   return { devName,       // Device name from user
            usrInputs,     // User defined input as a vector of one InputSpec
-           { usrOutput }, // user defined outputs as a vector of OutputSpecs
+           o2f::Outputs{ usrOutput }, // user defined outputs as a vector of OutputSpecs
 
            o2f::AlgorithmSpec{ [usrOutput](o2f::InitContext&) {
              auto output_sharedptr = std::make_shared<o2f::OutputSpec>(std::move(usrOutput));
