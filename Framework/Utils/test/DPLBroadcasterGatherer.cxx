@@ -21,41 +21,41 @@ o2f::Outputs noOutputs{};
 
 o2f::DataProcessorSpec defineGenerator()
 {
-  return {
-    "Generator",                                                           // Device name
-    noInputs,                                                              // No inputs for a generator
-    o2f::Outputs{ { "A", "B", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // One simple output
+  return { "Generator",                                                           // Device name
+           noInputs,                                                              // No inputs for a generator
+           o2f::Outputs{ { "A", "B", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // One simple output
 
-    o2f::AlgorithmSpec{ [](o2f::InitContext&) {
+           o2f::AlgorithmSpec{ [](o2f::InitContext&) {
+             int msgCounter = 0;
+             auto msgCounter_shptr = std::make_shared<int>(msgCounter);
 
-      int msgCounter = 0;
-      auto msgCounter_shptr = std::make_shared<int>(msgCounter);
+             LOG(INFO) << ">>>>>>>>>>>>>> Generator initialised\n";
 
-      // Processing context in captured from return on InitCallback
-      return [msgCounter_shptr](o2f::ProcessingContext& ctx) {
-        for (int j = 0; j < 17; ++j) {
-          std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-          auto outputMsg = ctx.allocator().newChunk({ "A", "GEN", 0, o2f::OutputSpec::Lifetime::Timeframe }, j + 1);
-          auto payload = reinterpret_cast<uint32_t*>(outputMsg.data);
+             // Processing context in captured from return on InitCallback
+             return [msgCounter_shptr](o2f::ProcessingContext& ctx) {
+               int msgIndex = (*msgCounter_shptr)++;
+               LOG(INFO) << ">>> MSG:" << msgIndex << "\n";
+               std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-          std::ofstream ofile;
-          ofile.open("~/Desktop/generator.txt");
+               LOG(INFO) << ">>> Preparing MSG:" << msgIndex << "\n";
 
-          payload[0] = j;
+               auto outputMsg =
+                 ctx.allocator().newChunk({ "A", "GEN", 0, o2f::OutputSpec::Lifetime::Timeframe }, msgIndex + 1);
 
-          ofile << "Msg" << (*msgCounter_shptr)++ <<": \t"<< payload[0] << " -> ";
+               LOG(INFO) << ">>> Preparing1 MSG:" << msgIndex << "\n";
 
-          for (int k = 0; k < j; ++k) {
-            payload[k + 1] = 32;
-            ofile << payload[k + 1] << "\t";
-          }
+               auto payload = reinterpret_cast<uint32_t*>(outputMsg.data);
 
-          ofile.flush();
-          ofile.close();
-        }
-      };
-    } }
-  };
+               payload[0] = msgIndex;
+
+               LOG(INFO) << ">>> Preparing2 MSG:" << msgIndex << "\n";
+
+               for (int k = 0; k < msgIndex; ++k) {
+                 payload[k + 1] = (uint32_t)32;
+                 LOG(INFO) << ">>>>\t" << payload[k + 1] << "\n";
+               }
+             };
+           } } };
 }
 
 o2f::DataProcessorSpec definePipeline(std::string devName, o2f::InputSpec usrInput, o2f::OutputSpec usrOutput)
