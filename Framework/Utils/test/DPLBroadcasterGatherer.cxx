@@ -19,41 +19,44 @@ namespace workflows
 o2f::Inputs noInputs{};
 o2f::Outputs noOutputs{};
 
-o2f::DataProcessorSpec defineGenerator()
+o2f::DataProcessorSpec defineGenerator(o2f::OutputSpec usrOutput)
 {
-  return { "Generator",                                                           // Device name
-           noInputs,                                                              // No inputs for a generator
-           o2f::Outputs{ { "TST", "B", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // One simple output
+  return { "Generator",               // Device name
+           noInputs,                  // No inputs for a generator
+           o2f::Outputs{ usrOutput }, // One simple output
 
-           o2f::AlgorithmSpec{ [](o2f::InitContext&) {
+           o2f::AlgorithmSpec{ [usrOutput](o2f::InitContext&) {
              int msgCounter = 0;
              auto msgCounter_shptr = std::make_shared<int>(msgCounter);
+             auto usrOutput_shptr = std::make_shared<o2f::OutputSpec>(usrOutput);
 
-             LOG(INFO) << ">>>>>>>>>>>>>> Generator initialised\n";
+             LOG(INFO) << ">>>>>>>>>>>>>> Generator initialised";
 
              // Processing context in captured from return on InitCallback
-             return [msgCounter_shptr](o2f::ProcessingContext& ctx) {
+             return [usrOutput_shptr, msgCounter_shptr](o2f::ProcessingContext& ctx) {
                int msgIndex = (*msgCounter_shptr)++;
-               LOG(INFO) << ">>> MSG:" << msgIndex << "\n";
+               LOG(INFO) << ">>> MSG:" << msgIndex;
                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-               LOG(INFO) << ">>> Preparing MSG:" << msgIndex << "\n";
+               LOG(INFO) << ">>> Preparing MSG:" << msgIndex;
 
                auto outputMsg =
-                 ctx.allocator().newChunk({ "TST", "GEN", 0, o2f::OutputSpec::Lifetime::Timeframe }, msgIndex + 1);
+                 ctx.allocator().newChunk(*usrOutput_shptr, (msgIndex + 1) * sizeof(uint32_t) / sizeof(char));
 
-               LOG(INFO) << ">>> Preparing1 MSG:" << msgIndex << "\n";
+               LOG(INFO) << ">>> Preparing1 MSG:" << msgIndex;
 
                auto payload = reinterpret_cast<uint32_t*>(outputMsg.data);
 
                payload[0] = msgIndex;
 
-               LOG(INFO) << ">>> Preparing2 MSG:" << msgIndex << "\n";
+               LOG(INFO) << ">>> Preparing2 MSG:" << msgIndex;
 
                for (int k = 0; k < msgIndex; ++k) {
                  payload[k + 1] = (uint32_t)32;
-                 LOG(INFO) << ">>>>\t" << payload[k + 1] << "\n";
+                 LOG(INFO) << ">>>>\t" << payload[k + 1];
                }
+
+               return;
              };
            } } };
 }
@@ -67,7 +70,7 @@ o2f::DataProcessorSpec definePipeline(std::string devName, o2f::InputSpec usrInp
 
              // Processing context in captured from return on InitCallback
              return [output_sharedptr](o2f::ProcessingContext& ctx) {
-               auto inputMsg = ctx.inputs().get("d");
+               auto inputMsg = ctx.inputs().getByPos(0);
                auto msgSize = (o2::header::get<o2::header::DataHeader*>(inputMsg.header))->payloadSize;
 
                auto fwdMsg = ctx.allocator().newChunk((*output_sharedptr), msgSize);
@@ -76,23 +79,26 @@ o2f::DataProcessorSpec definePipeline(std::string devName, o2f::InputSpec usrInp
            } } };
 }
 
-o2f::DataProcessorSpec defineSink()
+o2f::DataProcessorSpec defineSink(o2f::InputSpec usrInput)
 {
-  return { "Sink",                                                                   // Device name
-           o2f::Inputs{ { "d", "D", "E", 0, o2f::InputSpec::Lifetime::Timeframe } }, // No inputs, for the moment
+  return { "Sink",                  // Device name
+           o2f::Inputs{ usrInput }, // No inputs, for the moment
            noOutputs,
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              // Processing context in captured from return on InitCallback
              return [](o2f::ProcessingContext& ctx) {
-               auto inputMsg = ctx.inputs().get("d");
+               LOG(INFO) << "Received message ";
+
+               auto inputMsg = ctx.inputs().getByPos(0);
                auto payload = reinterpret_cast<const uint32_t*>(inputMsg.payload);
 
-               LOG(INFO) << "Received message containing" << payload[0] << "elements\n";
+               LOG(INFO) << "Received message containing" << payload[0] << "elements";
+
                for (int j = 0; j < payload[0]; ++j) {
-                 LOG(INFO) << payload[j] << "\t";
+                 LOG(INFO) << payload[j+1] << "\t";
                }
-               LOG(INFO) << "\n";
+               LOG(INFO);
              };
            } } };
 }
@@ -102,37 +108,30 @@ o2::framework::WorkflowSpec DPLBroadcasterGathererWorkflow()
   auto lspec = o2f::WorkflowSpec();
 
   // A generator of data
-  lspec.emplace_back(defineGenerator());
+  lspec.emplace_back(defineGenerator(o2f::OutputSpec{ "TST", "ToSink", 0, o2f::OutputSpec::Lifetime::Timeframe }));
 
-  // A two-way broadcaster
-  lspec.emplace_back(defineBroadcaster("Broadcaster",
-                                       o2f::InputSpec{ "c", "TST", "B", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                       o2f::Outputs{ { "TST", "BCAST0", 0, o2f::OutputSpec::Lifetime::Timeframe },
-                                                     { "TST", "BCAST1", 0, o2f::OutputSpec::Lifetime::Timeframe } },
-                                       [](o2f::DataRef data) { return (size_t)data.payload[0]; }));
-
-  // Two pipeline devices
-  lspec.emplace_back(definePipeline("pip0",
-                                    o2f::InputSpec{ "bc", "TST", "BCAST0", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                    o2f::OutputSpec{ "TST", "PIP0", 0, o2f::OutputSpec::Lifetime::Timeframe }));
-  lspec.emplace_back(definePipeline("pip1",
-                                    o2f::InputSpec{ "bc", "TST", "BCAST1", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                    o2f::OutputSpec{ "TST", "PIP1", 0, o2f::OutputSpec::Lifetime::Timeframe }));
-
-  // A gatherer
-  lspec.emplace_back(defineGatherer("Gatherer",
-                                    o2f::Inputs{ { "input1", "TST", "PIP0", 0, o2f::InputSpec::Lifetime::Timeframe },
-                                                 { "input2", "TST", "PIP1", 0, o2f::InputSpec::Lifetime::Timeframe } },
-                                    o2f::OutputSpec{ "D", "E", 0, o2f::OutputSpec::Lifetime::Timeframe },
-                                    [](OutputBuffer outputBuffer, const o2f::DataRef data) {
-                                      auto payload = reinterpret_cast<const uint32_t*>(data.payload);
-                                      outputBuffer[0] += payload[0];
-                                      std::copy(&(payload[1]), &(payload[payload[0]]),
-                                                std::back_inserter(outputBuffer));
-                                    }));
+//  // A two-way broadcaster
+//  lspec.emplace_back(defineBroadcaster(
+//    "Broadcaster", o2f::InputSpec{ "input", "TST", "ToBCast", 0, o2f::InputSpec::Lifetime::Timeframe },
+//    o2f::Outputs{ { "TST", "BCAST0", 0, o2f::OutputSpec::Lifetime::Timeframe },
+//                  { "TST", "BCAST1", 0, o2f::OutputSpec::Lifetime::Timeframe } }));
+//
+//  // Two pipeline devices
+//  lspec.emplace_back(definePipeline("pip0",
+//                                    o2f::InputSpec{ "bc", "TST", "BCAST0", 0, o2f::InputSpec::Lifetime::Timeframe },
+//                                    o2f::OutputSpec{ "TST", "PIP0", 0, o2f::OutputSpec::Lifetime::Timeframe }));
+//  lspec.emplace_back(definePipeline("pip1",
+//                                    o2f::InputSpec{ "bc", "TST", "BCAST1", 0, o2f::InputSpec::Lifetime::Timeframe },
+//                                    o2f::OutputSpec{ "TST", "PIP1", 0, o2f::OutputSpec::Lifetime::Timeframe }));
+//
+//  // A gatherer
+//  lspec.emplace_back(defineGatherer("Gatherer",
+//                                    o2f::Inputs{ { "input1", "TST", "PIP0", 0, o2f::InputSpec::Lifetime::Timeframe },
+//                                                 { "input2", "TST", "PIP1", 0, o2f::InputSpec::Lifetime::Timeframe } },
+//                                    o2f::OutputSpec{ "TST", "ToSink", 0, o2f::OutputSpec::Lifetime::Timeframe }));
 
   // A sink which dumps messages
-  lspec.emplace_back(defineSink());
+  lspec.emplace_back(defineSink(o2f::InputSpec{ "input", "TST", "ToSink", 0, o2f::InputSpec::Lifetime::Timeframe }));
   return std::move(lspec);
 }
 
