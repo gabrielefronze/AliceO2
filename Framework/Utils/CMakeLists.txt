@@ -16,6 +16,8 @@ set(SRCS
         src/DPLBroadcaster.cxx
         src/DPLGatherer.cxx
         src/DPLSplitter.cxx
+        test/DPLBroadcasterGatherer.cxx
+        test/test_DPLBroadcasterGatherer.cxx
         )
 
 set(HEADERS
@@ -28,3 +30,11 @@ set(LIBRARY_NAME ${MODULE_NAME})
 set(BUCKET_NAME ${MODULE_BUCKET_NAME})
 
 O2_GENERATE_LIBRARY()
+
+O2_FRAMEWORK_WORKFLOW(
+        WORKFLOW_NAME "test_DPLBroadcasterGatherer"
+        DETECTOR_BUCKETS DPLUtils_bucket
+        SOURCES test/test_DPLBroadcasterGatherer.cxx test/DPLBroadcasterGatherer.cxx src/DPLGatherer.cxx src/DPLBroadcaster.cxx include/Utils/Utils.h
+)
+
+#add_subdirectory(test)
