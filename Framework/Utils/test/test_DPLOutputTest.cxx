@@ -10,7 +10,7 @@
 // FIXME: this should not be needed as the framework should be able to
 //        decode TClonesArray by itself.
 #include "Framework/TMessageSerializer.h"
-#include "DplOutputTest.h"
+#include "DPLOutputTest.h"
 #include "FairMQLogger.h"
 
 using namespace o2::framework;
@@ -18,7 +18,7 @@ using namespace o2::framework;
 // This is how you can define your processing in a declarative way
 void defineDataProcessing(WorkflowSpec &specs) {
   WorkflowSpec workflow{
-    o2::workflows::DplOutputTestWorkflow(),
+    o2::workflows::DPLOutputTest(),
   };
 
   specs.swap(workflow);

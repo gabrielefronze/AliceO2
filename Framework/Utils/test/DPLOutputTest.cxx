@@ -2,18 +2,25 @@
 // Created by Gabriele Gaetano Fronzé on 16/04/2018.
 //
 
-#include "DplOutputTest.h"
+#include "DPLOutputTest.h"
+#include <fstream>
+#include "../include/Utils/Utils.h"
+#include "Framework/DataProcessorSpec.h"
+#include "random"
+#include "FairMQLogger.h"
+
+namespace o2f = o2::framework;
 
 namespace o2
 {
 namespace workflows
 {
 
-o2f::DataProcessorSpec defineGenerator()
+o2f::DataProcessorSpec defineTestGenerator()
 {
   return { "Generator",                                                             // Device name
-           noInputs,                                                                // No inputs for a generator
-           o2f::Outputs{ { "TST", "ToSink", 0, o2f::OutputSpec::Lifetime::Timeframe } }, // One simple output
+           {},                                                                // No inputs for a generator
+           o2f::Outputs{ { "TST", "ToSink", 0, o2f::OutputSpec::Lifetime::Transient } }, // One simple output
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
              int msgCounter = 0;
@@ -25,57 +32,60 @@ o2f::DataProcessorSpec defineGenerator()
              return [msgCounter_shptr](o2f::ProcessingContext& ctx) {
                int msgIndex = (*msgCounter_shptr)++;
                LOG(INFO) << ">>> MSG:" << msgIndex << "\n";
-               std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-               LOG(INFO) << ">>> Preparing MSG:" << msgIndex << "\n";
+               LOG(INFO) << ">>> Preparing MSG:" << msgIndex;
 
                auto outputMsg =
-                 ctx.allocator().newChunk({ "TST", "ToSink", 0, o2f::OutputSpec::Lifetime::Timeframe }, msgIndex + 1);
+                 ctx.allocator().newChunk({ "TST", "ToSink", 0, o2f::OutputSpec::Lifetime::Transient }, (31 + 1)*sizeof(uint32_t)/sizeof(char));
 
-               LOG(INFO) << ">>> Preparing1 MSG:" << msgIndex << "\n";
+               LOG(INFO) << ">>> Preparing1 MSG:" << msgIndex;
 
                auto payload = reinterpret_cast<uint32_t*>(outputMsg.data);
 
                payload[0] = msgIndex;
 
-               LOG(INFO) << ">>> Preparing2 MSG:" << msgIndex << "\n";
+               LOG(INFO) << ">>> Preparing2 MSG:" << msgIndex;
 
-               for (int k = 0; k < msgIndex; ++k) {
-                 payload[k + 1] = (uint32_t)32;
-                 LOG(INFO) << ">>>>\t" << payload[k + 1] << "\n";
+               for (int k = 0; k < 31; ++k) {
+                 payload[k + 1] = (uint32_t)k;
+                 LOG(INFO) << ">>>>\t" << payload[k + 1];
                }
+
+               LOG(INFO) << ">>> Done MSG:" << msgIndex;
              };
            } } };
 }
 
-o2f::DataProcessorSpec defineSink()
+o2f::DataProcessorSpec defineTestSink()
 {
   return { "Sink",                                                                   // Device name
-           o2f::Inputs{ { "input", "TST", "ToSink", 0, o2f::InputSpec::Lifetime::Timeframe } }, // No inputs, for the moment
-           noOutputs,
+           o2f::Inputs{ { "input", "TST", "ToSink", 0, o2f::InputSpec::Lifetime::Transient } }, // No inputs, for the moment
+           {},
 
            o2f::AlgorithmSpec{ [](o2f::InitContext&) {
+
+             LOG(INFO) << ">>>>>>>>>>>>>> Sink initialised\n";
+
              // Processing context in captured from return on InitCallback
              return [](o2f::ProcessingContext& ctx) {
-               auto inputMsg = ctx.inputs().get("d");
+               auto inputMsg = ctx.inputs().getByPos(0);
                auto payload = reinterpret_cast<const uint32_t*>(inputMsg.payload);
 
                LOG(INFO) << "Received message containing" << payload[0] << "elements\n";
                for (int j = 0; j < payload[0]; ++j) {
-                 LOG(INFO) << payload[j] << "\t";
+                 LOG(INFO) << payload[j];
                }
-               LOG(INFO) << "\n";
              };
            } } };
 }
 
-o2::framework::WorkflowSpec DplOutputTestWorkflow()
+o2::framework::WorkflowSpec DPLOutputTest()
 {
   auto lspec = o2f::WorkflowSpec();
 
   // A generator of data
-  lspec.emplace_back(defineGenerator());
-  lspec.emplace_back(defineSink());
+  lspec.emplace_back(defineTestGenerator());
+  lspec.emplace_back(defineTestSink());
   return std::move(lspec);
 }
 
