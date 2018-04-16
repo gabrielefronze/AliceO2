@@ -30,7 +30,7 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
                                          std::function<size_t(o2f::DataRef)> const& func)
 {
   return { devName,      // Device name from user
-           { usrInput }, // User defined input as a vector of one InputSpec
+           o2f::Inputs{ usrInput }, // User defined input as a vector of one InputSpec
            usrOutputs,   // user defined outputs as a vector of OutputSpecs
 
            o2f::AlgorithmSpec{ [usrOutputs, func](o2f::InitContext&) {
@@ -68,7 +68,7 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs)
 {
   return { devName,      // Device name from user
-           { usrInput }, // User defined input as a vector of one InputSpec
+           o2f::Inputs{ usrInput }, // User defined input as a vector of one InputSpec
            usrOutputs,   // user defined outputs as a vector of OutputSpecs
 
            o2f::AlgorithmSpec{ [usrOutputs](o2f::InitContext&) {
