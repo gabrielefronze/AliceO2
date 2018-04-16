@@ -25,7 +25,7 @@ namespace workflows
 {
 // This is a possible implementation of a DPL compliant and generic gatherer
 o2f::DataProcessorSpec defineSplitter(std::string devName, o2f::Inputs usrInput, o2f::Outputs usrOutputs,
-                                      std::function<size_t(const o2f::DataRef)> const& mappingFunc)
+                                      std::function<size_t(const o2f::DataRef)> const mappingFunc)
 {
   return { devName,       // Device name from user
            { usrInput },  // User defined input as a vector of one InputSpec

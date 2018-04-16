@@ -27,7 +27,7 @@ namespace workflows
 
 // This is a possible implementation of a DPL compliant and generic broadcaster
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
-                                         std::function<size_t(o2f::DataRef)> const& func)
+                                         std::function<size_t(o2f::DataRef)> const func)
 {
   return { devName,                 // Device name from user
            o2f::Inputs{ usrInput }, // User defined input as a vector of one InputSpec
@@ -35,8 +35,8 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
 
            o2f::AlgorithmSpec{ [usrOutputs, func](o2f::InitContext&) {
              // Creating shared ptrs to useful parameters
-             auto outputs_sharedptr = std::make_shared<o2f::Outputs>(std::move(usrOutputs));
-             auto func_sharedptr = std::make_shared<std::function<size_t(o2f::DataRef)> const>(std::move(func));
+             auto outputs_sharedptr = std::make_shared<o2f::Outputs>(usrOutputs);
+             auto func_sharedptr = std::make_shared<std::function<size_t(o2f::DataRef)> const>(func);
 
              // Defining the ProcessCallback as returned object of InitCallback
              return [outputs_sharedptr, func_sharedptr](o2f::ProcessingContext& ctx) {

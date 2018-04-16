@@ -26,7 +26,7 @@ namespace workflows
 
 // This is a possible implementation of a DPL compliant and generic gatherer
 o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs, o2f::OutputSpec usrOutput,
-                                      std::function<void(OutputBuffer, const o2f::DataRef)> const& mergerFunc)
+                                      std::function<void(OutputBuffer, const o2f::DataRef)> const mergerFunc)
 {
   return { devName,                   // Device name from user
            usrInputs,                 // User defined input as a vector of one InputSpec
@@ -34,7 +34,7 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
 
            o2f::AlgorithmSpec{ [usrOutput, mergerFunc](o2f::InitContext&) {
              // Creating shared ptrs to useful parameters
-             auto output_sharedptr = std::make_shared<o2f::OutputSpec>(std::move(usrOutput));
+             auto output_sharedptr = std::make_shared<o2f::OutputSpec>(usrOutput);
              auto mergerFunc_sharedptr =
                std::make_shared<std::function<void(OutputBuffer, o2f::DataRef)> const>(mergerFunc);
 
