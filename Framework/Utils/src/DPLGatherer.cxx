@@ -26,28 +26,29 @@ namespace workflows
 
 // This is a possible implementation of a DPL compliant and generic gatherer
 o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs, o2f::OutputSpec usrOutput,
-                                      std::function<void(OutputBuffer,const o2f::DataRef)> const& mergerFunc)
+                                      std::function<void(OutputBuffer, const o2f::DataRef)> const& mergerFunc)
 {
-  return { devName,       // Device name from user
-           usrInputs,     // User defined input as a vector of one InputSpec
+  return { devName,                   // Device name from user
+           usrInputs,                 // User defined input as a vector of one InputSpec
            o2f::Outputs{ usrOutput }, // user defined outputs as a vector of OutputSpecs
 
            o2f::AlgorithmSpec{ [usrOutput, mergerFunc](o2f::InitContext&) {
              // Creating shared ptrs to useful parameters
              auto output_sharedptr = std::make_shared<o2f::OutputSpec>(std::move(usrOutput));
-             auto mergerFunc_sharedptr = std::make_shared<std::function<void(OutputBuffer,o2f::DataRef)> const>(mergerFunc);
+             auto mergerFunc_sharedptr =
+               std::make_shared<std::function<void(OutputBuffer, o2f::DataRef)> const>(mergerFunc);
 
              // Defining the ProcessCallback as returned object of InitCallback
              return [output_sharedptr, mergerFunc_sharedptr](o2f::ProcessingContext& ctx) {
-
                OutputBuffer outputBuffer;
 
                // Iterating over the InputSpecs to aggregate msgs from the connected devices
-               for (const auto& itInputs : ctx.inputs() ) {
-                 (*mergerFunc_sharedptr)(outputBuffer,itInputs);
+               for (const auto& itInputs : ctx.inputs()) {
+                 (*mergerFunc_sharedptr)(outputBuffer, itInputs);
                }
 
-               ctx.allocator().adoptChunk((*output_sharedptr),&outputBuffer[0],outputBuffer.size(),&header::Stack::freefn,nullptr);
+               ctx.allocator().adoptChunk((*output_sharedptr), &outputBuffer[0], outputBuffer.size(),
+                                          &header::Stack::freefn, nullptr);
              };
            } } };
 }
@@ -55,32 +56,13 @@ o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs
 // This is a possible implementation of a DPL compliant and generic gatherer whit trivial messages concatenation
 o2f::DataProcessorSpec defineGatherer(std::string devName, o2f::Inputs usrInputs, o2f::OutputSpec usrOutput)
 {
-  return { devName,       // Device name from user
-           usrInputs,     // User defined input as a vector of one InputSpec
-           o2f::Outputs{ usrOutput }, // user defined outputs as a vector of OutputSpecs
+  auto funcMerge = [](OutputBuffer buf, const o2f::DataRef d) {
+    auto msgSize = (o2::header::get<o2::header::DataHeader*>(d.header))->payloadSize;
+    buf.resize(buf.size() + msgSize);
+    std::copy(&(d.payload[0]), &(d.payload[msgSize - 1]), std::back_inserter(buf));
+  };
 
-           o2f::AlgorithmSpec{ [usrOutput](o2f::InitContext&) {
-             auto output_sharedptr = std::make_shared<o2f::OutputSpec>(std::move(usrOutput));
-             // Defining the ProcessCallback as returned object of InitCallback
-             return [output_sharedptr](o2f::ProcessingContext& ctx) {
-
-               OutputBuffer outputBuffer;
-
-               // Iterating over the InputSpecs to aggregate msgs from the connected devices
-               for (const auto& itInput : ctx.inputs() ) {
-                 // Getting message size through the API
-                 auto msgSize = (o2::header::get<o2::header::DataHeader*>(itInput.header))->payloadSize;
-
-                 // Resizing the buffer
-                 outputBuffer.resize(outputBuffer.size()+msgSize);
-
-                 // Appending received message to outputBuffer
-                 std::copy(&(itInput.payload[0]),&(itInput.payload[msgSize-1]),std::back_inserter(outputBuffer));
-               }
-
-               ctx.allocator().adoptChunk((*output_sharedptr),&outputBuffer[0],outputBuffer.size(),&header::Stack::freefn,nullptr);
-             };
-           } } };
+  return defineGatherer(devName, usrInputs, usrOutput, funcMerge);
 }
 
 } // namespace workflows
