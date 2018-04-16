@@ -29,9 +29,9 @@ namespace workflows
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          std::function<size_t(o2f::DataRef)> const& func)
 {
-  return { devName,      // Device name from user
+  return { devName,                 // Device name from user
            o2f::Inputs{ usrInput }, // User defined input as a vector of one InputSpec
-           usrOutputs,   // user defined outputs as a vector of OutputSpecs
+           usrOutputs,              // user defined outputs as a vector of OutputSpecs
 
            o2f::AlgorithmSpec{ [usrOutputs, func](o2f::InitContext&) {
              // Creating shared ptrs to useful parameters
@@ -44,6 +44,8 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
                auto inputMsg = ctx.inputs().getByPos(0);
 
                auto msgSize = (*func_sharedptr)(inputMsg);
+
+               LOG(INFO) << "Received message with size " << msgSize << "\n";
 
                // Iterating over the OutputSpecs to push the input message to all the output destinations
                for (const auto& itOutputs : (*outputs_sharedptr)) {
@@ -58,33 +60,18 @@ o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usr
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          size_t fixMsgSize)
 {
-  auto func = [fixMsgSize](o2f::DataRef d) -> size_t { return fixMsgSize; };
-  return defineBroadcaster(devName, usrInput, usrOutputs,func);
+  auto funcSize = [fixMsgSize](o2f::DataRef d) -> size_t { return fixMsgSize; };
+  return defineBroadcaster(devName, usrInput, usrOutputs, funcSize);
 }
-} // namespace workflows
-} // namespace o2
 
 // This is an implementation which retrieves the message size using the API
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs)
 {
-  return { devName,      // Device name from user
-           o2f::Inputs{ usrInput }, // User defined input as a vector of one InputSpec
-           usrOutputs,   // user defined outputs as a vector of OutputSpecs
-
-           o2f::AlgorithmSpec{ [usrOutputs](o2f::InitContext&) {
-             // Creating shared ptrs to useful parameters
-             auto outputs_sharedptr = std::make_shared<o2f::Outputs>(std::move(usrOutputs));
-
-             // Defining the ProcessCallback as returned object of InitCallback
-             return [outputs_sharedptr](o2f::ProcessingContext& ctx) {
-               auto inputMsg = ctx.inputs().getByPos(0);
-               auto msgSize = (o2::header::get<o2::header::DataHeader*>(inputMsg.header))->payloadSize;
-
-               // Iterating over the OutputSpecs to push the input message to all the output destinations
-               for (const auto& itOutputs : (*outputs_sharedptr)) {
-                 auto fwdMsg = ctx.allocator().newChunk(itOutputs, msgSize);
-                 std::memcpy(fwdMsg.data, inputMsg.payload, msgSize);
-               }
-             };
-           } } };
+  auto funcSize = [](o2f::DataRef d) -> size_t {
+    return (o2::header::get<o2::header::DataHeader*>(d.header))->payloadSize;
+  };
+  return defineBroadcaster(devName, usrInput, usrOutputs, funcSize);
 }
+
+} // namespace workflows
+} // namespace o2
