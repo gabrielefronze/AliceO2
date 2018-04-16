@@ -18,6 +18,8 @@ set(SRCS
         src/DPLSplitter.cxx
         test/DPLBroadcasterGatherer.cxx
         test/test_DPLBroadcasterGatherer.cxx
+        test/DplOutputTest.cxx
+        test/test_DPLOutputTest.cxx
         )
 
 set(HEADERS
@@ -35,6 +37,12 @@ O2_FRAMEWORK_WORKFLOW(
         WORKFLOW_NAME "test_DPLBroadcasterGatherer"
         DETECTOR_BUCKETS DPLUtils_bucket
         SOURCES test/test_DPLBroadcasterGatherer.cxx test/DPLBroadcasterGatherer.cxx src/DPLGatherer.cxx src/DPLBroadcaster.cxx include/Utils/Utils.h
+)
+
+O2_FRAMEWORK_WORKFLOW(
+        WORKFLOW_NAME "test_DPLOutputTest"
+        DETECTOR_BUCKETS DPLUtils_bucket
+        SOURCES test/test_DPLOutputTest.cxx test/DPLOutputTest.cxx
 )
 
 #add_subdirectory(test)
