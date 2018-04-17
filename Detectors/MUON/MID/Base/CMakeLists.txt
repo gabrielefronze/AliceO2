@@ -4,27 +4,45 @@ O2_SETUP(NAME ${MODULE_NAME})
 
 set(SRCS
   src/Constants.cxx
+  src/Deserializer.cxx
   src/GeometryTransformer.cxx
   src/HitFinder.cxx
   src/LegacyUtility.cxx
   src/Mapping.cxx
+  src/FilteringMapping.cxx
   src/MpArea.cxx
+  src/OccupancyMapping.cxx
+  src/FilteringSerializer.cxx
 )
 
 set(NO_DICT_HEADERS
+  include/${MODULE_NAME}/Chrono.h
   include/${MODULE_NAME}/Constants.h
+  include/${MODULE_NAME}/DataStructs.h
+  include/${MODULE_NAME}/Deserializer.h
+  include/${MODULE_NAME}/Enums.h
   include/${MODULE_NAME}/GeometryTransformer.h
   include/${MODULE_NAME}/HitFinder.h
   include/${MODULE_NAME}/LegacyUtility.h
   include/${MODULE_NAME}/Mapping.h
+  include/${MODULE_NAME}/FilteringMapping.h
   include/${MODULE_NAME}/MpArea.h
+  include/${MODULE_NAME}/OccupancyMapping.h
   include/${MODULE_NAME}/Serializer.h
+  include/${MODULE_NAME}/FilteringSerializer.h
+
 )
 
 set(LIBRARY_NAME ${MODULE_NAME})
 set(BUCKET_NAME mid_base_bucket)
 
 O2_GENERATE_LIBRARY()
+
+O2_GENERATE_TESTS(
+  MODULE_LIBRARY_NAME ${LIBRARY_NAME}
+  BUCKET_NAME ${BUCKET_NAME}
+  TEST_SRCS test/testChrono.cxx
+)
 
 O2_GENERATE_TESTS(
   MODULE_LIBRARY_NAME ${LIBRARY_NAME}
@@ -42,4 +60,10 @@ O2_GENERATE_TESTS(
   MODULE_LIBRARY_NAME ${LIBRARY_NAME}
   BUCKET_NAME ${BUCKET_NAME}
   TEST_SRCS test/testGeometryTransformer.cxx
+)
+
+O2_GENERATE_TESTS(
+  MODULE_LIBRARY_NAME ${LIBRARY_NAME}
+  BUCKET_NAME ${BUCKET_NAME}
+  TEST_SRCS test/testDeserializer.cxx
 )
