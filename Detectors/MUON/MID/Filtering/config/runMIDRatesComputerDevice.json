@@ -1,0 +1,37 @@
+{
+  "fairMQOptions": {
+    "devices": [
+      {
+        "key": "MIDRatesComputerDevice",
+        "channels": [
+          {
+            "name": "data-in",
+            "sockets": [
+              {
+                "type": "pull",
+                "method": "connect",
+                "address": "tcp://localhost:23000",
+                "sndBufSize": 1500,
+                "rcvBufSize": 1500,
+                "rateLogging": 0
+              }
+            ]
+          },
+          {
+            "name": "rates-out",
+            "sockets": [
+              {
+                "type": "push",
+                "method": "bind",
+                "address": "tcp://*:22500",
+                "sndBufSize": 252000,
+                "rcvBufSize": 252000,
+                "rateLogging": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
