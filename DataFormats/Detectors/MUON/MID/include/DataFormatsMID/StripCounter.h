@@ -149,6 +149,7 @@ struct CounterContainer {
     return ret;
   }
 
+  uint8_t deId;
   std::array<CounterStruct, dataType::SIZE> countersContainer; ///< container of counters
 
   friend class boost::serialization::access;
@@ -157,6 +158,7 @@ struct CounterContainer {
   template <class Archive>
   void serialize(Archive& ar, const unsigned int version)
   {
+    ar& deId;
     ar& countersContainer;
   }
 };

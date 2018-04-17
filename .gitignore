@@ -66,3 +66,7 @@ compile_commands.json
 
 # rbenv files
 .ruby-version
+
+Detectors/MUON/MID/Filtering/src_old/
+
+Detectors/MUON/MID/Filtering/config_old/
