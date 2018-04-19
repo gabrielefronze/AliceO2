@@ -6,11 +6,13 @@ set(SRCS
   src/Track.cxx
 )
 
+message(status "toto")
 set(NO_DICT_HEADERS
-  include/${MODULE_NAME}/Cluster2D.h
-  include/${MODULE_NAME}/Cluster3D.h
-  include/${MODULE_NAME}/StripPattern.h
-  include/${MODULE_NAME}/Track.h
+        include/${MODULE_NAME}/Cluster2D.h
+        include/${MODULE_NAME}/Cluster3D.h
+        include/${MODULE_NAME}/StripCounter.h
+        include/${MODULE_NAME}/StripPattern.h
+        include/${MODULE_NAME}/Track.h
 )
 
 set(LIBRARY_NAME ${MODULE_NAME})

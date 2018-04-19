@@ -17,8 +17,10 @@
 #define O2_MID_STRIPPATTERN_H
 
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/array.hpp>
 #include <cstdint>
 #include <array>
+#include <vector>
 
 namespace o2
 {
@@ -52,6 +54,14 @@ struct ColumnData {
   uint8_t columnId;      ///< Column in DE
   StripPattern patterns; ///< Strip patterns
 
+  void setPatterns(std::vector<uint16_t> pat){
+    if(pat.size()<5) return;
+    for (int i = 0; i < 4; ++i) {
+      patterns.setBendPattern(pat[i],i);
+    }
+    patterns.setNonBendPattern(pat[4]);
+  };
+
   friend class boost::serialization::access;
 
   /// Serializes the struct
@@ -63,6 +73,8 @@ struct ColumnData {
     ar& patterns.patterns;
   }
 };
+
+using MaskData = ColumnData;
 } // namespace mid
 } // namespace o2
 
