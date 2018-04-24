@@ -3,6 +3,7 @@ set(MODULE_NAME "MIDFiltering")
 O2_SETUP(NAME ${MODULE_NAME})
 
 set(SRCS
+        src/Decoder.cxx
         src/HitCounter.cxx
         src/MaskGenerator.cxx
         src/Filter.cxx
