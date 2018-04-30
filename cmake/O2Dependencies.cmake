@@ -988,13 +988,13 @@ o2_define_bucket(
 o2_define_bucket(
     NAME
     TPCCAGPUTracking_bucket
-    
+
     DEPENDENCIES
     dl
     pthread
     root_base_bucket
     common_vc_bucket
-    
+
     INCLUDE_DIRECTORIES
     ${ROOT_INCLUDE_DIR}
     ${ALITPCCOMMON_DIR}/sources/TPCCAGPUTracking/SliceTracker
@@ -2046,4 +2046,12 @@ o2_define_bucket(
     ${Geant3_INCLUDE_DIRS}
     ${FAIRROOT_INCLUDE_DIR}
     ${ROOT_INCLUDE_DIR}
+)
+
+o2_define_bucket(
+    NAME
+    mid_simulation_bucket
+
+    DEPENDENCIES
+    MIDBase
 )
