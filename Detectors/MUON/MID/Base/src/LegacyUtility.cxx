@@ -187,19 +187,10 @@ std::vector<ColumnData> LegacyUtility::digitsToPattern(std::vector<uint32_t> dig
       break;
     }
     if (!currentColumn) {
-      columns.emplace_back(ColumnData());
+      columns.emplace_back(ColumnData{ (uint8_t)deId, (uint8_t)icolumn });
       currentColumn = &columns.back();
-      currentColumn->deId = deId;
-      currentColumn->columnId = icolumn;
     }
-    uint16_t pattern =
-      (cathode == 0) ? currentColumn->patterns.getBendPattern(iline) : currentColumn->patterns.getNonBendPattern();
-    pattern |= (1 << channel);
-    if (cathode == 0) {
-      currentColumn->patterns.setBendPattern(pattern, iline);
-    } else {
-      currentColumn->patterns.setNonBendPattern(pattern);
-    }
+    currentColumn->addStrip(channel, cathode, iline);
   }
   return columns;
 }
