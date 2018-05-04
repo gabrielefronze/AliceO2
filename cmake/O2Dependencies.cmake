@@ -1351,7 +1351,7 @@ o2_define_bucket(
     Core Hist # ROOT
     CommonDataFormat
     detectors_base_bucket
- 
+
     INCLUDE_DIRECTORIES
     ${FAIRROOT_INCLUDE_DIR}
     ${ROOT_INCLUDE_DIR}
@@ -2054,4 +2054,19 @@ o2_define_bucket(
 
     DEPENDENCIES
     MIDBase
+)
+
+o2_define_bucket(
+    NAME
+    mid_simulation_test_bucket
+
+    DEPENDENCIES
+    Boost::unit_test_framework
+    mid_simulation_bucket
+    mid_clustering_bucket
+    MIDSimulation
+    MIDClustering
+
+    INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/Detectors/MUON/MID/Clustering/src
 )

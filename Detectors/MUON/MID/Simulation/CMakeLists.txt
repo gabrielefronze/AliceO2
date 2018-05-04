@@ -20,3 +20,5 @@ set(LIBRARY_NAME ${MODULE_NAME})
 set(BUCKET_NAME mid_simulation_bucket)
 
 O2_GENERATE_LIBRARY()
+
+add_subdirectory(test)
