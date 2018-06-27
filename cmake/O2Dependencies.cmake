@@ -1655,6 +1655,18 @@ o2_define_bucket(
         mid_filtering_bucket
 
         DEPENDENCIES
+        data_format_mid_bucket
+        MIDBase
+
+        INCLUDE_DIRECTORIES
+        ${CMAKE_SOURCE_DIR}/Detectors/MUON/MID/Base/include
+)
+
+o2_define_bucket(
+        NAME
+        mid_filtering_DPL_bucket
+
+        DEPENDENCIES
         O2FrameworkCore_bucket
         data_format_mid_bucket
         DPLUtils
