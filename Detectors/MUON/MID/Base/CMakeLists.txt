@@ -29,6 +29,7 @@ set(NO_DICT_HEADERS
   include/${MODULE_NAME}/MpArea.h
   include/${MODULE_NAME}/OccupancyMapping.h
   include/${MODULE_NAME}/Serializer.h
+  include/${MODULE_NAME}/DPLSerializer.h
   include/${MODULE_NAME}/FilteringSerializer.h
 
 )

@@ -1624,7 +1624,12 @@ o2_define_bucket(
 
     DEPENDENCIES
     data_format_mid_bucket
+    O2FrameworkCore_bucket
+    Framework
     DataFormatsMID
+
+    INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/Framework/Core/include/Framework
 )
 
 o2_define_bucket(
