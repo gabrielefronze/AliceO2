@@ -129,6 +129,7 @@ set(HEADERS
       include/Framework/Variant.h
       include/Framework/CallbackRegistry.h
       include/Framework/CallbackService.h
+      include/Framework/DPLBoostSerializer.h
       src/ComputingResource.h
       src/DDSConfigHelpers.h
       src/DeviceSpecHelpers.h
