@@ -1972,6 +1972,9 @@ o2_define_bucket(
     DEPENDENCIES
     fairroot_base_bucket
     MIDBase
+    MIDClustering
+    O2FrameworkCore_bucket
+    Framework
 )
 
 o2_define_bucket(

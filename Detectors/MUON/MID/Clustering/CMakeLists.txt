@@ -5,6 +5,7 @@ O2_SETUP(NAME ${MODULE_NAME})
 set(SRCS
    src/Clusterizer.cxx
    src/ClusterizerDevice.cxx
+   src/ClusterizerDeviceDPL.cxx
 )
 
 set(LIBRARY_NAME ${MODULE_NAME})
