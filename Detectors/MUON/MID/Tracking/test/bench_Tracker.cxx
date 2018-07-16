@@ -22,7 +22,7 @@
 #include "MIDBase/MpArea.h"
 #include "MIDBase/HitFinder.h"
 #include "MIDTestingSimTools/TrackGenerator.h"
-#include "Tracker.h"
+#include "MIDTracking/Tracker.h"
 
 std::vector<o2::mid::Cluster2D> generateTestData(int nTracks, o2::mid::TrackGenerator& trackGen,
                                                  const o2::mid::HitFinder& hitFinder, const o2::mid::Mapping& mapping)
