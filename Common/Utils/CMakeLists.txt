@@ -10,6 +10,7 @@ set(SRCS
 Set(HEADERS
   include/${MODULE_NAME}/TreeStream.h
   include/${MODULE_NAME}/TreeStreamRedirector.h
+  include/${MODULE_NAME}/BoostSerializer.h
 )
 
 Set(LINKDEF src/CommonUtilsLinkDef.h)
@@ -20,6 +21,7 @@ O2_GENERATE_LIBRARY()
 
 set(TEST_SRCS
   test/testTreeStream.cxx
+  test/testBoostSerializer.cxx
 )
 
 O2_GENERATE_TESTS(
