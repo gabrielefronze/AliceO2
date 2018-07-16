@@ -2030,6 +2030,18 @@ o2_define_bucket(
     ${CMAKE_SOURCE_DIR}/Detectors/MUON/MID/Tracking/src
 )
 
+o2_define_bucket(
+    NAME
+    mid_workflow_bucket
+
+    DEPENDENCIES
+    MIDTracking
+    MIDClustering
+    O2FrameworkCore_bucket
+    Framework
+    DataFormatsMID
+)
+
 
 o2_define_bucket(
     NAME
