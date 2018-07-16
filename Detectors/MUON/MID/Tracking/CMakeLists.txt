@@ -5,6 +5,7 @@ O2_SETUP(NAME ${MODULE_NAME})
 set(SRCS
    src/Tracker.cxx
    src/TrackerDevice.cxx
+   src/TrackerDeviceDPL.cxx
 )
 
 set(LIBRARY_NAME ${MODULE_NAME})

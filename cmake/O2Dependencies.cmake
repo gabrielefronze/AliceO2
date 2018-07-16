@@ -2006,6 +2006,9 @@ o2_define_bucket(
     DEPENDENCIES
     fairroot_base_bucket
     MIDBase
+    MIDTracking
+    O2FrameworkCore_bucket
+    Framework
 
     INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Detectors/MUON/MID/TestingSimTools/include
