@@ -23,7 +23,7 @@
 #include "MIDSimulation/Digitizer.h"
 #include "MIDSimulation/ChamberResponseParams.h"
 #include "MIDBase/Mapping.h"
-#include "Clusterizer.h"
+#include "MIDClustering/Clusterizer.h"
 
 namespace bdata = boost::unit_test::data;
 
