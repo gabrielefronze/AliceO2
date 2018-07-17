@@ -67,12 +67,10 @@ class is_boost_serializable
 } // namespace check
 
 template <typename ContT>
-typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_oarchive>::value
-                        && boost::is_class<typename ContT::value_type>::value, std::ostringstream>::type
+typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_oarchive>::value && boost::is_class<typename ContT::value_type>::value, std::ostringstream>::type
   SerializeContainer(const ContT& dataSet)
 {
-  static_assert(check::is_boost_serializable<typename ContT::value_type, boost::archive::binary_oarchive>::value,
-                "This class doesn't provide a boost serializer.");
+  static_assert(check::is_boost_serializable<typename ContT::value_type, boost::archive::binary_oarchive>::value, "This class doesn't provide a boost serializer.");
   /// Serialises a container (vector, array or list) using boost serialisation routines.
   /// Requires the contained type to be either trivial or provided with an overried of boost::serialise method.
   std::ostringstream buffer;
@@ -82,12 +80,10 @@ typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::bina
 }
 
 template <typename ContT, typename ContentT = typename ContT::value_type>
-typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_oarchive>::value
-                        && !(boost::is_class<ContentT>::value), std::ostringstream>::type
+typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_oarchive>::value && !(boost::is_class<ContentT>::value), std::ostringstream>::type
   SerializeContainer(const ContT& dataSet)
 {
-  static_assert(boost::serialization::is_bitwise_serializable<typename ContT::value_type>::value,
-                "This type doesn't provide a boost serializer.");
+  static_assert(boost::serialization::is_bitwise_serializable<typename ContT::value_type>::value, "This type doesn't provide a boost serializer.");
   /// Serialises a container (vector, array or list) using boost serialisation routines.
   /// Requires the contained type to be either trivial or provided with an overried of boost::serialise method.
   std::ostringstream buffer;
@@ -97,12 +93,10 @@ typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::bina
 }
 
 template <typename ContT>
-typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_iarchive>::value
-                        && boost::is_class<typename ContT::value_type>::value, ContT>::type
+typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_iarchive>::value && boost::is_class<typename ContT::value_type>::value, ContT>::type
   DeserializeContainer(std::string& msgStr)
 {
-  static_assert(check::is_boost_serializable<typename ContT::value_type, boost::archive::binary_oarchive>::value,
-                "This class doesn't provide a boost deserializer.");
+  static_assert(check::is_boost_serializable<typename ContT::value_type, boost::archive::binary_oarchive>::value, "This class doesn't provide a boost deserializer.");
   /// Deserialises a msg contained in a string in a container type (vector, array or list) of the provided type.
   ContT output;
   std::istringstream buffer(msgStr);
@@ -112,12 +106,10 @@ typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::bina
 }
 
 template <typename ContT, typename ContentT = typename ContT::value_type>
-typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_iarchive>::value
-                        && !(boost::is_class<ContentT>::value), ContT>::type
+typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_iarchive>::value && !(boost::is_class<ContentT>::value), ContT>::type
   DeserializeContainer(std::string& msgStr)
 {
-  static_assert(boost::serialization::is_bitwise_serializable<typename ContT::value_type>::value,
-                "This type doesn't provide a boost serializer.");
+  static_assert(boost::serialization::is_bitwise_serializable<typename ContT::value_type>::value, "This type doesn't provide a boost serializer.");
   /// Deserialises a msg contained in a string in a container type (vector, array or list) of the provided type.
   ContT output;
   std::istringstream buffer(msgStr);
