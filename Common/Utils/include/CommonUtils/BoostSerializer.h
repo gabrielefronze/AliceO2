@@ -34,7 +34,7 @@ namespace utils
 namespace check
 {
 ///A set of classes and struct to be sure the serialised object is either trivial or implementing custom serialize
-template <class Type, class Archive, typename = typename std::enable_if<boost::is_class<Type>::value>::type>
+template <class Type, class Archive, typename = typename std::enable_if<std::is_class<Type>::value>::type>
 class is_boost_serializable
 {
  private:
@@ -68,7 +68,7 @@ class is_boost_serializable
 
 template <typename ContT>
 typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_oarchive>::value
-                        && boost::is_class<typename ContT::value_type>::value, std::ostringstream>::type
+                        && std::is_class<typename ContT::value_type>::value, std::ostringstream>::type
   SerializeContainer(const ContT& dataSet)
 {
   static_assert(check::is_boost_serializable<typename ContT::value_type, boost::archive::binary_oarchive>::value,
@@ -83,7 +83,7 @@ typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::bina
 
 template <typename ContT, typename ContentT = typename ContT::value_type>
 typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_oarchive>::value
-                        && !(boost::is_class<ContentT>::value), std::ostringstream>::type
+                        && !(std::is_class<ContentT>::value), std::ostringstream>::type
   SerializeContainer(const ContT& dataSet)
 {
   static_assert(boost::serialization::is_bitwise_serializable<typename ContT::value_type>::value,
@@ -98,7 +98,7 @@ typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::bina
 
 template <typename ContT>
 typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_iarchive>::value
-                        && boost::is_class<typename ContT::value_type>::value, ContT>::type
+                        && std::is_class<typename ContT::value_type>::value, ContT>::type
   DeserializeContainer(std::string& msgStr)
 {
   static_assert(check::is_boost_serializable<typename ContT::value_type, boost::archive::binary_oarchive>::value,
@@ -113,7 +113,7 @@ typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::bina
 
 template <typename ContT, typename ContentT = typename ContT::value_type>
 typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::binary_iarchive>::value
-                        && !(boost::is_class<ContentT>::value), ContT>::type
+                        && !(std::is_class<ContentT>::value), ContT>::type
   DeserializeContainer(std::string& msgStr)
 {
   static_assert(boost::serialization::is_bitwise_serializable<typename ContT::value_type>::value,
