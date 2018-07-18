@@ -36,6 +36,7 @@ set(SRCS
     src/DataProcessor.cxx
     src/DataRelayer.cxx
     src/DataSampling.cxx
+    src/DataSamplingConditionRandom.cxx
     src/DataSourceDevice.cxx
     src/DeviceMetricsInfo.cxx
     src/DeviceSpec.cxx
@@ -130,6 +131,8 @@ set(HEADERS
       include/Framework/CallbackRegistry.h
       include/Framework/CallbackService.h
       include/Framework/DPLBoostSerializer.h
+      include/Framework/DataSampling.h
+      include/Framework/DataSamplingCondition.h
       src/ComputingResource.h
       src/DDSConfigHelpers.h
       src/DeviceSpecHelpers.h
@@ -189,6 +192,7 @@ set(TEST_SRCS
       test/test_BoostOptionsRetriever.cxx
       test/test_DataRelayer.cxx
       test/test_DataSampling.cxx
+      test/test_DataSamplingCondition.cxx
       test/test_DataRefUtils.cxx
       test/test_DataProcessorSpec.cxx
       test/test_DeviceMetricsInfo.cxx
@@ -226,10 +230,10 @@ O2_GENERATE_TESTS(
   TIMEOUT 60
 
   TEST_SRCS
-  test/test_WorkflowOptions.cxx
+  test/test_ProcessorOptions.cxx
 
   COMMAND_LINE_ARGS
   --global-config require-me
   # Note: the group switch makes process consumer parse only the group arguments
-  --consumer "--global-config require-me --local-option hello-aliceo2"
+  --consumer "--global-config consumer-config --local-option hello-aliceo2"
 )
