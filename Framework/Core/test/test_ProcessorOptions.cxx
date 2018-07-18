@@ -18,7 +18,8 @@ using namespace o2::framework;
   }
 
 // This is how you can define your processing in a declarative way
-WorkflowSpec defineDataProcessing(ConfigContext const&) {
+WorkflowSpec defineDataProcessing(ConfigContext const&)
+{
   return WorkflowSpec{
     DataProcessorSpec{
       "producer",
@@ -34,7 +35,9 @@ WorkflowSpec defineDataProcessing(ConfigContext const&) {
           ASSERT_ERROR(configstring == "require-me");
 
           return [](ProcessingContext& ctx) {
-            // there is nothing to do, simply stop the workflow
+            // there is nothing to do, simply stop the workflow but we have to send at least one message
+            // to make sure that the callback of the consumer is called
+            ctx.outputs().make<int>(Output{ "TST", "TEST", 0, Lifetime::Timeframe }) = 42;
             ctx.services().get<ControlService>().readyToQuit(true);
           };
         },
@@ -59,7 +62,7 @@ WorkflowSpec defineDataProcessing(ConfigContext const&) {
           // read back the option from the command line, see CMakeLists.txt
           auto configstring = ic.options().get<std::string>("global-config");
           auto anotheroption = ic.options().get<std::string>("local-option");
-          ASSERT_ERROR(configstring == "require-me");
+          ASSERT_ERROR(configstring == "consumer-config");
           ASSERT_ERROR(anotheroption == "hello-aliceo2");
 
           return [](ProcessingContext& ctx) {

@@ -17,10 +17,16 @@
 #include "FairTask.h" 
 
 #include "ITSBase/GeometryTGeo.h"
+#include "ITSMFTReconstruction/ChipMappingITS.h"
 #include "ITSMFTReconstruction/PixelReader.h"
+#include "ITSMFTReconstruction/RawPixelReader.h"
+#include "ITSMFTReconstruction/DigitPixelReader.h"
 #include "ITSMFTReconstruction/Clusterer.h"
+#include "DataFormatsITSMFT/CompCluster.h"
+#include "DataFormatsITSMFT/Cluster.h"
 #include "SimulationDataFormat/MCTruthContainer.h"
 #include "SimulationDataFormat/MCCompLabel.h"
+#include <memory>
 
 namespace o2
 {
@@ -36,29 +42,44 @@ namespace ITS
   
 class ClustererTask : public FairTask
 {
-  using DigitPixelReader = o2::ITSMFT::DigitPixelReader;
   using Clusterer = o2::ITSMFT::Clusterer;
   using Cluster = o2::ITSMFT::Cluster;
+  using CompCluster = o2::ITSMFT::CompCluster;
+  using CompClusterExt = o2::ITSMFT::CompClusterExt;
   using MCTruth = o2::dataformats::MCTruthContainer<o2::MCCompLabel>;
 
  public:
-  ClustererTask(bool useMC = true);
+  ClustererTask(bool useMC = true, bool raw = false);
   ~ClustererTask() override;
 
   InitStatus Init() override;
   void Exec(Option_t* option) override;
   Clusterer& getClusterer() { return mClusterer; }
+  void run(const std::string inpName, const std::string outName, bool entryPerROF = true);
+  void setSelfManagedMode(bool v) { mSelfManagedMode = v; }
+  bool isSelfManagedMode() const { return mSelfManagedMode; }
+  void attachFairManagerIO();
+  o2::ITSMFT::PixelReader* getReader() const { return (o2::ITSMFT::PixelReader*)mReader; }
 
  private:
+  bool mSelfManagedMode = false;                          ///< manages itself input output
+  bool mRawDataMode = false;                              ///< input from raw data or MC digits
   bool mUseMCTruth = true;                                ///< flag to use MCtruth if available
-  const o2::ITSMFT::GeometryTGeo* mGeometry = nullptr;    ///< ITS OR MFT upgrade geometry
-  DigitPixelReader mReader;  ///< Pixel reader
-  Clusterer mClusterer;      ///< Cluster finder
+  o2::ITSMFT::PixelReader* mReader = nullptr;             ///< Pointer on the relevant Pixel reader
+  std::unique_ptr<o2::ITSMFT::DigitPixelReader> mReaderMC;                            ///< reader for MC data
+  std::unique_ptr<o2::ITSMFT::RawPixelReader<o2::ITSMFT::ChipMappingITS>> mReaderRaw; ///< reader for raw data
 
-  std::vector<Cluster> mClustersArray;                       //!< Array of clusters
-  std::vector<Cluster>* mClustersArrayPtr = &mClustersArray; //!< Array of clusters pointer
+  const o2::ITSMFT::GeometryTGeo* mGeometry = nullptr;    ///< ITS OR MFT upgrade geometry
+  Clusterer mClusterer;                                   ///< Cluster finder
+
+  std::vector<Cluster> mFullClus;               //!< vector of full clusters
+  std::vector<Cluster>* mFullClusPtr = nullptr; //!< vector of full clusters pointer
+
+  std::vector<CompClusterExt> mCompClus;               //!< vector of compact clusters
+  std::vector<CompClusterExt>* mCompClusPtr = nullptr; //!< vector of compact clusters pointer
+
   MCTruth mClsLabels;                                        //! MC labels
-  MCTruth* mClsLabelsPtr = &mClsLabels;                      //! MC labels pointer
+  MCTruth* mClsLabelsPtr = nullptr;                          //! MC labels pointer (optional)
 
   ClassDefOverride(ClustererTask, 1)
 };
