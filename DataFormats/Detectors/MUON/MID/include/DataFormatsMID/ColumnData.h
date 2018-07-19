@@ -20,6 +20,7 @@
 #include <boost/serialization/array.hpp>
 #include <cstdint>
 #include <array>
+#include <vector>
 
 namespace o2
 {
@@ -52,6 +53,14 @@ struct ColumnData {
   /// Checks if strip is fired in the bending plane
   bool isBPStripFired(int istrip, uint16_t line) { return isStripFired(istrip, 0, line); }
 
+  void setPatterns(std::vector<uint16_t> pat){
+    if(pat.size()<5) return;
+    for (int i = 0; i < 4; ++i) {
+      patterns.setBendPattern(pat[i],i);
+    }
+    patterns.setNonBendPattern(pat[4]);
+  };
+
   friend class boost::serialization::access;
 
   /// Serializes the struct
@@ -63,6 +72,8 @@ struct ColumnData {
     ar& patterns;
   }
 };
+
+using MaskData = ColumnData;
 } // namespace mid
 } // namespace o2
 
