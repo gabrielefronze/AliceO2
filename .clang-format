@@ -9,7 +9,7 @@ AllowShortLoopsOnASingleLine: false
 #AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: true
 BinPackParameters: true
-BreakBeforeBinaryOperators: false
+BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Linux
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
