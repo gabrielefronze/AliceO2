@@ -1992,6 +1992,35 @@ o2_define_bucket(
 )
 
 o2_define_bucket(
+        NAME
+        mid_filtering_bucket
+
+        DEPENDENCIES
+        O2FrameworkCore_bucket
+        data_format_mid_bucket
+        DPLUtils
+        MIDBase
+
+        INCLUDE_DIRECTORIES
+        ${CMAKE_SOURCE_DIR}/Framework/Core/include
+        ${CMAKE_SOURCE_DIR}/Detectors/MUON/MID/Base/include
+)
+
+o2_define_bucket(
+        NAME
+        mid_filtering_test_bucket
+
+        DEPENDENCIES
+        Boost::unit_test_framework
+        $<IF:$<BOOL:${benchmark_FOUND}>,benchmark::benchmark,$<0:"">>
+        mid_filtering_bucket
+        MIDFiltering
+
+        INCLUDE_DIRECTORIES
+        ${CMAKE_SOURCE_DIR}/Detectors/MUON/MID/Filtering/src
+)
+
+o2_define_bucket(
     NAME
     mid_testingSimTools_bucket
 

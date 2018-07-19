@@ -53,12 +53,8 @@ struct ColumnData {
   /// Checks if strip is fired in the bending plane
   bool isBPStripFired(int istrip, uint16_t line) { return isStripFired(istrip, 0, line); }
 
-  void setPatterns(std::vector<uint16_t> pat){
-    if(pat.size()<5) return;
-    for (int i = 0; i < 4; ++i) {
-      patterns.setBendPattern(pat[i],i);
-    }
-    patterns.setNonBendPattern(pat[4]);
+  void setPatterns(std::array<uint16_t,5> pat){
+    patterns.swap(pat);
   };
 
   friend class boost::serialization::access;
