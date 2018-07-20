@@ -8,6 +8,7 @@ set(SRCS
         src/MIDWorkflow.cxx
         src/ColdataStreamerSpec.cxx
         src/SinkSpec.cxx
+        src/DecoderSpec.cxx
         )
 
 set(LIBRARY_NAME ${MODULE_NAME})
