@@ -11,6 +11,7 @@ set(SRCS
         src/DecoderSpec.cxx
         src/HitCounterSpec.cxx
         src/MaskGeneratorSpec.cxx
+        src/FilterSpec.cxx
         )
 
 set(LIBRARY_NAME ${MODULE_NAME})
