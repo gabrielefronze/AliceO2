@@ -7,6 +7,7 @@ set(SRCS
         src/HitCounter.cxx
         src/MaskGenerator.cxx
         src/Filter.cxx
+        src/DecoderDeviceDPL.cxx
 )
 
 set(LIBRARY_NAME ${MODULE_NAME})
