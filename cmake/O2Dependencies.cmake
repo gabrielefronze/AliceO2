@@ -2066,6 +2066,7 @@ o2_define_bucket(
     DEPENDENCIES
     MIDTracking
     MIDClustering
+    MIDFiltering
     O2FrameworkCore_bucket
     Framework
     DataFormatsMID
