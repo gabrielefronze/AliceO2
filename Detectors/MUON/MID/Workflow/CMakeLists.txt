@@ -10,6 +10,7 @@ set(SRCS
         src/SinkSpec.cxx
         src/DecoderSpec.cxx
         src/HitCounterSpec.cxx
+        src/MaskGeneratorSpec.cxx
         )
 
 set(LIBRARY_NAME ${MODULE_NAME})
