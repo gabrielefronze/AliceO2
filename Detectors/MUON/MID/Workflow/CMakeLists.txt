@@ -9,6 +9,7 @@ set(SRCS
         src/ColdataStreamerSpec.cxx
         src/SinkSpec.cxx
         src/DecoderSpec.cxx
+        src/HitCounterSpec.cxx
         )
 
 set(LIBRARY_NAME ${MODULE_NAME})
