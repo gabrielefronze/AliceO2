@@ -31,7 +31,7 @@ std::shared_ptr<std::vector<o2f::Output>> getOutputList(const o2f::Outputs outpu
 
 // Broadcaster implementations
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
-                                         std::function<size_t(o2f::DataRef)> const func);
+                                         const std::function<size_t(framework::DataRef& )> func);
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs,
                                          size_t fixMsgSize);
 o2f::DataProcessorSpec defineBroadcaster(std::string devName, o2f::InputSpec usrInput, o2f::Outputs usrOutputs);
