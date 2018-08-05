@@ -126,20 +126,23 @@ typename std::enable_if<check::is_boost_serializable<ContT, boost::archive::bina
   return std::move(output);
 }
 
-template <typename T>
+namespace check {
+template<typename T>
 struct has_serializer
 {
-  template <class, class> class checker;
+  template<class, class>
+  class checker;
 
-  template <typename C>
+  template<typename C>
   static std::true_type test(checker<C, decltype(&o2::utils::BoostSerialize<C>)> *);
 
-  template <typename C>
+  template<typename C>
   static std::false_type test(...);
 
   typedef decltype(test<T>(nullptr)) type;
   static const bool value = std::is_same<std::true_type, decltype(test<T>(nullptr))>::value;
 };
+} // namespace check
 } // namespace utils
 } // namespace o2
 
