@@ -17,6 +17,7 @@
 #include "Framework/DataAllocator.h"
 #include "Framework/DeviceSpec.h"
 #include "Framework/ServiceRegistry.h"
+#include "Framework/RawBufferContext.h"
 
 #include <memory>
 #include <cstddef>
@@ -49,6 +50,7 @@ private:
   MessageContext mFairMQContext;
   RootObjectContext mRootContext;
   StringContext mStringContext;
+  RawBufferContext mRawBufferContext;
   ContextRegistry mContextRegistry;
   DataAllocator mAllocator;
   size_t mCurrentTimeslice;

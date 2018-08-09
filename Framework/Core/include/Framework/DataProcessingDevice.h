@@ -22,6 +22,7 @@
 #include "Framework/MessageContext.h"
 #include "Framework/RootObjectContext.h"
 #include "Framework/StringContext.h"
+#include "Framework/RawBufferContext.h"
 #include "Framework/ServiceRegistry.h"
 #include "Framework/InputRoute.h"
 #include "Framework/ForwardRoute.h"
@@ -56,6 +57,7 @@ private:
   MessageContext mFairMQContext;
   RootObjectContext mRootContext;
   StringContext mStringContext;
+  RawBufferContext mRawBufferContext;
   ContextRegistry mContextRegistry;
   DataAllocator mAllocator;
   DataRelayer mRelayer;

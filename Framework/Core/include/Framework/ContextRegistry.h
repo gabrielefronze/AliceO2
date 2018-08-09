@@ -36,7 +36,7 @@ enum contexts{
   kMessageContext,
   kROOTObjectContext,
   kStringContext,
-  kRawContext,
+  kRawBufferContext,
   kNContexts
 };
 

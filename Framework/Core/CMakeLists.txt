@@ -135,6 +135,7 @@ set(HEADERS
       include/Framework/DataSamplingCondition.h
       include/Framework/DataSamplingReadoutAdapter.h
       include/Framework/DPLBoostSerializer.h
+      include/Framework/RawBufferContext.h
       src/ComputingResource.h
       src/DDSConfigHelpers.h
       src/DeviceSpecHelpers.h
@@ -191,6 +192,7 @@ Install(FILES test/test_DataSamplingDPL.json test/test_DataSamplingFairMQ.json D
 set(TEST_SRCS
       test/test_SimpleStatefulProcessing01.cxx
       test/test_SimpleStringProcessing.cxx
+      test/test_BoostSerializedProcessing.cxx
       test/test_AlgorithmSpec.cxx
       test/test_BoostOptionsRetriever.cxx
       test/test_DataRelayer.cxx

@@ -11,10 +11,13 @@
 #include "Framework/RootObjectContext.h"
 #include "Framework/MessageContext.h"
 #include "Framework/StringContext.h"
+#include "Framework/RawBufferContext.h"
 #include "Framework/TMessageSerializer.h"
+#include "CommonUtils/BoostSerializer.h"
 #include "Headers/DataHeader.h"
 #include <fairmq/FairMQParts.h>
 #include <fairmq/FairMQDevice.h>
+#include <cstddef>
 
 using namespace o2::framework;
 using DataHeader = o2::header::DataHeader;
@@ -71,6 +74,32 @@ void DataProcessor::doSend(FairMQDevice& device, StringContext& context)
     parts.AddPart(std::move(payload));
     device.Send(parts, messageRef.channel, 0);
   }
+}
+
+void DataProcessor::doSend(FairMQDevice& device, RawBufferContext& context)
+{
+
+  LOG(INFO) << "Sending...";
+  for (auto& messageRef : context) {
+    FairMQParts parts;
+    FairMQMessagePtr payload(device.NewMessage());
+    auto buffer = messageRef.serializeMsg().str();
+    // Rebuild the message using the serialized ostringstream as input. For now it involves a copy.
+    size_t size = buffer.length();
+    payload->Rebuild(size);
+    std::memcpy(payload->GetData(), buffer.c_str(), size);
+    const DataHeader* cdh = o2::header::get<DataHeader*>(messageRef.header->GetData());
+    // sigh... See if we can avoid having it const by not
+    // exposing it to the user in the first place.
+    DataHeader* dh = const_cast<DataHeader*>(cdh);
+    dh->payloadSize = size;
+    LOG(INFO) << "length set to " << dh->payloadSize;
+    parts.AddPart(std::move(messageRef.header));
+    parts.AddPart(std::move(payload));
+    device.Send(parts, messageRef.channel, 0);
+    LOG(INFO) << "DONE!";
+  }
+  LOG(INFO) << "DONE!";
 }
 
 } // namespace framework

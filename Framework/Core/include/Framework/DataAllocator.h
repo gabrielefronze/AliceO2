@@ -15,6 +15,8 @@
 #include "Framework/MessageContext.h"
 #include "Framework/RootObjectContext.h"
 #include "Framework/StringContext.h"
+#include "Framework/RawBufferContext.h"
+#include "CommonUtils/BoostSerializer.h"
 #include "Framework/Output.h"
 #include "Framework/OutputRef.h"
 #include "Framework/OutputRoute.h"
@@ -32,6 +34,7 @@
 #include <type_traits>
 #include <gsl/span>
 #include <utility>
+#include <cstddef>
 
 #include <TClass.h>
 
@@ -117,14 +120,44 @@ public:
     return *s;
   }
 
+  /// Helper to create an byte stream buffer using boost serialization, which will be owned by the framework
+  /// and transmitted when the processing finishes.
+    template <typename T, typename WT = typename T::wrapped_type>
+    typename std::enable_if<is_specialization<T, BoostSerialized>::value == true, WT&>::type
+    make(const Output& specs)
+  {
+    LOG(INFO) << "Using make_boost!";
+    return make_boost<WT>(std::move(specs));
+  }
+
+  template<typename T>
+  typename std::enable_if<is_specialization<T,BoostSerialized>::value == false 
+                        && o2::utils::check::has_serializer<T>::value == true 
+                        && std::is_base_of<std::string, T>::value == false, T&>::type 
+    make(const Output& spec)
+  {
+    LOG(INFO) << "Using make_boost!";
+    return make_boost<T>(std::move(spec));
+  }
+
+    template<typename T> 
+    T& make_boost(const Output& spec)
+  {
+    auto buff = new T{};
+    adopt_boost(spec, buff);
+    return *buff;
+  }
+
   /// catching unsupported type for case without additional arguments
   /// have to add three specializations because of the different role of
   /// the arguments and the different return types
   template <typename T>
   typename std::enable_if<
-    std::is_base_of<TObject, T>::value == false
+    is_specialization<T,BoostSerialized>::value == false 
+    && std::is_base_of<TObject, T>::value == false
     && is_messageable<T>::value == false
-    && std::is_same<std::string, T>::value == false,
+    && std::is_same<std::string, T>::value == false
+    && o2::utils::check::has_serializer<T>::value == false,
     T&>::type
     make(const Output&)
   {
@@ -133,7 +166,9 @@ public:
                   "data type T not supported by API, \n specializations available for"
                   "\n - trivially copyable, non-polymorphic structures"
                   "\n - arrays of those"
-                  "\n - TObject with additional constructor arguments");
+                  "\n - TObject with additional constructor arguments"
+                  "\n - Classes and structs with boost serialization support"
+                  "\n - std containers of those");
   }
 
   /// catching unsupported type for case of span of objects
@@ -141,7 +176,8 @@ public:
   typename std::enable_if<
     std::is_base_of<TObject, T>::value == false
     && is_messageable<T>::value == false
-    && std::is_same<std::string, T>::value == false,
+    && std::is_same<std::string, T>::value == false
+    && o2::utils::check::has_serializer<T>::value == false,
     gsl::span<T>>::type
     make(const Output&, size_t)
   {
@@ -149,7 +185,9 @@ public:
                   "data type T not supported by API, \n specializations available for"
                   "\n - trivially copyable, non-polymorphic structures"
                   "\n - arrays of those"
-                  "\n - TObject with additional constructor arguments");
+                  "\n - TObject with additional constructor arguments"
+                  "\n - Classes and structs with boost serialization support"
+                  "\n - std containers of those");
   }
 
   /// catching unsupported type for case of at least two additional arguments
@@ -157,7 +195,8 @@ public:
   typename std::enable_if<
     std::is_base_of<TObject, T>::value == false
     && is_messageable<T>::value == false
-    && std::is_same<std::string, T>::value == false,
+    && std::is_same<std::string, T>::value == false
+    && o2::utils::check::has_serializer<T>::value == false,
     T&>::type
     make(const Output&, U, V, Args...)
   {
@@ -165,7 +204,9 @@ public:
                   "data type T not supported by API, \n specializations available for"
                   "\n - trivially copyable, non-polymorphic structures"
                   "\n - arrays of those"
-                  "\n - TObject with additional constructor arguments");
+                  "\n - TObject with additional constructor arguments"
+                  "\n - Classes and structs with boost serialization support"
+                  "\n - std containers of those");
   }
 
   /// Adopt a TObject in the framework and serialize / send
@@ -176,7 +217,41 @@ public:
   /// Adopt a string in the framework and serialize / send
   /// it to the consumers of @a spec once done.
   void
-    adopt(const Output& spec, std::string*);
+  adopt(const Output& spec, std::string*);
+
+  /// Adopt a raw buffer in the framework and serialize / send
+  /// it to the consumers of @a spec once done.
+template<typename T>
+typename std::enable_if<is_specialization<T, BoostSerialized>::value == true, void>::type
+  adopt(const Output& spec, T* ptr){
+    LOG(INFO) << "Using adopt_boost";
+    adopt_boost(std::move(spec),std::move(ptr()));
+  }
+
+  template<typename T>
+  void adopt_boost(const Output& spec, T* ptr){
+    LOG(INFO) << "Using boost serialization...";
+
+    using type = T;
+
+   char* payload = reinterpret_cast<char*>(ptr);
+    std::string channel = matchDataHeader(spec, mTimingInfo->timeslice);
+    // the correct payload size is set later when sending the
+    // RawBufferContext, see DataProcessor::doSend
+    auto header = headerMessageFromOutput(spec, channel, o2::header::gSerializationMethodNone, 0);
+
+    auto lambdaSerialize = [voidPtr = payload](){
+      return o2::utils::BoostSerialize<type>(*(reinterpret_cast<type*>(voidPtr)));
+    };
+
+    auto lambdaDestructor = [voidPtr = payload](){
+      auto ptr = reinterpret_cast<type*>(voidPtr);
+      delete ptr;
+    };
+
+    LOG(INFO) << "Adding raw buffer...";
+    mContextRegistry->get<RawBufferContext>()->addRawBuffer( std::move(header), std::move(payload), std::move(channel), std::move(lambdaSerialize), std::move(lambdaDestructor) );
+  }
 
   /// Serialize a snapshot of an object with root dictionary when called,
   /// will then be sent once the computation ends.
