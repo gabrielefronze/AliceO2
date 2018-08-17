@@ -33,10 +33,10 @@ WorkflowSpec defineDataProcessing(ConfigContext const&)
         OutputSpec{ { "make" }, "TES", "BOOST" }, //
       },
       AlgorithmSpec{ [](ProcessingContext& ctx) {
-        auto& out1 = ctx.outputs().make<BoostSerialized<std::array<int,6>>>({ "TES", "BOOST" }); //WORKS
-        // auto& out1 = ctx.outputs().make_boost<std::array<int,6>>({ "TES", "BOOST" }); //WORKS
-        // auto& out1 = ctx.outputs().make<BoostSerialized<std::array<int,6>>>({ "TES", "BOOST" }); //DOESN'T WORK
-        // auto& out1 = ctx.outputs().make<std::array<int,6>>({ "TES", "BOOST" }); //DOESN'T WORK
+        auto& out1 = ctx.outputs().make<BoostSerialized<std::array<int,6>>>({ "TES", "BOOST" });
+        // auto& out1 = ctx.outputs().make_boost<std::array<int,6>>({ "TES", "BOOST" });
+        // auto& out1 = ctx.outputs().make<BoostSerialized<std::array<int,6>>>({ "TES", "BOOST" });
+        // auto& out1 = ctx.outputs().make<std::array<int,6>>({ "TES", "BOOST" });
         out1 = {1,2,3,4,5,6};
       } } //
     },    //
