@@ -126,7 +126,6 @@ public:
     typename std::enable_if<is_specialization<T, BoostSerialized>::value == true, WT&>::type
     make(const Output& specs)
   {
-    LOG(INFO) << "Using make_boost!";
     return make_boost<WT>(std::move(specs));
   }
 
@@ -136,7 +135,6 @@ public:
                         && std::is_base_of<std::string, T>::value == false, T&>::type 
     make(const Output& spec)
   {
-    LOG(INFO) << "Using make_boost!";
     return make_boost<T>(std::move(spec));
   }
 
@@ -224,14 +222,11 @@ public:
 template<typename T>
 typename std::enable_if<is_specialization<T, BoostSerialized>::value == true, void>::type
   adopt(const Output& spec, T* ptr){
-    LOG(INFO) << "Using adopt_boost";
     adopt_boost(std::move(spec),std::move(ptr()));
   }
 
   template<typename T>
   void adopt_boost(const Output& spec, T* ptr){
-    LOG(INFO) << "Using boost serialization...";
-
     using type = T;
 
    char* payload = reinterpret_cast<char*>(ptr);
@@ -248,8 +243,7 @@ typename std::enable_if<is_specialization<T, BoostSerialized>::value == true, vo
       auto ptr = reinterpret_cast<type*>(voidPtr);
       delete ptr;
     };
-
-    LOG(INFO) << "Adding raw buffer...";
+    
     mContextRegistry->get<RawBufferContext>()->addRawBuffer( std::move(header), std::move(payload), std::move(channel), std::move(lambdaSerialize), std::move(lambdaDestructor) );
   }
 

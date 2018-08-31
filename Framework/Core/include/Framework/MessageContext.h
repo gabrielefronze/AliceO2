@@ -12,6 +12,7 @@
 
 #include <fairmq/FairMQParts.h>
 #include "Framework/ContextRegistry.h"
+#include "Framework/ProtoContext.h"
 #include "Framework/FairMQDeviceProxy.h"
 #include <vector>
 #include <cassert>
@@ -24,7 +25,8 @@ namespace o2
 namespace framework
 {
 
-class MessageContext {
+class MessageContext : public ProtoContext
+{
 public:
  MessageContext(FairMQDeviceProxy proxy)
    : mProxy{ proxy }
@@ -79,24 +81,15 @@ public:
  private:
   FairMQDeviceProxy mProxy;
   Messages mMessages;
+
+ public:
+  static const context_id_type mContextID = ContextIDGenerator("FairMQMessage");
+
+  context_id_type getID() final
+  {
+    return mContextID;
+  }
 };
-
-/// Helper to get the context from the registry.
-template <>
-inline MessageContext*
-  ContextRegistry::get<MessageContext>()
-{
-  return reinterpret_cast<MessageContext*>(mContextes[o2::framework::contexts::kMessageContext]);
-}
-
-/// Helper to set the context from the registry.
-template <>
-inline void
-  ContextRegistry::set<MessageContext>(MessageContext* context)
-{
-  mContextes[o2::framework::contexts::kMessageContext] = context;
-}
-
 } // namespace framework
 } // namespace o2
 #endif // FRAMEWORK_MESSAGECONTEXT_H

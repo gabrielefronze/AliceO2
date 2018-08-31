@@ -11,6 +11,7 @@
 #define FRAMEWORK_ROOTOBJETCONTEXT_H
 
 #include "Framework/ContextRegistry.h"
+#include "Framework/ProtoContext.h"
 #include "Framework/FairMQDeviceProxy.h"
 #include <vector>
 #include <cassert>
@@ -27,7 +28,8 @@ namespace framework
 
 /// Holds ROOT objects which are being processed by a given 
 /// computation.
-class RootObjectContext {
+class RootObjectContext : public ProtoContext
+{
 public:
  RootObjectContext(FairMQDeviceProxy proxy)
    : mProxy{ proxy }
@@ -86,24 +88,15 @@ public:
  private:
   FairMQDeviceProxy mProxy;
   Messages mMessages;
+
+ public:
+  static const context_id_type mContextID = ContextIDGenerator("ROOTObject");
+
+  context_id_type getID() final
+  {
+    return mContextID;
+  }
 };
-
-/// Helper to get the context from the registry.
-template <>
-inline RootObjectContext*
-  ContextRegistry::get<RootObjectContext>()
-{
-  return reinterpret_cast<RootObjectContext*>(mContextes[o2::framework::contexts::kROOTObjectContext]);
-}
-
-/// Helper to set the context from the registry.
-template <>
-inline void
-  ContextRegistry::set<RootObjectContext>(RootObjectContext* context)
-{
-  mContextes[o2::framework::contexts::kROOTObjectContext] = context;
-}
-
 } // namespace framework
 } // namespace o2
 #endif // FRAMEWORK_ROOTOBJECTCONTEXT_H

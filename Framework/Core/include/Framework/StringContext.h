@@ -11,6 +11,7 @@
 #define FRAMEWORK_STRINGCONTEXT_H
 
 #include "Framework/ContextRegistry.h"
+#include "Framework/ProtoContext.h"
 #include "Framework/FairMQDeviceProxy.h"
 #include <vector>
 #include <cassert>
@@ -27,7 +28,7 @@ namespace framework
 /// A context which holds `std::string`s being passed around
 /// useful for debug purposes and as an illustration of
 /// how to add a context for a new kind of object.
-class StringContext
+class StringContext : public ProtoContext
 {
  public:
   StringContext(FairMQDeviceProxy proxy)
@@ -87,24 +88,15 @@ class StringContext
  private:
   FairMQDeviceProxy mProxy;
   Messages mMessages;
+
+ public:
+  static const context_id_type mContextID = ContextIDGenerator("String");
+
+  context_id_type getID() final
+  {
+    return mContextID;
+  }
 };
-
-/// Helper to get the context from the registry.
-template <>
-inline StringContext*
-  ContextRegistry::get<StringContext>()
-{
-  return reinterpret_cast<StringContext*>(mContextes[o2::framework::contexts::kStringContext]);
-}
-
-/// Helper to set the context from the registry.
-template <>
-inline void
-  ContextRegistry::set<StringContext>(StringContext* context)
-{
-  mContextes[o2::framework::contexts::kStringContext] = context;
-}
-
 } // namespace framework
 } // namespace o2
 #endif // FRAMEWORK_STRINGCONTEXT_H

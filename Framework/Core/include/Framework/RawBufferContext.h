@@ -17,6 +17,7 @@
 #define FRAMEWORK_RAWBUFFERCONTEXT_H
 
 #include "Framework/ContextRegistry.h"
+#include "Framework/ProtoContext.h"
 #include "Framework/FairMQDeviceProxy.h"
 #include "CommonUtils/BoostSerializer.h"
 #include <vector>
@@ -34,7 +35,7 @@ namespace framework
 
 /// A context which holds bytes streams being passed around
 /// Intended to be used with boost serialization methods
-class RawBufferContext
+class RawBufferContext : public ProtoContext
 {
  public:
   RawBufferContext(FairMQDeviceProxy proxy)
@@ -87,10 +88,7 @@ class RawBufferContext
       m.destroyPayload();
       m.payload = nullptr;
     }
-
-    LOG(INFO) << "Clearing...";
     mMessages.clear();
-    LOG(INFO) << "Cleared.";
   }
 
   FairMQDeviceProxy& proxy()
@@ -101,24 +99,15 @@ class RawBufferContext
  private:
   FairMQDeviceProxy mProxy;
   Messages mMessages;
+
+ public:
+  static const context_id_type mContextID = ContextIDGenerator("RawBuffer");
+
+  context_id_type getID() final
+  {
+    return mContextID;
+  }
 };
-
-/// Helper to get the context from the registry.
-template <>
-inline RawBufferContext*
-  ContextRegistry::get<RawBufferContext>()
-{
-  return reinterpret_cast<RawBufferContext*>(mContextes[o2::framework::contexts::kRawBufferContext]);
-}
-
-/// Helper to set the context from the registry.
-template <>
-inline void
-  ContextRegistry::set<RawBufferContext>(RawBufferContext* context)
-{
-  mContextes[o2::framework::contexts::kRawBufferContext] = context;
-}
-
 } // namespace framework
 } // namespace o2
 

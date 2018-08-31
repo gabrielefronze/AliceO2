@@ -11,13 +11,15 @@
 #ifndef FRAMEWORK_CONTEXTREGISTRY_H
 #define FRAMEWORK_CONTEXTREGISTRY_H
 
-#include <array>
+#include <vector>
+#include <unordered_map>
+#include <cassert>
+#include "Framework/ProtoContext.h"
 
 namespace o2
 {
 namespace framework
 {
-
 /// Decouples getting the various contextes from the actual type
 /// of context, so that the DataAllocator does not need to know
 /// about the various serialization methods. Since there is only
@@ -31,43 +33,38 @@ namespace framework
 /// ROOTObjectContext 1
 /// StringContext 2
 /// RawContext 3
-
-enum contexts{
-  kMessageContext,
-  kROOTObjectContext,
-  kStringContext,
-  kRawBufferContext,
-  kNContexts
-};
-
 class ContextRegistry
 {
  public:
-  ContextRegistry(std::array<void*, contexts::kNContexts> contextes)
-    : mContextes{ contextes }
+  ContextRegistry(std::vector<ProtoContext*> contextes)
   {
+    for(auto &itCtx : contextes){
+      auto ID = itCtx->getID();
+      mContextes[ID] = itCtx;
+    }
   }
 
-  /// Default getter does nothing. Each Context needs
-  /// to override the get method and return a unique
-  /// entry in the mContextes.
-  template <class T, size_t S = sizeof(T)>
-  T* get()
-  {
-    static_assert(sizeof(T) == -1, "Unsupported backend");
-  }
+  /// Helper to get the context from the registry.
+template <class ContextT>
+inline ContextT* get()
+{
+  auto ID = ContextT::mContextID;
+  auto got = mContextes.find(ID);
+  assert(got != mContextes.end());
+  return reinterpret_cast<ContextT*>(got->second);
+}
 
-  /// Default setter does nothing. Each Context needs
-  /// to override the set method and store the agreed
-  /// pointer in the right position.
-  template <class T, size_t S = sizeof(T)>
-  void set(T*)
-  {
-    static_assert(sizeof(T) == -1, "Unsupported backend");
+/// Helper to set the context from the registry.
+template <class ContextT>
+inline void set(ContextT* context)
+{
+  if (mContextes.find(context->getID()) == mContextes.end()) {
+    mContextes.insert(std::make_pair<context_id_type,ProtoContext*>(context->getID(),context));
   }
+}
 
  private:
-  std::array<void*, contexts::kNContexts> mContextes;
+  std::unordered_map<context_id_type,ProtoContext*> mContextes;
 };
 
 } // namespace framework
